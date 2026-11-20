@@ -2,17 +2,18 @@
 // Protocol + behaviour checks for the MCP server, for any show. Calls it like a chat client would.
 // Usage: node scripts/mcp-smoke.mjs <show> [baseUrl]   (server must be running)
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+import { qaFetch } from './qa-fetch.mjs';
 
 const showId = process.argv[2];
 const BASE = process.argv[3] ?? 'http://localhost:5180';
 if (!showId) { console.error('usage: node scripts/mcp-smoke.mjs <show> [baseUrl]'); process.exit(2); }
 const client = new Client({ name: 'smoke', version: '0.0.1' });
-await client.connect(new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`)));
+await client.connect(new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`), { fetch: qaFetch }));
 const call = async (name, args) => (await client.callTool({ name, arguments: args })).content.map((c) => c.text).join('\n');
 let failures = 0;
 const check = (label, ok) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}`); if (!ok) failures++; };
 
-const view = await (await fetch(`${BASE}/api/shows/${showId}?next=S1E1`)).json();
+const view = await (await qaFetch(`${BASE}/api/shows/${showId}?next=S1E1`)).json();
 const codes = view.episodes.map((e) => e.code);
 const mid = codes[Math.floor(codes.length / 2)];
 const last = codes[codes.length - 1];

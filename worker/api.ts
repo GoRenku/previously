@@ -4,29 +4,46 @@
  *   GET /api/catalog                 every show; available ones get spoiler-free extras
  *   GET /api/shows/:id?next=|through=          the gated show plus its theme
  *   GET /api/shows/:id/search?next=|through=&q=  search over the gated show
+ * Gated responses depend only on the show's bundle and the request's
+ * parameters, so they are cached at the edge under the bundle key.
  */
 import type { CatalogShow } from '../shared/content.ts';
 import { search } from '../shared/spoilers.ts';
 import type { ContentStore } from './content/store.ts';
-import { json, methodNotAllowed, notFound } from './http.ts';
+import { badRequest, digest, edgeCached, json, methodNotAllowed, notFound } from './http.ts';
+import { LIMITS } from './limits.ts';
 import { catalogWithAvailability, gatedShow, type PositionArgs } from './shows.ts';
 
 const DAY = 1000 * 60 * 60 * 24;
 
-export async function api(request: Request, store: ContentStore): Promise<Response> {
+export async function api(request: Request, store: ContentStore, ctx: ExecutionContext, opts: { cache: boolean }): Promise<Response> {
   const url = new URL(request.url);
   if (request.method !== 'GET' && request.method !== 'HEAD') return methodNotAllowed();
 
-  if (url.pathname === '/api/catalog') return json({ shows: await catalog(store) });
+  if (url.pathname === '/api/catalog') {
+    const m = await store.manifest();
+    // The catalog's hook line depends on today's date, so the day is part of its version.
+    const version = opts.cache && m.catalog ? await digest([m.catalog, ...Object.values(m.shows).map((s) => s.bundle), new Date().toISOString().slice(0, 10)]) : null;
+    return edgeCached(ctx, url, version, async () => json({ shows: await catalog(store) }));
+  }
 
-  const m = /^\/api\/shows\/([^/]+)(\/search)?$/.exec(url.pathname);
-  if (!m) return notFound('Not found.');
-  const id = decodeURIComponent(m[1]);
-  const pos: PositionArgs = { next: url.searchParams.get('next') ?? undefined, through: url.searchParams.get('through') ?? undefined };
-  const { data, view, error } = await gatedShow(store, id, pos);
-  if (!data || !view) return notFound(error!);
-  if (m[2]) return json({ hits: search(view, url.searchParams.get('q') ?? '', 12) });
-  return json({ ...view, theme: data.theme }, { headers: { 'Cache-Control': 'no-store' } });
+  const match = /^\/api\/shows\/([^/]+)(\/search)?$/.exec(url.pathname);
+  if (!match) return notFound('Not found.');
+  const id = decodeURIComponent(match[1]);
+  const p = url.searchParams;
+  const pos: PositionArgs = { next: p.get('next') ?? undefined, through: p.get('through') ?? undefined };
+  const q = p.get('q') ?? '';
+  if (id.length > LIMITS.show || (pos.next?.length ?? 0) > LIMITS.position || (pos.through?.length ?? 0) > LIMITS.position || q.length > LIMITS.text) {
+    return badRequest('A parameter is too long.');
+  }
+
+  const bundle = opts.cache ? (await store.manifest()).shows[id]?.bundle ?? null : null;
+  return edgeCached(ctx, url, bundle, async () => {
+    const { data, view, error } = await gatedShow(store, id, pos);
+    if (!data || !view) return notFound(error!);
+    if (match[2]) return json({ hits: search(view, q, 12) });
+    return json({ ...view, theme: data.theme }, { headers: { 'Cache-Control': 'no-store' } });
+  });
 }
 
 async function catalog(store: ContentStore): Promise<CatalogShow[]> {

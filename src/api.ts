@@ -10,7 +10,9 @@ export type { GCharacter, GWorld, GStoryline, GEpisode, GFact } from '../shared/
 
 export async function getCatalog(): Promise<CatalogShow[]> {
   const r = await fetch('/api/catalog');
-  return (await r.json()).shows;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !Array.isArray(j.shows)) throw new Error(j.error ?? 'Could not load the shows. Try again in a moment.');
+  return j.shows;
 }
 
 export async function getShow(id: string, next: string): Promise<ShowView> {

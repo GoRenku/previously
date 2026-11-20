@@ -1,6 +1,6 @@
 # 0001 Launch Previously On Cloudflare
 
-Status: accepted (choices settled 2026-11-19; slices 0–2 done 2026-11-20, plus setup step 2)
+Status: accepted (choices settled 2026-11-19; slices 0–3 done 2026-11-20, plus setup steps 2 and 3)
 Date: 2026-11-19
 Setup guide: [docs/operations/cloudflare-setup.md](../../docs/operations/cloudflare-setup.md)
 
@@ -407,13 +407,36 @@ Routes and MCP tools keep their current names, parameters and output.
      ledger.
    - Promoting a show also makes the staging catalog live (the catalog only
      lists shows and their TVmaze data).
-   - For slice 3: the media domain was created with minimum TLS 1.0; raise
-     it to 1.2.
-3. **Hardening.** Cache headers (gated responses vary only by show, position
-   and bundle, so they can be cached at the edge), input length limits on
-   search and MCP arguments, a Workers rate-limit binding on `/api` and
-   `/mcp`, Workers Logs and traces, basic security headers, CORS on `/mcp`,
-   and `noindex` on staging so search engines do not list a duplicate site.
+   - The media domain was created with minimum TLS 1.0; raised to 1.2 in
+     slice 3.
+3. **Hardening.** Done 2026-11-20, checked on the built Worker locally
+   (`pnpm preview`): QA clean, output still identical to the Express
+   baseline, and the site works in a browser under the new CSP (fonts,
+   images and YouTube clips). Notes on what landed:
+   - Edge cache: `/api/*` responses are stored with the Cache API under a key
+     that includes the bundle key (the catalog: every key plus today's date,
+     since its hook line depends on the date), so a publish never serves a
+     stale copy. Browsers may keep a response for 60 s. Not under `pnpm dev`.
+   - Limits (`worker/limits.ts`): show 100 characters, positions 40, search
+     text, names and terms 200 (400 on `/api`, a tool error on MCP), MCP body
+     64 KiB (413).
+   - Rate limits per client IP per minute: `/api` 600, `/mcp` 1200 (Claude.ai
+     and ChatGPT call from shared IPs). A spoiler scan is about 450 requests
+     per show. The QA scripts wait and retry on 429 (`scripts/qa-fetch.mjs`).
+     Separate namespaces for staging and production. Off under `pnpm dev`.
+   - Workers Logs (with invocation logs) and traces on, sampling everything.
+   - Security headers on Worker responses (`worker/http.ts`) and on static
+     assets (a `_headers` file written at build time): nosniff, referrer
+     policy, HSTS, a CSP (scripts from the site only; Google Fonts; YouTube
+     embeds; https images) and a permissions policy. `/assets/*` is cached
+     forever. Staging adds `X-Robots-Tag: noindex` everywhere.
+   - MCP CORS stays the `agents` default (`*`). Browser `Origin` checks are
+     off (`allowedOriginHostnames: '*'`), since the server is public,
+     read-only and has no credentials; by default only localhost origins
+     could call it from a browser.
+   - `media.previously.fyi` now requires TLS 1.2 or later.
+   - The home page showed a crash when the catalog request failed (for
+     example on a 429); it now shows the error.
 4. **Cloudflare setup and first launch.** Follow
    [the setup guide](../../docs/operations/cloudflare-setup.md): you confirm
    the domain and create the R2 token; Claude creates the buckets and media

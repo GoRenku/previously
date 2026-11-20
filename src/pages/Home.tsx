@@ -9,7 +9,8 @@ export default function Home() {
   const input = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
-  useEffect(() => { getCatalog().then(setShows); }, []);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => { getCatalog().then(setShows, (e: Error) => setError(e.message)); }, []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === '/' && document.activeElement !== input.current) { e.preventDefault(); input.current?.focus(); } };
     window.addEventListener('keydown', onKey);
@@ -61,7 +62,9 @@ export default function Home() {
           <h2 className="display">{q ? `Results for “${q}”` : 'Popular shows'}</h2>
           <span className="kicker">{shows.filter((s) => s.available).length} ready · {shows.filter((s) => !s.available).length} coming soon</span>
         </div>
-        {filtered.length ? (
+        {error ? (
+          <div className="empty">{error}</div>
+        ) : filtered.length ? (
           <div className="poster-grid">
             {filtered.map((s) => <Poster key={s.id} show={s} />)}
           </div>

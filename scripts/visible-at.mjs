@@ -3,9 +3,10 @@
 // review): names, roles, groups, status, "right now", arc titles, storyline membership and beats,
 // questions, world entries with their links, clips and every image with when it appears.
 // Usage: node scripts/visible-at.mjs <show> <upNext> [baseUrl]     e.g. node scripts/visible-at.mjs black-doves S1E4
+import { qaFetch } from './qa-fetch.mjs';
 const [showId, next, BASE = 'http://localhost:5180'] = process.argv.slice(2);
 if (!showId || !next) { console.error('usage: node scripts/visible-at.mjs <show> <upNext> [baseUrl]'); process.exit(2); }
-const v = await (await fetch(`${BASE}/api/shows/${showId}?next=${next}`)).json();
+const v = await (await qaFetch(`${BASE}/api/shows/${showId}?next=${next}`)).json();
 if (v.error) { console.error(v.error); process.exit(2); }
 const out = [];
 const h = (t) => out.push(`\n## ${t}`);

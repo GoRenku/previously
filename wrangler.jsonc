@@ -17,12 +17,28 @@
   // Show bundles, catalogs and manifests (written by scripts/publish/). Both
   // sites share the bucket; CONTENT_ENV picks the manifest.
   "r2_buckets": [{ "binding": "CONTENT", "bucket_name": "previously-content" }],
+  // Requests per client IP per minute (per Cloudflare location). Claude.ai and
+  // ChatGPT call /mcp from shared IPs, so its limit is the higher one. The QA
+  // scripts wait and retry when they hit a limit.
+  "ratelimits": [
+    { "name": "API_LIMIT", "namespace_id": "41001", "simple": { "limit": 600, "period": 60 } },
+    { "name": "MCP_LIMIT", "namespace_id": "41002", "simple": { "limit": 1200, "period": 60 } }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
+  },
   "routes": [{ "pattern": "previously.fyi", "custom_domain": true }],
   "env": {
     "staging": {
       "name": "previously-staging",
       "vars": { "CONTENT_ENV": "staging" },
       "r2_buckets": [{ "binding": "CONTENT", "bucket_name": "previously-content" }],
+      "ratelimits": [
+        { "name": "API_LIMIT", "namespace_id": "41101", "simple": { "limit": 600, "period": 60 } },
+        { "name": "MCP_LIMIT", "namespace_id": "41102", "simple": { "limit": 1200, "period": 60 } }
+      ],
       "routes": [{ "pattern": "staging.previously.fyi", "custom_domain": true }]
     }
   }

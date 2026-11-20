@@ -138,6 +138,22 @@ it; catalog entries never published show as "coming soon".
 The publish scripts use their own R2 token, kept in the git-ignored
 `.publish.vars` (`.publish.vars.example` lists the keys).
 
+### Protection
+
+- **Caching:** `/api/*` responses are cached at the edge under keys that
+  include the content version, and in browsers for 60 seconds. `/assets/*`
+  is cached forever (file names are hashed).
+- **Limits:** short maximum lengths for every parameter and tool argument
+  (`worker/limits.ts`), a 64 KiB MCP body, and per-IP rate limits (`/api`
+  600 and `/mcp` 1200 requests a minute; `wrangler.jsonc`).
+- **Headers:** a Content-Security-Policy and the usual security headers on
+  every response (`worker/http.ts` for Worker responses, a `_headers` file
+  written by `vite.config.ts` for static assets). Staging is `noindex`.
+- **MCP from browsers:** CORS is open (`*`) and `Origin` is not checked: the
+  server is public, read-only and holds no credentials.
+- **Logs and traces:** Workers Logs and traces, viewable on the Worker's
+  page in the Cloudflare dashboard.
+
 ### Local
 
 - `pnpm dev` (port 5180) runs the Worker in workerd with the dev store

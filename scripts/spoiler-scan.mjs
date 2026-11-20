@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { showDir } from './content-root.mjs';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+import { qaFetch } from './qa-fetch.mjs';
 
 const showId = process.argv[2];
 const BASE = process.argv[3] ?? 'http://localhost:5180';
@@ -22,11 +23,11 @@ const checks = [
 ].map((c) => ({ ...c, re: new RegExp(`(^|[^\\p{L}\\p{N}])${esc(c.term)}($|[^\\p{L}\\p{N}])`, 'iu'), slug: slug(c.term) }));
 
 const client = new Client({ name: 'spoiler-scan', version: '0.0.1' });
-await client.connect(new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`)));
+await client.connect(new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`), { fetch: qaFetch }));
 const mcp = async (name, args) => (await client.callTool({ name, arguments: args })).content.map((c) => c.text).join('\n');
 
 // Every position: before each episode, plus "watched everything".
-const probe = await (await fetch(`${BASE}/api/shows/${showId}?next=S1E1`)).json();
+const probe = await (await qaFetch(`${BASE}/api/shows/${showId}?next=S1E1`)).json();
 if (probe.error) { console.error(probe.error); process.exit(2); }
 const codes = probe.episodes.map((e) => e.code);
 const lastSeason = Math.max(...probe.episodes.map((e) => e.season));
@@ -34,7 +35,7 @@ const positions = [...codes, `S${lastSeason + 1}E1`];
 
 const first = new Map(); // check -> { through, where, snippet }
 for (const next of positions) {
-  const view = await (await fetch(`${BASE}/api/shows/${showId}?next=${next}`)).json();
+  const view = await (await qaFetch(`${BASE}/api/shows/${showId}?next=${next}`)).json();
   const through = view.position.through;
   // The next-up title and logline are a deliberate teaser; ledger-check.mjs vets them separately.
   for (const e of view.episodes) if (e.nextUp) { delete e.title; delete e.logline; }
@@ -62,6 +63,6 @@ for (const c of checks) {
   bad++;
   console.log(`EARLY  "${c.term}" (${c.id}, revealed ${c.at}) already visible after ${f.through} via ${f.where}\n       …${f.snippet}…`);
 }
-console.log(`${showId}: ${checks.length} terms × ${positions.length} positions (web + MCP) — ${bad ? `${bad} leak(s)` : 'clean'}`);
+console.log(`${showId}: ${checks.length} terms × ${positions.length} positions (web + MCP) — ${bad ? `${bad} leak(s)` : 'clean'} (${qaFetch.calls} requests)`);
 await client.close();
 process.exit(bad ? 1 : 0);

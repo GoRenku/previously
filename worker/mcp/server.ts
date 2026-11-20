@@ -7,6 +7,7 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 import { findByName, fmt, search, type GatedShow } from '../../shared/spoilers.ts';
 import type { ContentStore } from '../content/store.ts';
+import { LIMITS } from '../limits.ts';
 import { catalogWithAvailability, gatedShow } from '../shows.ts';
 import { boundary, characterCard, fail, factLine, text } from './format.ts';
 
@@ -17,8 +18,8 @@ Rules for using it:
 3. If the user asks about something the tools don't return, say it hasn't come up as of their episode (or isn't in Previously yet). Don't hint, tease, or confirm/deny future events.
 4. Never reveal a later name or identity for a character; use the names the tools give.`;
 
-const upNext = z.string().describe('The episode the user is about to watch, e.g. "S2E1" (everything before it is safe). Use "S3E1" style for an unaired next season. Ask the user if unknown — never guess.');
-const showArg = z.string().describe('Show id or title, e.g. "severance". Use list_shows to see what is available.');
+const upNext = z.string().max(LIMITS.position).describe('The episode the user is about to watch, e.g. "S2E1" (everything before it is safe). Use "S3E1" style for an unaired next season. Ask the user if unknown — never guess.');
+const showArg = z.string().max(LIMITS.show).describe('Show id or title, e.g. "severance". Use list_shows to see what is available.');
 
 /** Every tool only reads, gives the same answer for the same arguments, and touches nothing outside Previously. */
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
@@ -93,7 +94,7 @@ export function createMcpServer(store: ContentStore) {
   server.registerTool('get_character', {
     title: 'Get character',
     description: 'A spoiler-safe dossier for one character: who they are, what we know (split by innie/outie or similar where the show has it), relationships, image.',
-    inputSchema: z.object({ show: showArg, up_next: upNext, name: z.string().describe('Character name as the user knows it') }),
+    inputSchema: z.object({ show: showArg, up_next: upNext, name: z.string().max(LIMITS.text).describe('Character name as the user knows it') }),
     annotations: READ_ONLY,
   }, async ({ show, up_next, name }) => withView(show, up_next, (v) => {
     const c = findByName(v.characters, name, v.redirects);
@@ -104,7 +105,7 @@ export function createMcpServer(store: ContentStore) {
   server.registerTool('get_episode', {
     title: 'Get episode recap',
     description: 'Detailed recap of one episode the user has already watched. Refuses episodes at or beyond the user\'s position.',
-    inputSchema: z.object({ show: showArg, up_next: upNext, episode: z.string().describe('Episode code, e.g. "S1E4"') }),
+    inputSchema: z.object({ show: showArg, up_next: upNext, episode: z.string().max(LIMITS.position).describe('Episode code, e.g. "S1E4"') }),
     annotations: READ_ONLY,
   }, async ({ show, up_next, episode }) => withView(show, up_next, (v) => {
     const code = episode.toUpperCase().replace(/^S(\d+)E0*(\d+)$/, 'S$1E$2');
@@ -126,7 +127,7 @@ export function createMcpServer(store: ContentStore) {
   server.registerTool('lookup', {
     title: 'Look up a term',
     description: 'Explain a place, organization, concept or object from the show (e.g. "Macrodata Refinement", "the break room"), as known at the user\'s position.',
-    inputSchema: z.object({ show: showArg, up_next: upNext, term: z.string() }),
+    inputSchema: z.object({ show: showArg, up_next: upNext, term: z.string().max(LIMITS.text) }),
     annotations: READ_ONLY,
   }, async ({ show, up_next, term }) => withView(show, up_next, (v) => {
     const w = findByName(v.world, term);
@@ -140,7 +141,7 @@ export function createMcpServer(store: ContentStore) {
   server.registerTool('search', {
     title: 'Search',
     description: 'Free-text search across recaps, characters, lore, storylines and questions — only what is revealed before the user\'s position. Use to answer specific questions ("why did Petey leave?").',
-    inputSchema: z.object({ show: showArg, up_next: upNext, query: z.string() }),
+    inputSchema: z.object({ show: showArg, up_next: upNext, query: z.string().max(LIMITS.text) }),
     annotations: READ_ONLY,
   }, async ({ show, up_next, query }) => withView(show, up_next, (v) => {
     const hits = search(v, query, 10);
