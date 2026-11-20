@@ -14,11 +14,15 @@
     "run_worker_first": ["/api/*", "/mcp"]
   },
   "vars": { "CONTENT_ENV": "production" },
+  // Show bundles, catalogs and manifests (written by scripts/publish/). Both
+  // sites share the bucket; CONTENT_ENV picks the manifest.
+  "r2_buckets": [{ "binding": "CONTENT", "bucket_name": "previously-content" }],
   "routes": [{ "pattern": "previously.fyi", "custom_domain": true }],
   "env": {
     "staging": {
       "name": "previously-staging",
       "vars": { "CONTENT_ENV": "staging" },
+      "r2_buckets": [{ "binding": "CONTENT", "bucket_name": "previously-content" }],
       "routes": [{ "pattern": "staging.previously.fyi", "custom_domain": true }]
     }
   }

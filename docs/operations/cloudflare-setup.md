@@ -56,7 +56,7 @@ account or a domain, choose your account and `previously.fyi`.
 
 ## Step 2 – Claude: buckets and image domain
 
-Claude runs:
+Done 2026-11-20. Claude ran:
 
 ```bash
 pnpm wrangler r2 bucket create previously-content

@@ -17,7 +17,12 @@
     "check": "pnpm typecheck && pnpm validate && pnpm build",
     "deploy:staging": "node scripts/deploy.mjs staging",
     "deploy:production": "node scripts/deploy.mjs production",
-    "rollback:production": "node scripts/deploy.mjs rollback"
+    "rollback:production": "node scripts/deploy.mjs rollback",
+    "content:local": "node scripts/publish/publish.mjs local",
+    "content:publish": "node scripts/publish/publish.mjs publish",
+    "content:qa": "node scripts/publish/promote.mjs qa",
+    "content:promote": "node scripts/publish/promote.mjs promote",
+    "content:rollback": "node scripts/publish/promote.mjs rollback"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

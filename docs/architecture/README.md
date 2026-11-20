@@ -2,8 +2,8 @@
 
 Date: 2026-11-20
 
-Status: current (hosting is still changing under
-[plan 0001](../../plans/active/0001-launch-on-cloudflare.md))
+Status: current (built under
+[plan 0001](../../plans/active/0001-launch-on-cloudflare.md); not yet deployed)
 
 Role: topic overview
 
@@ -15,13 +15,13 @@ LLM.
 ## The Pieces
 
 ```text
-show data (JSON per show)
-      │
-      ▼
-spoiler gate  shared/spoilers.ts   full show + position ──► gated view
-      │
-      ├──► /api/*   JSON for the React site (src/)
-      └──► /mcp     MCP tools for Claude, ChatGPT and other clients
+content repo (private) ──pnpm content:publish──► R2 previously-content  (bundles, catalog, manifests)
+                                            └──► R2 previously-media    (mirrored images, media.previously.fyi)
+                                                        │
+Worker:  content store ──► spoiler gate (shared/spoilers.ts): full show + position ──► gated view
+                                                        │
+                                   ├──► /api/*   JSON for the React site (src/)
+                                   └──► /mcp     MCP tools for Claude, ChatGPT and other clients
 ```
 
 | Path | Owns |
@@ -30,13 +30,15 @@ spoiler gate  shared/spoilers.ts   full show + position ──► gated view
 | `shared/spoilers.ts` | The spoiler gate and search. `gate(show, position)` returns only what is visible at that position. This is the only place visibility rules live. |
 | `shared/content.ts` | The content contracts: catalog entries, show bundles (a show's published files in one object, with its theme), manifests. |
 | `worker/index.ts` | The Worker's entry: sends `/api/*` and `/mcp` to their handlers. Every other path is a static asset and never runs Worker code. |
-| `worker/content/` | `ContentStore`: `catalog()`, `manifest()`, `show(id)`. The only place the Worker reads content. |
+| `worker/content/` | `ContentStore`: `catalog()`, `manifest()`, `show(id)`. The only place the Worker reads content: R2 when deployed (`r2.ts`), the local content folder under `pnpm dev` (`dev.ts`). |
 | `worker/shows.ts` | Catalog availability (a show is available once the manifest lists it) and resolving a viewer's position. |
 | `worker/api.ts` | `/api/*`: the catalog, the gated show, search. Handlers are thin: parse, gate, serialize. |
 | `worker/mcp/` | The MCP server (SDK v2): instructions and eight read-only tools. Each tool takes `up_next`, gates, then formats text. |
 | `shared/theme.ts` | The shape of a show's theme: palette and type tokens, lock motif, microcopy. |
 | `src/` | The React site. It only renders gated views and never filters content itself. `src/themes.ts` holds the app theme; each show's theme comes from the API. |
 | `scripts/` | Content QA and tooling (below). |
+| `scripts/publish/` | Bundling, image mirroring, manifests and the R2 client for the `content:*` commands. The only place scripts talk to R2. |
+| `scripts/deploy.mjs` | Code deploys and rollback. |
 
 ## Positions
 
@@ -97,18 +99,55 @@ Shows are added with the Claude Code skills in `.claude/skills/`
 
 ## Hosting
 
-The site, `/api/*` and `/mcp` are one Cloudflare Worker with static assets
-(`wrangler.jsonc`), built by Vite with the Cloudflare Vite plugin. Only
+Two Cloudflare Workers from one `wrangler.jsonc`: `previously`
+(`previously.fyi`) and `previously-staging` (`staging.previously.fyi`). They
+run the same code and differ only in `CONTENT_ENV`, which picks the manifest
+they read. Each is built by Vite with the Cloudflare Vite plugin. Only
 `/api/*` and `/mcp` run Worker code; every other path is a static asset with
 single-page-app fallback.
 
-Locally, `pnpm dev` runs the Worker in workerd on port 5180. Its content
-store is the dev store (`worker/content/dev.ts`): workerd cannot read the
-disk, so the Vite dev server serves the content folder at `/__dev/content/*`
-(`devContent` in `vite.config.ts`) and the store fetches it on every request.
-The dev store is guarded by `import.meta.env.DEV`, so no build contains it.
-Locally a show is available once its `episodes.json` exists.
+Code and content ship separately, and only from the maintainer's machine:
 
-Plan 0001 is still moving the rest: the deployed sites read content from R2
-(slice 2) and images are mirrored. Until then a built Worker answers `/api/*`
-and `/mcp` with 503. This page will be rewritten when that lands.
+- **Code:** `pnpm deploy:staging` / `pnpm deploy:production` (`check`, a
+  clean tree, then `wrangler deploy` tagged with the commit);
+  `pnpm rollback:production`.
+- **Content:** `pnpm content:publish <id>` bundles the committed content,
+  mirrors its images and points the staging manifest at it.
+  `pnpm content:promote <id>` runs `spoiler-scan` and `mcp-smoke` against
+  staging, then copies those exact entries to production.
+  `pnpm content:rollback <env> <id>` returns a site to the show's previous
+  bundle.
+
+### R2
+
+| Bucket | Key | Holds |
+|---|---|---|
+| `previously-content` (Worker binding `CONTENT`, not public) | `shows/<id>/<sha256>.json` | One show bundle: every published file of the show in one object, theme included, image URLs rewritten. Never `reveals.json` or the research brief. |
+| | `catalog/<sha256>.json` | The catalog. |
+| | `manifests/<env>.json` | What a site serves: the catalog key, and per show its bundle key, content commit and publish time. |
+| | `manifests/history/<env>/<time>.json` | Every replaced manifest. Each manifest's `previous` points at the one it replaced, which is how rollback walks back. |
+| | `media-index.json` | Source image URL → mirrored file, so each image is downloaded once. |
+| `previously-media` (public at `media.previously.fyi`) | `img/<sha256>.<ext>` | Mirrored images, named by their bytes and cached forever. |
+
+Bundles and catalogs are named by the hash of their contents and never
+change, so the Worker caches them for the life of an isolate. It caches the
+manifest for 60 seconds, so a publish, promote or rollback takes effect within
+about a minute. A show is available on a site once that site's manifest lists
+it; catalog entries never published show as "coming soon".
+
+The publish scripts use their own R2 token, kept in the git-ignored
+`.publish.vars` (`.publish.vars.example` lists the keys).
+
+### Local
+
+- `pnpm dev` (port 5180) runs the Worker in workerd with the dev store
+  (`worker/content/dev.ts`). workerd cannot read the disk, so the Vite dev
+  server serves the content folder at `/__dev/content/*` (`devContent` in
+  `vite.config.ts`) and the store fetches it on every request; content edits
+  show up on reload. A show is available once its `episodes.json` exists. The
+  dev store is guarded by `import.meta.env.DEV`, so no build contains it.
+- `pnpm content:local`, then `pnpm build && pnpm preview`, runs the built
+  Worker against a local R2 (`.wrangler/state`) holding the local content,
+  which exercises exactly the deployed code path. Images stay on their
+  original hosts locally. `content:qa`, `content:promote` and
+  `content:rollback` take `--local` to work against it.

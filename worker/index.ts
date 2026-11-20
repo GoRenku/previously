@@ -7,7 +7,7 @@
 import { createMcpHandler } from 'agents/mcp/server';
 import { api } from './api.ts';
 import { contentStore } from './content/store.ts';
-import { notFound, serverError, unavailable } from './http.ts';
+import { notFound, serverError } from './http.ts';
 import { createMcpServer } from './mcp/server.ts';
 
 export default {
@@ -18,7 +18,6 @@ export default {
     if (!isApi && !isMcp) return notFound('Not found.');
 
     const store = contentStore(env, url);
-    if (!store) return unavailable();
     try {
       if (isApi) return await api(request, store);
       return await createMcpHandler(() => createMcpServer(store), { route: '/mcp' })(request, env, ctx);

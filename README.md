@@ -29,6 +29,20 @@ pnpm check           # typecheck, validate every show, build
 
 `pnpm dev` runs the Cloudflare Worker locally in workerd through the Cloudflare Vite plugin. Content edits show up on reload.
 
+## Publish and deploy
+
+Everything goes out from this machine; nothing deploys from GitHub. Setup: [docs/operations/cloudflare-setup.md](docs/operations/cloudflare-setup.md).
+
+```bash
+pnpm content:publish <show>             # committed content -> staging (bundles, mirrored images, manifest)
+pnpm content:promote <show>             # spoiler-scan + mcp-smoke on staging, then make it live
+pnpm content:rollback production <show> # back to the show's previous version
+pnpm deploy:staging                     # code: check, then deploy (refuses uncommitted changes)
+pnpm deploy:production
+pnpm rollback:production
+pnpm content:local && pnpm build && pnpm preview   # the deployed code path, locally, on local R2
+```
+
 Installs follow the same supply-chain rules as Renku Studio (`pnpm-workspace.yaml`): package versions must be at least 7 days old, the lockfile is re-checked, no git or tarball dependencies, and only listed packages may run install scripts.
 
 ## Use from Claude
@@ -76,7 +90,7 @@ node scripts/build-catalog.mjs             # rebuild the home page list from cat
 | `wrangler.jsonc` | The two Workers: `previously` (production) and `previously-staging` |
 | `src/` | React site; it only renders gated views. `src/themes.ts` holds the app theme |
 | `scripts/content-root.mjs` | Finds the content repo |
-| `scripts/publish/bundle.mjs` | Show folder → one show bundle (no reveal ledger, no research) |
+| `scripts/publish/` | Bundling (no reveal ledger, no research), image mirroring, manifests, the R2 client, the `content:*` commands |
 | `scripts/deploy.mjs` | `deploy:staging`, `deploy:production`, `rollback:production` |
 | `scripts/validate-data.mjs`, `validate-all.mjs` | Checks the dataset: codes, ordering, cross-references, ledger, theme |
 | `scripts/spoiler-scan.mjs` | Fetches the gated payload at every position and flags sensitive terms that appear before their reveal |

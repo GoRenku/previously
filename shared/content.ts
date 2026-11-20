@@ -29,6 +29,10 @@ export interface ShowBundle extends ShowData {
 
 /** Which catalog and which show bundles a site serves. */
 export interface Manifest {
+  /** R2 key of the catalog (`catalog/<sha256>.json`). */
   catalog: string;
+  /** Per show: the R2 key of its bundle (`shows/<id>/<sha256>.json`), the content repo commit, and when it was published. */
   shows: Record<string, { bundle: string; contentCommit: string; publishedAt: string }>;
+  /** The history copy of the manifest this one replaced (`manifests/history/<env>/<time>.json`), for rollback. */
+  previous?: string;
 }

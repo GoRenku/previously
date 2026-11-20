@@ -1,6 +1,6 @@
 # 0001 Launch Previously On Cloudflare
 
-Status: accepted (choices settled 2026-11-19; slices 0 and 1 done 2026-11-20)
+Status: accepted (choices settled 2026-11-19; slices 0–2 done 2026-11-20, plus setup step 2)
 Date: 2026-11-19
 Setup guide: [docs/operations/cloudflare-setup.md](../../docs/operations/cloudflare-setup.md)
 
@@ -377,8 +377,38 @@ Routes and MCP tools keep their current names, parameters and output.
    Remove Express. Keep port 5180. Add `check`, `deploy:*` and
    `rollback:production`. Done when every local QA step passes against
    `pnpm dev`.
-2. **Publish pipeline.** Bundling, media mirroring, manifests, the
-   `content:*` commands, the R2 content store, and `.publish.vars` loading.
+2. **Publish pipeline.** Done 2026-11-20. Bundling, media mirroring,
+   manifests, the `content:*` commands, the R2 content store, and
+   `.publish.vars` loading. Setup step 2 was done at the same time: both
+   buckets exist and `media.previously.fyi` is attached to
+   `previously-media`. Notes on what landed:
+   - Tested end to end on local R2: `content:local`, then the built Worker
+     under `pnpm preview` gives output identical to the Express baseline;
+     `content:qa`, `content:promote` and `content:rollback` (`--local`)
+     moved the right entries; and the Worker picked up each manifest change
+     within its 60-second cache.
+   - Not testable before the token exists: the S3 calls to real R2. The
+     SigV4 signer is hand-written (`node:crypto`, no new dependency) and
+     matches AWS's published GET and PUT examples. Image mirroring was run
+     against real image hosts with an in-memory bucket. The first real
+     `content:publish` (slice 4) is the remaining check.
+   - Manifests gained `previous`, the history copy each one replaced, so
+     rollback walks back without listing the bucket. Rollback returns the
+     show to what the site served before its last change; a second rollback
+     undoes the first, like `wrangler rollback`.
+   - Mirrored images are every `url` (except in `meta.sources`, which are
+     web pages), `thumb`, `image` and `poster`. A publish fails, naming each
+     image, if any cannot be fetched or is not an image. Downloads retry rate
+     limits with backoff and send `PreviouslyPublisher/0.1
+     (https://previously.fyi)` as the User-Agent (Wikimedia asks for one).
+   - `content:publish` runs `validate-data` and `ledger-check` for each show
+     first. `content:promote` refuses if the content repo's reveal ledger
+     differs from the staged commit, since `spoiler-scan` reads the local
+     ledger.
+   - Promoting a show also makes the staging catalog live (the catalog only
+     lists shows and their TVmaze data).
+   - For slice 3: the media domain was created with minimum TLS 1.0; raise
+     it to 1.2.
 3. **Hardening.** Cache headers (gated responses vary only by show, position
    and bundle, so they can be cached at the edge), input length limits on
    search and MCP arguments, a Workers rate-limit binding on `/api` and
