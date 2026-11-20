@@ -2,7 +2,7 @@
 
 Date: 2026-11-20
 
-Status: current (hosting is changing under
+Status: current (hosting is still changing under
 [plan 0001](../../plans/active/0001-launch-on-cloudflare.md))
 
 Role: topic overview
@@ -28,9 +28,12 @@ spoiler gate  shared/spoilers.ts   full show + position ──► gated view
 |---|---|
 | `shared/schema.ts` | The data model. Every fact, beat, name, image, title and question carries `at`: the episode where the **viewer** learns it. Values that change over time are lists of `{ at, value }`. |
 | `shared/spoilers.ts` | The spoiler gate and search. `gate(show, position)` returns only what is visible at that position. This is the only place visibility rules live. |
-| `server/data.ts` | Loads show data and themes from the content repo and resolves a viewer's position. |
-| `server/index.ts` | HTTP: the catalog, the gated show, search, and the MCP endpoint. Handlers are thin: parse, gate, serialize. |
-| `server/mcp.ts` | The MCP server: instructions and eight read-only tools. Each tool takes `up_next`, gates, then formats text. |
+| `shared/content.ts` | The content contracts: catalog entries, show bundles (a show's published files in one object, with its theme), manifests. |
+| `worker/index.ts` | The Worker's entry: sends `/api/*` and `/mcp` to their handlers. Every other path is a static asset and never runs Worker code. |
+| `worker/content/` | `ContentStore`: `catalog()`, `manifest()`, `show(id)`. The only place the Worker reads content. |
+| `worker/shows.ts` | Catalog availability (a show is available once the manifest lists it) and resolving a viewer's position. |
+| `worker/api.ts` | `/api/*`: the catalog, the gated show, search. Handlers are thin: parse, gate, serialize. |
+| `worker/mcp/` | The MCP server (SDK v2): instructions and eight read-only tools. Each tool takes `up_next`, gates, then formats text. |
 | `shared/theme.ts` | The shape of a show's theme: palette and type tokens, lock motif, microcopy. |
 | `src/` | The React site. It only renders gated views and never filters content itself. `src/themes.ts` holds the app theme; each show's theme comes from the API. |
 | `scripts/` | Content QA and tooling (below). |
@@ -59,8 +62,11 @@ The full rules for writing content are in the `spoiler-model` skill.
 
 ## MCP
 
-Streamable HTTP, stateless (a fresh server per request), POST only, no
-authentication. All tools are read-only and marked `readOnlyHint`. Tools:
+Streamable HTTP, stateless (a fresh server per request, through
+`createMcpHandler` from `agents`), POST only, no authentication. It serves
+both the 2025 protocol and the 2026-07-28 one. All tools are read-only and
+marked `readOnlyHint`, `idempotentHint`, not `destructiveHint` and not
+`openWorldHint`. Tools:
 `list_shows`, `catch_me_up`, `list_characters`, `get_character`,
 `get_episode`, `list_storylines`, `lookup`, `search`. Every result starts with
 a spoiler-boundary line stating what the result covers.
@@ -89,13 +95,20 @@ thing) and a research brief. The ledger is not served; it drives QA.
 Shows are added with the Claude Code skills in `.claude/skills/`
 (`onboard-show` runs the phases).
 
-## Hosting Today
+## Hosting
 
-A single Node process (Express) serves the site, `/api/*` and `/mcp` on port
-5180, with Vite middleware in development. Show data is read from the content
-repo on disk and reloaded when files change. Images are linked from their
-original hosts.
+The site, `/api/*` and `/mcp` are one Cloudflare Worker with static assets
+(`wrangler.jsonc`), built by Vite with the Cloudflare Vite plugin. Only
+`/api/*` and `/mcp` run Worker code; every other path is a static asset with
+single-page-app fallback.
 
-Plan 0001 moves this to a Cloudflare Worker that serves content from R2, and
-mirrors images. This page will be rewritten
-when that lands.
+Locally, `pnpm dev` runs the Worker in workerd on port 5180. Its content
+store is the dev store (`worker/content/dev.ts`): workerd cannot read the
+disk, so the Vite dev server serves the content folder at `/__dev/content/*`
+(`devContent` in `vite.config.ts`) and the store fetches it on every request.
+The dev store is guarded by `import.meta.env.DEV`, so no build contains it.
+Locally a show is available once its `episodes.json` exists.
+
+Plan 0001 is still moving the rest: the deployed sites read content from R2
+(slice 2) and images are mirrored. Until then a built Worker answers `/api/*`
+and `/mcp` with 503. This page will be rewritten when that lands.

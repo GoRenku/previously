@@ -6,8 +6,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { showDir } from './content-root.mjs';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 
 const showId = process.argv[2];
 const BASE = process.argv[3] ?? 'http://localhost:5180';

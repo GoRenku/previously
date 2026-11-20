@@ -1,5 +1,5 @@
 import type { GatedShow, SearchHit } from '../shared/spoilers.ts';
-import type { CatalogShow } from '../server/data.ts';
+import type { CatalogShow } from '../shared/content.ts';
 import type { ShowTheme } from '../shared/theme.ts';
 
 /** The gated show plus its theme (null: use the app theme). */

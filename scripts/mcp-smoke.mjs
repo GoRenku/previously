@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 // Protocol + behaviour checks for the MCP server, for any show. Calls it like a chat client would.
 // Usage: node scripts/mcp-smoke.mjs <show> [baseUrl]   (server must be running)
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 
 const showId = process.argv[2];
 const BASE = process.argv[3] ?? 'http://localhost:5180';
@@ -20,6 +19,7 @@ const last = codes[codes.length - 1];
 
 const tools = (await client.listTools()).tools;
 check('8 tools, all read-only with titles', tools.length === 8 && tools.every((t) => t.title && t.annotations?.readOnlyHint));
+check('every tool: not destructive, idempotent, closed world', tools.every((t) => t.annotations?.destructiveHint === false && t.annotations?.idempotentHint === true && t.annotations?.openWorldHint === false));
 check(`list_shows includes "${showId}"`, (await call('list_shows', {})).includes(`"${showId}"`));
 
 check('nothing watched → premise only', /hasn't watched anything/.test(await call('catch_me_up', { show: showId, up_next: 'S1E1' })));

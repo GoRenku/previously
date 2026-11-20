@@ -1,11 +1,14 @@
 /**
- * Previously as an MCP server. Every tool takes the user's position (`up_next`)
- * and only ever returns content from before it — the same gate the website uses.
+ * Previously as an MCP server (SDK v2). Every tool takes the user's position
+ * (`up_next`) and only ever returns content from before it — the same gate
+ * the website uses. Stateless: a fresh server per request.
  */
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
-import { catalog, gatedShow } from './data.ts';
-import { findByName, fmt, search, type GArc, type GatedShow, type GCharacter, type GFact } from '../shared/spoilers.ts';
+import { findByName, fmt, search, type GatedShow } from '../../shared/spoilers.ts';
+import type { ContentStore } from '../content/store.ts';
+import { catalogWithAvailability, gatedShow } from '../shows.ts';
+import { boundary, characterCard, fail, factLine, text } from './format.ts';
 
 const INSTRUCTIONS = `Previously is a spoiler-safe "catch me up" companion for TV shows.
 Rules for using it:
@@ -17,71 +20,37 @@ Rules for using it:
 const upNext = z.string().describe('The episode the user is about to watch, e.g. "S2E1" (everything before it is safe). Use "S3E1" style for an unaired next season. Ask the user if unknown — never guess.');
 const showArg = z.string().describe('Show id or title, e.g. "severance". Use list_shows to see what is available.');
 
-const text = (t: string) => ({ content: [{ type: 'text' as const, text: t }] });
-const fail = (t: string) => ({ content: [{ type: 'text' as const, text: t }], isError: true });
+/** Every tool only reads, gives the same answer for the same arguments, and touches nothing outside Previously. */
+const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
 
-function resolveShowId(show: string) {
-  const s = show.toLowerCase().trim();
-  const hit = catalog().find((c) => c.id === s || c.title.toLowerCase() === s) ?? catalog().find((c) => c.title.toLowerCase().includes(s));
-  return hit?.available ? hit.id : null;
-}
-
-function withView(show: string, up_next: string, fn: (v: GatedShow) => string) {
-  const id = resolveShowId(show);
-  if (!id) return fail(`"${show}" isn't available in Previously yet. Call list_shows for available shows.`);
-  const { view, error } = gatedShow(id, { next: up_next });
-  if (!view) return fail(error!);
-  return text(`${boundary(view)}\n\n${fn(view)}`);
-}
-
-const boundary = (v: GatedShow) => {
-  const p = v.position;
-  const watched = p.through === 'S0E0' ? 'nothing yet' : `through ${fmt(p.through)}`;
-  // Stated as data, not as commands (directory review rules); the behavioural rules live in the server instructions.
-  const coverage = p.through === 'S0E0' ? 'premise only' : `S1·E1 – ${fmt(p.through)}`;
-  return `[SPOILER BOUNDARY — ${v.meta.title}. User has watched ${watched}; up next: ${p.nextUpLabel}. This result covers ${coverage}. The user has not seen anything later; later events, names and identities are deliberately excluded.]`;
-};
-
-const factLine = (f: GFact) => `- ${f.superseded ? `~~${f.text}~~ (${f.supersededNote ?? 'later shown to be untrue'})` : f.text}${f.via ? ` (as ${f.via})` : ''} [${fmt(f.at)}]`;
-
-function characterCard(c: GCharacter, full: boolean, arc?: GArc) {
-  const lines = [`## ${c.name}${c.aka.length ? ` (also: ${c.aka.join(', ')})` : ''}`, `${c.role}${c.status ? ` — status: ${c.status}` : ''}`, `Group: ${c.group}${c.actor ? ` · Played by ${c.actor.name}` : ''}`];
-  if (c.image?.url) lines.push(`Image: ${c.image.url}`);
-  if (!full) return lines.join('\n');
-  if (arc) {
-    if (arc.now) lines.push('', `### Where ${c.name} stands right now (as of ${fmt(arc.nowAt!)})`, arc.now);
-    if (arc.drives) lines.push('', `Driven by: ${arc.drives}`);
-    if (arc.tensions) lines.push(`Inner conflict: ${arc.tensions}`);
-    if (arc.chapters.length) {
-      lines.push('', `### Arc${arc.logline ? ` — ${arc.logline}` : ''}`);
-      for (const ch of arc.chapters) {
-        lines.push(`**${ch.title}** (${fmt(ch.firstAt)}–${fmt(ch.lastAt)}): ${ch.summary}`);
-        for (const b of ch.beats.filter((x) => (x.importance ?? 1) >= 3)) lines.push(`- [${fmt(b.at)}${b.facet ? ` · ${b.facet}` : ''}] ${b.superseded ? `(${b.supersededNote ?? 'later reframed'}) ` : ''}${b.text}`);
-      }
-    }
-  }
-  const facets = [...new Set(c.facts.map((f) => f.facet ?? ''))];
-  for (const facet of facets) {
-    lines.push('', facet ? `### ${facet}` : '### What we know');
-    lines.push(...c.facts.filter((f) => (f.facet ?? '') === facet).map(factLine));
-  }
-  if (c.relationships.length) lines.push('', '### Relationships', ...c.relationships.map((r) => `- ${r.name}: ${r.label}`));
-  return lines.join('\n');
-}
-
-export function createMcpServer() {
+export function createMcpServer(store: ContentStore) {
   const server = new McpServer(
     { name: 'previously', title: 'Previously — spoiler-safe TV recaps', version: '0.1.0' },
     { instructions: INSTRUCTIONS },
   );
 
+  async function resolveShowId(show: string) {
+    const s = show.toLowerCase().trim();
+    const all = await catalogWithAvailability(store);
+    const hit = all.find((c) => c.id === s || c.title.toLowerCase() === s) ?? all.find((c) => c.title.toLowerCase().includes(s));
+    return hit?.available ? hit.id : null;
+  }
+
+  async function withView(show: string, up_next: string, fn: (v: GatedShow) => string) {
+    const id = await resolveShowId(show);
+    if (!id) return fail(`"${show}" isn't available in Previously yet. Call list_shows for available shows.`);
+    const { view, error } = await gatedShow(store, id, { next: up_next });
+    if (!view) return fail(error!);
+    return text(`${boundary(view)}\n\n${fn(view)}`);
+  }
+
   server.registerTool('list_shows', {
     title: 'List shows',
     description: 'Lists the shows Previously can catch the user up on (and ones coming soon).',
-    inputSchema: {},
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({}),
+    annotations: READ_ONLY,
   }, async () => {
-    const all = catalog();
+    const all = await catalogWithAvailability(store);
     const avail = all.filter((s) => s.available).map((s) => `- ${s.title} (id: "${s.id}") — ${s.network}, ${s.seasons} season(s)`);
     const soon = all.filter((s) => !s.available).map((s) => s.title);
     return text(`Available:\n${avail.join('\n')}\n\nComing soon: ${soon.join(', ')}`);
@@ -90,8 +59,8 @@ export function createMcpServer() {
   server.registerTool('catch_me_up', {
     title: 'Catch me up',
     description: 'The main recap: where the story left off, the story so far, key characters and open questions — strictly up to the episode the user is about to watch. Use this first when someone wants a refresher.',
-    inputSchema: { show: showArg, up_next: upNext, depth: z.enum(['quick', 'full']).optional().describe('quick ≈ 2-minute read (default); full = detailed per-episode recap') },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext, depth: z.enum(['quick', 'full']).optional().describe('quick ≈ 2-minute read (default); full = detailed per-episode recap') }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next, depth = 'quick' }) => withView(show, up_next, (v) => {
     if (!v.leftOff) return `The user hasn't watched anything yet. Premise (spoiler-free): ${v.meta.premise}`;
     const out: string[] = [];
@@ -114,8 +83,8 @@ export function createMcpServer() {
   server.registerTool('list_characters', {
     title: 'List characters',
     description: 'Everyone who has appeared so far, with their current role and status, grouped — as of the user\'s position.',
-    inputSchema: { show: showArg, up_next: upNext },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next }) => withView(show, up_next, (v) => {
     const groups = [...new Set(v.characters.map((c) => c.group))];
     return groups.map((g) => `## ${g}\n${v.characters.filter((c) => c.group === g).map((c) => `- ${c.name} — ${c.role}${c.status ? ` (${c.status})` : ''}`).join('\n')}`).join('\n\n');
@@ -124,8 +93,8 @@ export function createMcpServer() {
   server.registerTool('get_character', {
     title: 'Get character',
     description: 'A spoiler-safe dossier for one character: who they are, what we know (split by innie/outie or similar where the show has it), relationships, image.',
-    inputSchema: { show: showArg, up_next: upNext, name: z.string().describe('Character name as the user knows it') },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext, name: z.string().describe('Character name as the user knows it') }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next, name }) => withView(show, up_next, (v) => {
     const c = findByName(v.characters, name, v.redirects);
     if (!c) return `No character matching "${name}" has appeared before ${v.position.nextUpLabel}. Tell the user that, without hinting at whether they appear later.`;
@@ -135,8 +104,8 @@ export function createMcpServer() {
   server.registerTool('get_episode', {
     title: 'Get episode recap',
     description: 'Detailed recap of one episode the user has already watched. Refuses episodes at or beyond the user\'s position.',
-    inputSchema: { show: showArg, up_next: upNext, episode: z.string().describe('Episode code, e.g. "S1E4"') },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext, episode: z.string().describe('Episode code, e.g. "S1E4"') }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next, episode }) => withView(show, up_next, (v) => {
     const code = episode.toUpperCase().replace(/^S(\d+)E0*(\d+)$/, 'S$1E$2');
     const e = v.episodes.find((x) => x.code === code);
@@ -148,8 +117,8 @@ export function createMcpServer() {
   server.registerTool('list_storylines', {
     title: 'List storylines',
     description: 'The main plot and subplots so far, each with status (open/resolved) and episode-by-episode beats.',
-    inputSchema: { show: showArg, up_next: upNext },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next }) => withView(show, up_next, (v) =>
     v.storylines.map((s) => `## ${s.title} — ${s.status}${s.kind ? ` (${s.kind})` : ''}\n${s.summary}${s.stakes ? `\nStakes: ${s.stakes}` : ''}\n${s.beats.map((b) => `- [${fmt(b.at)}] ${b.text}`).join('\n')}`).join('\n\n'),
   ));
@@ -157,8 +126,8 @@ export function createMcpServer() {
   server.registerTool('lookup', {
     title: 'Look up a term',
     description: 'Explain a place, organization, concept or object from the show (e.g. "Macrodata Refinement", "the break room"), as known at the user\'s position.',
-    inputSchema: { show: showArg, up_next: upNext, term: z.string() },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext, term: z.string() }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next, term }) => withView(show, up_next, (v) => {
     const w = findByName(v.world, term);
     if (w) return [`## ${w.name} (${w.kind})`, w.summary, ...(w.explainer ? ['', w.explainer] : []), ...(w.image ? [`Image: ${w.image.url}`] : []), '', ...w.facts.map(factLine)].join('\n');
@@ -171,8 +140,8 @@ export function createMcpServer() {
   server.registerTool('search', {
     title: 'Search',
     description: 'Free-text search across recaps, characters, lore, storylines and questions — only what is revealed before the user\'s position. Use to answer specific questions ("why did Petey leave?").',
-    inputSchema: { show: showArg, up_next: upNext, query: z.string() },
-    annotations: { readOnlyHint: true },
+    inputSchema: z.object({ show: showArg, up_next: upNext, query: z.string() }),
+    annotations: READ_ONLY,
   }, async ({ show, up_next, query }) => withView(show, up_next, (v) => {
     const hits = search(v, query, 10);
     return hits.length ? hits.map((h) => `- (${h.kind}) ${h.title} [${fmt(h.at)}]: ${h.text}`).join('\n') : `Nothing matching "${query}" before ${v.position.nextUpLabel}. Don't fill the gap from your own knowledge.`;

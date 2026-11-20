@@ -23,8 +23,11 @@ Needs Node 24 (see `.node-version`) and pnpm. The pinned pnpm version (`packageM
 
 ```bash
 pnpm install
-pnpm dev             # http://localhost:5180  (site + API + MCP on one port)
+pnpm dev             # http://localhost:5180  (site + API + MCP on one port, reading ../previously-content)
+pnpm check           # typecheck, validate every show, build
 ```
+
+`pnpm dev` runs the Cloudflare Worker locally in workerd through the Cloudflare Vite plugin. Content edits show up on reload.
 
 Installs follow the same supply-chain rules as Renku Studio (`pnpm-workspace.yaml`): package versions must be at least 7 days old, the lockfile is re-checked, no git or tarball dependencies, and only listed packages may run install scripts.
 
@@ -68,9 +71,13 @@ node scripts/build-catalog.mjs             # rebuild the home page list from cat
 | `shared/schema.ts` | Data model. Every item carries `at` (the episode where the viewer learns it) |
 | `shared/spoilers.ts` | The gate: full data + position → spoiler-safe view; search |
 | `shared/theme.ts` | The shape of a show's `theme.json` |
-| `server/` | Express: `/api/*` (gated JSON), `/mcp` (MCP tools), Vite middleware in dev |
+| `shared/content.ts` | The content contracts: catalog entries, show bundles, manifests |
+| `worker/` | The Cloudflare Worker: `/api/*` (gated JSON), `/mcp` (MCP tools); everything else is static assets |
+| `wrangler.jsonc` | The two Workers: `previously` (production) and `previously-staging` |
 | `src/` | React site; it only renders gated views. `src/themes.ts` holds the app theme |
 | `scripts/content-root.mjs` | Finds the content repo |
+| `scripts/publish/bundle.mjs` | Show folder → one show bundle (no reveal ledger, no research) |
+| `scripts/deploy.mjs` | `deploy:staging`, `deploy:production`, `rollback:production` |
 | `scripts/validate-data.mjs`, `validate-all.mjs` | Checks the dataset: codes, ordering, cross-references, ledger, theme |
 | `scripts/spoiler-scan.mjs` | Fetches the gated payload at every position and flags sensitive terms that appear before their reveal |
 | `scripts/mcp-smoke.mjs` | Calls the MCP server like a chat client and checks that the spoiler line holds |
