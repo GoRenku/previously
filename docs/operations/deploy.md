@@ -63,5 +63,5 @@ errors) shows up there. Locally, `pnpm preview` prints the same logs.
 |---|---|---|
 | A first deploy of a new Worker fails after uploading with "This Worker does not exist on your account [code: 10007]" | Cloudflare had not caught up with the brand-new Worker | Run the same deploy again (this happened once, on the first production deploy). |
 | `pnpm deploy:*` stops before deploying | Typecheck, validation or build failed, or there are uncommitted changes | Read the error, fix or commit, run it again. |
-| The new domain does not resolve on this Mac right after the first deploy, though `dig` finds it | macOS cached the "no such name" answer from before the record existed (up to 30 minutes) | Wait, or `sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder`. |
+| The new domain does not resolve on this Mac right after the first deploy, though `dig` finds it | macOS, and Tailscale MagicDNS in front of it, cached the "no such name" answer from before the record existed (up to 30 minutes) | Wait, or check `dig @100.100.100.100 <name> A` returns the address, then `sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder`. |
 | The site loads but lists no shows | Nothing promoted to that site yet | `pnpm content:promote <show>` ([content-publishing.md](content-publishing.md)). |

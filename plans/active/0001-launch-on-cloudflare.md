@@ -456,9 +456,11 @@ Routes and MCP tools keep their current names, parameters and output.
      `previously-www` (`worker/www.ts`, `wrangler.www.jsonc`,
      `pnpm deploy:www`), instead of a dashboard redirect rule, so it stays
      scripted like everything else.
-   - Right after launch this Mac's DNS cache still held "no such name" for
-     `previously.fyi` (cached before the record existed), so the production
-     QA waited for it to expire.
+   - `content:qa production` passed for both shows, and the live site
+     checked out in a browser. It ran late: this Mac's DNS goes through
+     Tailscale MagicDNS, which had cached "no such name" (and then "no IPv4
+     address") for `previously.fyi` from before the record existed; it took
+     two macOS cache flushes once Tailscale's own cache had expired.
    - Open: Cloudflare answers `cf-cache-status: DYNAMIC` for images on
      `media.previously.fyi`, so they are served from R2 on every request.
      Harmless at this traffic; a Cache Rule for that host would fix it.
