@@ -3,6 +3,7 @@
 //   pnpm deploy:staging      check, build for staging, deploy previously-staging
 //   pnpm deploy:production   check, build for production, deploy previously
 //   pnpm rollback:production return the production Worker to its previous version
+//   pnpm deploy:www          the www.previously.fyi -> previously.fyi redirect Worker
 // Add --dry-run to a deploy to build and let Wrangler check the upload without
 // sending it (the uncommitted-changes rule is skipped, since nothing goes out).
 // A deploy never changes content: each site reads whatever its manifest points to.
@@ -26,8 +27,8 @@ if (target === 'rollback') {
   process.exit(0);
 }
 
-if (!(target in WORKERS)) {
-  console.error('usage: node scripts/deploy.mjs staging|production [--dry-run] | rollback');
+if (!(target in WORKERS) && target !== 'www') {
+  console.error('usage: node scripts/deploy.mjs staging|production|www [--dry-run] | rollback');
   process.exit(2);
 }
 
@@ -38,6 +39,11 @@ if (dirty && !dryRun) {
 }
 const commit = git('rev-parse', '--short=12', 'HEAD');
 const subject = git('log', '-1', '--format=%s');
+
+if (target === 'www') {
+  run('pnpm', ['exec', 'wrangler', 'deploy', '-c', 'wrangler.www.jsonc', '--tag', commit, '--message', `${commit} ${subject}`.slice(0, 100), ...(dryRun ? ['--dry-run'] : [])]);
+  process.exit(0);
+}
 
 // The Cloudflare Vite plugin picks the Wrangler environment at build time, so
 // the whole check (typecheck, validate, build) runs with it set. Production is

@@ -31,6 +31,7 @@ What becomes easier, harder or required.
 Do not rewrite an accepted ADR when the decision changes. Write a new one and
 mark the old one `superseded by NNNN`.
 
-No ADRs are accepted yet. The first ones come from
-[plan 0001](../../plans/active/0001-launch-on-cloudflare.md) once it is
-approved.
+## Accepted
+
+- [0001](0001-serve-content-from-r2.md) Keep content in a private repo and serve it from R2.
+- [0002](0002-workers-with-stateless-mcp.md) Run on Cloudflare Workers with a stateless MCP server.

@@ -31,7 +31,7 @@ pnpm check           # typecheck, validate every show, build
 
 ## Publish and deploy
 
-Everything goes out from this machine; nothing deploys from GitHub. Setup: [docs/operations/cloudflare-setup.md](docs/operations/cloudflare-setup.md).
+Everything goes out from this machine; nothing deploys from GitHub. Guides: [deploying code](docs/operations/deploy.md), [publishing content](docs/operations/content-publishing.md), [one-time setup](docs/operations/cloudflare-setup.md).
 
 ```bash
 pnpm content:publish <show>             # committed content -> staging (bundles, mirrored images, manifest)
@@ -40,16 +40,21 @@ pnpm content:rollback production <show> # back to the show's previous version
 pnpm deploy:staging                     # code: check, then deploy (refuses uncommitted changes)
 pnpm deploy:production
 pnpm rollback:production
+pnpm deploy:www                         # the www -> apex redirect Worker (rarely needed)
 pnpm content:local && pnpm build && pnpm preview   # the deployed code path, locally, on local R2
 ```
 
 Installs follow the same supply-chain rules as Renku Studio (`pnpm-workspace.yaml`): package versions must be at least 7 days old, the lockfile is re-checked, no git or tarball dependencies, and only listed packages may run install scripts.
 
-## Use from Claude
+## Use from Claude or ChatGPT
+
+The MCP server is live at `https://previously.fyi/mcp` (no sign-in). Add it as a custom connector in Claude.ai or ChatGPT ([how](docs/operations/cloudflare-setup.md#step-5--you-add-the-mcp-server-to-your-chat-apps)), or in Claude Code:
 
 ```bash
-claude mcp add --transport http previously http://localhost:5180/mcp
+claude mcp add --transport http previously https://previously.fyi/mcp
 ```
+
+Use `http://localhost:5180/mcp` for the local server.
 
 Then ask something like: *"I'm about to start Severance season 2. Catch me up, and remind me who Petey is."*
 

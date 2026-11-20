@@ -73,6 +73,8 @@ When this is done, both buckets appear on
 
 ## Step 3 – You: the R2 API token
 
+Done 2026-11-20.
+
 The publish scripts upload with their own token, separate from your Wrangler
 sign-in, so it can only touch these two buckets.
 
@@ -107,11 +109,14 @@ is ever removed from the account.
 
 ## Step 4 – Claude: deploy and go live
 
+Done 2026-11-20 (and `www.previously.fyi` redirects to the apex through the
+small `previously-www` Worker, `pnpm deploy:www`).
+
 Claude runs, from this Mac: `pnpm deploy:staging`, then
 `pnpm content:publish severance black-doves`, the full spoiler QA against
 `https://staging.previously.fyi`, `pnpm content:promote severance black-doves`
 and `pnpm deploy:production`. The deploys attach
-`previously.fyi`, `www.previously.fyi` and `staging.previously.fyi` to the
+`previously.fyi`, `staging.previously.fyi` and `www.previously.fyi` to their
 Workers automatically, including HTTPS certificates.
 
 When this is done:

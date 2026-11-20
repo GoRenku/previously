@@ -1,0 +1,10 @@
+// www.previously.fyi -> previously.fyi (301). Deployed with `pnpm deploy:www`;
+// it only needs deploying again if this file or worker/www.ts changes.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "previously-www",
+  "main": "./worker/www.ts",
+  "compatibility_date": "2026-11-10",
+  "workers_dev": false,
+  "routes": [{ "pattern": "www.previously.fyi", "custom_domain": true }]
+}

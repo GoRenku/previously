@@ -2,8 +2,8 @@
 
 Date: 2026-11-20
 
-Status: current (built under
-[plan 0001](../../plans/active/0001-launch-on-cloudflare.md); not yet deployed)
+Status: current (live since 2026-11-20, built under
+[plan 0001](../../plans/active/0001-launch-on-cloudflare.md))
 
 Role: topic overview
 
@@ -102,7 +102,9 @@ Shows are added with the Claude Code skills in `.claude/skills/`
 Two Cloudflare Workers from one `wrangler.jsonc`: `previously`
 (`previously.fyi`) and `previously-staging` (`staging.previously.fyi`). They
 run the same code and differ only in `CONTENT_ENV`, which picks the manifest
-they read. Each is built by Vite with the Cloudflare Vite plugin. Only
+they read. Each is built by Vite with the Cloudflare Vite plugin. A third,
+tiny Worker, `previously-www` (`worker/www.ts`), redirects
+`www.previously.fyi` to the apex. Only
 `/api/*` and `/mcp` run Worker code; every other path is a static asset with
 single-page-app fallback.
 

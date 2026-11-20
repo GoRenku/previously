@@ -22,7 +22,8 @@
     "content:publish": "node scripts/publish/publish.mjs publish",
     "content:qa": "node scripts/publish/promote.mjs qa",
     "content:promote": "node scripts/publish/promote.mjs promote",
-    "content:rollback": "node scripts/publish/promote.mjs rollback"
+    "content:rollback": "node scripts/publish/promote.mjs rollback",
+    "deploy:www": "node scripts/deploy.mjs www"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

@@ -25,8 +25,13 @@ content and private product notes live in the private content repository.
 
 - [architecture/README.md](architecture/README.md) – system overview: data
   model, spoiler gate, web app, API, MCP server, QA tooling.
-- [decisions/README.md](decisions/README.md) – how ADRs are written.
+- [decisions/README.md](decisions/README.md) – how ADRs are written, and the
+  accepted ones.
 - [operations/cloudflare-setup.md](operations/cloudflare-setup.md) – one-time
   Cloudflare setup for `previously.fyi`, step by step.
+- [operations/deploy.md](operations/deploy.md) – deploying and rolling back
+  code.
+- [operations/content-publishing.md](operations/content-publishing.md) –
+  publishing, promoting and rolling back show content.
 - [concept.md](concept.md) – product concept and design (to move into
   `product/`).

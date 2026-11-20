@@ -1,6 +1,6 @@
 # 0001 Launch Previously On Cloudflare
 
-Status: accepted (choices settled 2026-11-19; slices 0–3 done 2026-11-20, plus setup steps 2 and 3)
+Status: accepted (choices settled 2026-11-19; slices 0–4 done 2026-11-20: live on previously.fyi; slice 5 and the chat-app connector tests remain)
 Date: 2026-11-19
 Setup guide: [docs/operations/cloudflare-setup.md](../../docs/operations/cloudflare-setup.md)
 
@@ -437,7 +437,35 @@ Routes and MCP tools keep their current names, parameters and output.
    - `media.previously.fyi` now requires TLS 1.2 or later.
    - The home page showed a crash when the catalog request failed (for
      example on a 429); it now shows the error.
-4. **Cloudflare setup and first launch.** Follow
+4. **Cloudflare setup and first launch.** Done 2026-11-20 apart from the
+   chat-app tests (setup step 5, yours). Notes:
+   - Staging deployed; both shows published (469 images mirrored in 36 s);
+     `content:qa staging` clean for both; staging output identical to the
+     Express baseline once image URLs are normalized; browser review on
+     staging clean (all images from `media.previously.fyi`, no CSP errors).
+   - Rollback and republish on staging: rolling back Black Doves (its first
+     version) took it off staging within seconds; republishing restored it
+     with nothing re-uploaded.
+   - The first `content:promote` stopped on a Black Doves scan failure that
+     did not repeat (most likely a dropped connection; `qaFetch` now retries
+     those). The second run passed and promoted both shows.
+   - The first `deploy:production` failed after uploading ("This Worker does
+     not exist", code 10007): Cloudflare had not caught up with the brand-new
+     Worker. Running it again worked.
+   - `www.previously.fyi` is a separate three-line redirect Worker,
+     `previously-www` (`worker/www.ts`, `wrangler.www.jsonc`,
+     `pnpm deploy:www`), instead of a dashboard redirect rule, so it stays
+     scripted like everything else.
+   - Right after launch this Mac's DNS cache still held "no such name" for
+     `previously.fyi` (cached before the record existed), so the production
+     QA waited for it to expire.
+   - Open: Cloudflare answers `cf-cache-status: DYNAMIC` for images on
+     `media.previously.fyi`, so they are served from R2 on every request.
+     Harmless at this traffic; a Cache Rule for that host would fix it.
+   - Written: `docs/operations/deploy.md`,
+     `docs/operations/content-publishing.md`, ADRs 0001 and 0002.
+
+   Originally: follow
    [the setup guide](../../docs/operations/cloudflare-setup.md): you confirm
    the domain and create the R2 token; Claude creates the buckets and media
    domain, runs `pnpm deploy:staging`, publishes Severance and Black Doves,
