@@ -63,7 +63,7 @@ function staticHeaders(): Plugin {
   const all = [
     'X-Content-Type-Options: nosniff',
     'Referrer-Policy: strict-origin-when-cross-origin',
-    'Strict-Transport-Security: max-age=31536000',
+    'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload',
     'Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()',
     `Content-Security-Policy: ${csp}`,
     ...(staging ? ['X-Robots-Tag: noindex'] : []),

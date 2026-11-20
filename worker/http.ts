@@ -28,7 +28,7 @@ export function withSecurityHeaders(response: Response, opts: { noindex: boolean
   const r = new Response(response.body, response);
   r.headers.set('X-Content-Type-Options', 'nosniff');
   r.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  r.headers.set('Strict-Transport-Security', 'max-age=31536000');
+  r.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   // JSON and MCP responses are never rendered as pages.
   r.headers.set('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
   if (opts.noindex) r.headers.set('X-Robots-Tag', 'noindex');

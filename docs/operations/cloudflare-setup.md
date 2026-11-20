@@ -16,6 +16,7 @@ it.
 | 3 | You | 5 min | Create the R2 API token for publishing |
 | 4 | Claude | – | Deploy staging, publish the shows, check them, go live |
 | 5 | You | 5 min | Add the MCP server to Claude.ai and ChatGPT |
+| 6 | You | 2 min | Submit the domain to the HSTS preload list |
 
 Everything is deployed from this Mac with `pnpm` commands. Nothing deploys
 from GitHub: there are no GitHub Actions and Cloudflare is not connected to
@@ -48,7 +49,13 @@ account or a domain, choose your account and `previously.fyi`.
    as `@`), `www`, `staging` or `media`. Registrars often add "parking"
    records, and Cloudflare will not attach the site to a name that already has
    one. Leave **MX** and **TXT** records alone (they are for email).
-4. Open the domain's **Overview** page
+4. Open
+   [dash.cloudflare.com → previously.fyi → SSL/TLS → Edge Certificates](https://dash.cloudflare.com/?to=/:account/:zone/ssl-tls/edge-certificates)
+   and turn on **Always Use HTTPS**. Without it, `http://previously.fyi`
+   loads as a "Not Secure" page instead of redirecting: static pages and
+   images never run Worker code, so only this zone setting can redirect
+   them. (Added 2026-11-20, after launch.)
+5. Open the domain's **Overview** page
    ([dash.cloudflare.com → previously.fyi](https://dash.cloudflare.com/?to=/:account/:zone)).
    In the right-hand column under **API**, copy the **Zone ID** and send it to
    Claude in chat. It is not a secret; Claude needs it to attach the image
@@ -160,6 +167,23 @@ look for these:
 claude mcp add --transport http previously https://previously.fyi/mcp
 ```
 
+## Step 6 – You: HSTS preload
+
+So that browsers never try `http://` at all, even on someone's first visit
+(typing `previously.fyi` otherwise starts with HTTP), put the domain on the
+browsers' built-in HTTPS-only list. The site already sends the header this
+needs (`Strict-Transport-Security: max-age=31536000; includeSubDomains;
+preload`).
+
+1. Check **Always Use HTTPS** is on (step 1.4): `http://previously.fyi` must
+   redirect to `https://`.
+2. Open [hstspreload.org](https://hstspreload.org/), enter `previously.fyi`,
+   tick the two confirmations and submit.
+3. Inclusion ships with browser releases, so it takes a few weeks to months.
+
+Preloading is hard to undo (removal also takes months) and covers every
+subdomain: never serve anything on a `*.previously.fyi` name over plain HTTP.
+
 ## Deploying From Now On
 
 After the first launch, everything goes out from this Mac, in the
@@ -213,6 +237,7 @@ is live, and publishing content never needs a code deploy.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| `http://previously.fyi` shows "Not Secure" instead of redirecting to `https://` | **Always Use HTTPS** is off | Step 1.4. |
 | Deploy says the domain or hostname is already in use | A leftover DNS record | Step 1.3: delete the A/AAAA/CNAME record for that name, then ask Claude to deploy again. |
 | `media.previously.fyi` does not load | The bucket domain is still being set up | Wait a few minutes; check R2 → `previously-media` → **Settings** → **Custom Domains** shows **Active**. |
 | Publishing fails with "access denied" | The token is missing a bucket, or `.publish.vars` has a typo | Recreate the token with both buckets (step 3); check the file has no spaces or quotes. |
