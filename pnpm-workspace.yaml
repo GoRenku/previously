@@ -1,0 +1,20 @@
+# Supply-chain settings, the same as Renku Studio's. See plan 0001,
+# "Supply-Chain Settings", before changing any of these.
+blockExoticSubdeps: true
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude: []
+minimumReleaseAgeStrict: true
+minimumReleaseAgeIgnoreMissingTime: false
+trustLockfile: false
+verifyDepsBeforeRun: warn
+allowBuilds:
+  esbuild: true
+  workerd: false
+
+supportedArchitectures:
+  os:
+    - darwin
+    - win32
+  cpu:
+    - arm64
+    - x64

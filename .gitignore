@@ -1,0 +1,18 @@
+# dependencies and builds
+node_modules/
+.pnpm-store/
+dist/
+.wrangler/
+
+# show content lives in GoRenku/previously-content, never here
+data/
+
+# secrets and local config
+.dev.vars*
+.publish.vars
+.env*
+.claude/settings.local.json
+
+# noise
+*.log
+.DS_Store
