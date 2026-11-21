@@ -1,6 +1,6 @@
 # 0002 Catch-Up Videos
 
-Status: in progress. Slices 0 and 1 done 2026-11-21: the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`, on branch `videos/scaffold`. Slice 2 casting is prepared and waiting for a go-ahead.
+Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 casting is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator). The ident, end cards and caption style are still to do.
 Date: 2026-11-21
 
 ## Review Attention
@@ -61,9 +61,9 @@ Date: 2026-11-21
 Make catch-up videos for returning shows as a repeatable system, starting
 with Black Doves before Season 2. Each catch-up point (a position) produces
 one long video for YouTube (16:9, 5–10 min) and a few shorts for YouTube
-Shorts, Instagram Reels and TikTok (9:16, 30–60 s). One narrator voice
-carries every video, the way a nature documentary is known by its narrator
-before its pictures. The story is designed for recall: it rebuilds the frame
+Shorts, Instagram Reels and TikTok (9:16, 30–60 s). A narrator voice carries
+every video, the way a nature documentary is known by its narrator before its
+pictures. (At casting we chose two voices that share one manner, one per show.) The story is designed for recall: it rebuilds the frame
 first (the world, the premise, the people, the question), then gives details,
 then shows where everyone was left.
 
@@ -115,6 +115,15 @@ kit.
 
 The voice is the brand. It is the same voice in the same manner for every
 show and every format.
+
+**Decision: two narrators (2026-11-21, after casting).** We keep two voices
+that share one manner and the same signature lines. A1 is an older British
+baritone; B1 is a low, smoky British/mid-Atlantic woman's voice. Each show gets
+the one that suits it and keeps it for every video: B1 for Black Doves, A1 for
+Severance. Two voices also let us measure later which one gets more traction.
+The rest of this section describes the one-voice plan as written before
+casting; `videos/_channel/voices.json` in the content repo records the voices
+and assignments.
 
 **Who they are.** We use the working name "the Archivist", but it never
 appears on screen. They are the friend who has watched everything and
@@ -298,7 +307,7 @@ previously-content/
     .gitignore                renders/, takes/, .hyperframes/artifacts/
     _channel/
       BIBLE.md                narrator, tone, signature lines, the ladder, budgets, banned moves, measured render times
-      voice.json              ElevenLabs voice id, model, settings, measured pace
+      voices.json             the two narrators: ElevenLabs voice ids, model, measured pace, which show uses which
       casting/                the audition script and the picked takes, kept for the record
       ident/                  the "Previously" ident: compositions (16:9, 9:16) and the sting
       endcard/                16:9 (with room for YouTube's end screen) and 9:16
@@ -393,8 +402,10 @@ This changes no production code.
   - a ledger term revealed at or after the position;
   - a `never` term;
   - an asset whose name starts with an episode code at or after the position.
-- **`_channel/voice.json`:** `{ provider, voiceId, model, settings: {
-  stability, similarityBoost, style }, wordsPerSecond, castOn, notes }`.
+- **`_channel/voices.json`:** `{ provider, model, castOn, casting, notes,
+  voices: { <id>: { name, voiceId, description, preview, v4Read,
+  wordsPerSecond } }, shows: { <show>: <voice id> } }`. It replaced the
+  one-voice `voice.json` after casting.
 - **Narration:** `assets/voice/<chapter>.mp3` with
   `assets/voice/<chapter>.words.json` (word timestamps).
 - **Stills:** `<at>-<slug>.<ext>`, for example `S1E3-two-shot.jpg`.
@@ -425,7 +436,8 @@ This changes no production code.
      `ledger-check.mjs`, and README rows.
 2. **The narrator and the channel ident.**
    - Casting: three directions with three takes each on the audition script.
-     You pick one; we save the voice and fill in `voice.json`.
+     You pick one; we save the voice and fill in `voice.json`. (Done: we kept
+     two, A1 and B1, in `voices.json`.)
    - The "Previously…" ident with its sting in both orientations, the end
      cards and the caption style.
    - You listen to the takes, then watch the ident and end cards in Studio.
@@ -466,8 +478,8 @@ This changes no production code.
 - `docs/architecture/README.md`: a short Videos section.
 - ADR 0003. Catch-up videos are HyperFrames projects made by hand in the
   content repo. No AI video. Pictures come from stills, type, procedural
-  graphics, and generated images used only for atmosphere. The narrator voice
-  lives in the ElevenLabs account.
+  graphics, and generated images used only for atmosphere. The two narrator
+  voices live in the ElevenLabs account, one per show.
 
 ## Risks And Open Questions
 
