@@ -1,6 +1,6 @@
 # 0002 Catch-Up Videos
 
-Status: proposed
+Status: in progress. Slices 0 and 1 done 2026-11-21: the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`, on branch `videos/scaffold`. Slice 2 casting is prepared and waiting for a go-ahead.
 Date: 2026-11-21
 
 ## Review Attention

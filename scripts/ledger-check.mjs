@@ -6,23 +6,20 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { showDir } from './content-root.mjs';
+import { CODE, NEVER_AT, ord, isIdLike, readLedger, ledgerChecks, mentions } from './ledger.mjs';
 
 const showId = process.argv[2];
 if (!showId) { console.error('usage: node scripts/ledger-check.mjs <show>'); process.exit(2); }
 const dir = showDir(showId);
 const read = (f) => (existsSync(join(dir, f)) ? JSON.parse(readFileSync(join(dir, f), 'utf8')) : null);
 
-const ledger = read('reveals.json');
+const ledger = readLedger(showId);
 if (!ledger) { console.error(`no shows/${showId}/reveals.json in the content repo — run the show-research skill first`); process.exit(2); }
 
-const CODE = /^S(\d+)E(\d+)$/;
-const ord = (c) => { const m = CODE.exec(c ?? ''); return m ? +m[1] * 1000 + +m[2] : 0; };
 const episodes = (read('episodes.json')?.episodes ?? []).map((e) => e.code).sort((a, b) => ord(a) - ord(b));
 const prevCode = (c) => { const i = episodes.indexOf(c); return i > 0 ? episodes[i - 1] : 'S0E0'; };
-const seasonFinale = (n) => [...episodes].reverse().find((c) => c.startsWith(`S${n}E`)) ?? 'S999E999';
+const seasonFinale = (n) => [...episodes].reverse().find((c) => c.startsWith(`S${n}E`)) ?? NEVER_AT;
 const later = (a, b) => (ord(a) >= ord(b) ? a : b);
-const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // When does each entity become visible? (references to it are hidden until then)
 const visibleFrom = new Map();
@@ -32,10 +29,7 @@ const sl = read('storylines.json');
 for (const s of sl?.storylines ?? []) visibleFrom.set(s.id, s.firstAppears);
 for (const q of sl?.questions ?? []) visibleFrom.set(q.id, q.raisedAt);
 
-const checks = [
-  ...ledger.reveals.flatMap((r) => r.terms.map((t) => ({ id: r.id, at: r.at, term: t }))),
-  ...(ledger.never ?? []).map((t) => ({ id: 'never', at: 'S999E999', term: t })),
-].map((c) => ({ ...c, re: new RegExp(`(^|[^\\p{L}\\p{N}])${esc(c.term)}($|[^\\p{L}\\p{N}])`, 'iu'), slug: slug(c.term) }));
+const checks = ledgerChecks(ledger);
 
 const hits = [];
 function walk(node, at, path, file) {
@@ -59,12 +53,11 @@ function walk(node, at, path, file) {
     return;
   }
   if (typeof node !== 'string' || /^https?:\/\//.test(node)) return;
-  const isId = /^[a-z0-9]+(-[a-z0-9]+)*$/.test(node);
+  const isId = isIdLike(node);
   const eff = isId && visibleFrom.has(node) ? later(at, visibleFrom.get(node)) : at;
   for (const c of checks) {
     if (ord(eff) >= ord(c.at)) continue;
-    const hit = isId ? new RegExp(`(^|-)${c.slug}(-|$)`).test(node) : c.re.test(node);
-    if (hit) hits.push({ file, path, visible: eff, ...c, text: node, isId });
+    if (mentions(c, node, isId)) hits.push({ file, path, visible: eff, ...c, text: node, isId });
   }
 }
 

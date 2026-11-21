@@ -80,6 +80,7 @@ node scripts/ledger-check.mjs <show>       # static: ledger terms in anything vi
 node scripts/spoiler-scan.mjs <show>       # live: web payload + MCP output at every position (server running)
 node scripts/mcp-smoke.mjs <show>          # MCP behaviour
 node scripts/visible-at.mjs <show> S1E4    # human-readable digest of everything visible at one position
+node scripts/video-check.mjs <show> before-s2  # static: ledger terms and late stills in a catch-up video (plan 0002)
 node scripts/build-catalog.mjs             # rebuild the home page list from catalog-shows.json and TVmaze
 ```
 
@@ -102,3 +103,5 @@ node scripts/build-catalog.mjs             # rebuild the home page list from cat
 | `scripts/spoiler-scan.mjs` | Fetches the gated payload at every position and flags sensitive terms that appear before their reveal |
 | `scripts/mcp-smoke.mjs` | Calls the MCP server like a chat client and checks that the spoiler line holds |
 | `scripts/ledger-check.mjs`, `scripts/visible-at.mjs` | Static ledger check; per-position digest for audits |
+| `scripts/ledger.mjs` | Reads a show's reveal ledger and matches its terms; shared by `ledger-check` and `video-check` |
+| `scripts/video-check.mjs` | Spoiler check for a catch-up video in the content repo's `videos/<show>/before-s<N>/`: ledger terms, `never` terms and stills named for a later episode |
