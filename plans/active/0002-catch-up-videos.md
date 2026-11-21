@@ -1,6 +1,6 @@
 # 0002 Catch-Up Videos
 
-Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator), and the channel kit (intro, end cards, shorts captions, sound) is in the content repo's `videos/_channel/landscape` and `portrait`, waiting on your review. Next: slice 3, the Black Doves kit.
+Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator), and the channel's brand elements (mark, wordmark, sound, spoiler warning, end card) are in the content repo's `videos/_channel/`, with reference projects (a Black Doves opening over the Season 1 key art). Every video's opening is directed for its show, not reused. Next: slice 4, the Black Doves long video, starting with three storylines.
 Date: 2026-11-21
 
 ## Review Attention
@@ -21,12 +21,16 @@ Date: 2026-11-21
   Three.js), and generated textures or atmosphere with no people in them.
   Every claim, spoken or on screen, traces to the gated view at the video's
   position.
-- **Each video is made by hand, from shared starting points.** No template
-  engine, and nothing renders a video from show JSON. Each video is its own
-  HyperFrames project written for its own story. The shared parts (the
-  narrator, the "Previously" ident and end card, a show's look and music) are
-  copied into a project when it is created, not linked to it. A later change
-  to a kit never breaks a finished video.
+- **Each video is directed as its own film (decided 2026-11-21: craft over
+  reuse).** No template engine, nothing rendered from show JSON, and no
+  reusable intro or segments to fill in. Each video is its own HyperFrames
+  project, and its opening is designed for that show and season, so it hooks
+  from frame 0 with the show's own key art. What stays constant is the brand:
+  the mark, the wordmark, palette and type, the show's narrator, the
+  signature lines, the channel's rewind and sting, the written spoiler
+  warning, and the end. The content repo's `videos/_channel/` holds those
+  brand elements and reference projects; whatever a video borrows from them
+  is copied in, never linked.
 - **You review before anything is rendered.** There are six review gates.
   The first five need no final render: the script, the narration audio, an
   animatic in the HyperFrames Studio preview, style frames, then the whole
@@ -443,6 +447,9 @@ This changes no production code.
    - You listen to the takes, then watch the ident and end cards in Studio.
 3. **The Black Doves kit:** K1 look, K2 theme, K3 stills (only those visible
    before S2), pronunciations, and the show's pieces in both orientations.
+   (Folded into slice 4 on 2026-11-21: the long video's storylines and style
+   frames set the show's look, theme and stills. The key art is already in
+   `videos/black-doves/kit/art/`.)
 4. **The long video first:** "Black Doves: everything before Season 2" (16:9,
    6–9 min), through G1–G6, with its thumbnail, chapters and SRT. What we
    learn goes into `BIBLE.md`.
