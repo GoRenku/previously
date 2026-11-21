@@ -45,10 +45,10 @@ Date: 2026-11-21
   analysis. We use no trailer or episode footage, none of the show's audio or
   score, and not the show's logo (we set the title in our own matched type).
   Fair use is not guaranteed, and a studio could still file a manual claim.
-- **Proposed order: a 60-second short is the pilot.** It goes through every
-  step (voice, look, music, captions, gates, render) for about a tenth of the
-  cost of the long video, so we fix the system on something cheap. The long
-  video comes second, then the other shorts.
+- **Decided 2026-11-21: the long video comes first,** then the shorts. (The
+  plan had proposed a 60-second short as a cheaper pilot.) The long video is
+  where the narrative model is tested at full depth. The shorts are then
+  distilled from its locked script, stills, music and kit.
 - **Media goes in git; renders do not.** We commit the chosen narration,
   music, sound effects and treated stills as compressed files. Takes we don't
   use, and all renders, are gitignored. git-lfs is not installed. We'll look
@@ -443,10 +443,12 @@ This changes no production code.
    - You listen to the takes, then watch the ident and end cards in Studio.
 3. **The Black Doves kit:** K1 look, K2 theme, K3 stills (only those visible
    before S2), pronunciations, and the show's pieces in both orientations.
-4. **The pilot:** "Black Doves: Season 1 in 60 seconds" (9:16), through gates
-   G1–G6, with its publish pack. What we learn goes into `BIBLE.md`.
-5. **The long video:** "Black Doves: everything before Season 2" (16:9,
-   6–9 min), through G1–G6, with its thumbnail, chapters and SRT.
+4. **The long video first:** "Black Doves: everything before Season 2" (16:9,
+   6–9 min), through G1–G6, with its thumbnail, chapters and SRT. What we
+   learn goes into `BIBLE.md`.
+5. **Then the shorts,** distilled from the long video's locked script and
+   assets: "Black Doves: Season 1 in 60 seconds" (9:16), through G1–G6, with
+   its publish pack.
 6. **Two more shorts** from `before-s2/STORY.md`: one person ("Who is Helen
    Webb?") and "Where we left them" (30–45 s each).
 7. **Write it down:** the `show-video` skill, ADR 0003, a Videos section in
