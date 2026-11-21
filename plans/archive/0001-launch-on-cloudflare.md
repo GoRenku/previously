@@ -461,9 +461,11 @@ Routes and MCP tools keep their current names, parameters and output.
      Tailscale MagicDNS, which had cached "no such name" (and then "no IPv4
      address") for `previously.fyi` from before the record existed; it took
      two macOS cache flushes once Tailscale's own cache had expired.
-   - Open: Cloudflare answers `cf-cache-status: DYNAMIC` for images on
-     `media.previously.fyi`, so they are served from R2 on every request.
-     Harmless at this traffic; a Cache Rule for that host would fix it.
+   - Images on `media.previously.fyi` looked uncached
+     (`cf-cache-status: DYNAMIC`), but that was the check: `curl -I` sends
+     HEAD requests, which Cloudflare always answers `DYNAMIC`. GET requests
+     were cached (`HIT`) by default all along. A Cache Rule was added on
+     2026-11-21 anyway, to make it explicit.
    - Written: `docs/operations/deploy.md`,
      `docs/operations/content-publishing.md`, ADRs 0001 and 0002.
 
@@ -549,7 +551,5 @@ Routes and MCP tools keep their current names, parameters and output.
 - **You:** try the connector in ChatGPT (setup guide step 5).
 - **You:** submit `previously.fyi` to the HSTS preload list (setup guide
   step 6).
-- **You, optional:** a Cache Rule so images on `media.previously.fyi` are
-  cached at the edge (setup guide step 7).
 - Move `docs/concept.md` into `docs/product/`, as `docs/README.md` already
   says.

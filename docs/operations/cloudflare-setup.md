@@ -17,7 +17,7 @@ it.
 | 4 | Claude | – | Deploy staging, publish the shows, check them, go live |
 | 5 | You | 5 min | Add the MCP server to Claude.ai and ChatGPT |
 | 6 | You | 2 min | Submit the domain to the HSTS preload list |
-| 7 | You | 2 min | Optional: let Cloudflare cache the images |
+| 7 | You | 2 min | Optional: make image caching explicit (done 2026-11-21) |
 
 Everything is deployed from this Mac with `pnpm` commands. Nothing deploys
 from GitHub: there are no GitHub Actions and Cloudflare is not connected to
@@ -185,20 +185,20 @@ preload`).
 Preloading is hard to undo (removal also takes months) and covers every
 subdomain: never serve anything on a `*.previously.fyi` name over plain HTTP.
 
-## Step 7 – You (optional): cache the images at the edge
+## Step 7 – You (optional): image caching rule
 
-`media.previously.fyi` answers `cf-cache-status: DYNAMIC`: every image request
-is read from R2. Browsers already keep each image for a year, so this only
-matters as traffic grows.
+Done 2026-11-21, but not needed: Cloudflare already caches `.jpg` and other
+image files on `media.previously.fyi` by default. The rule only makes that
+explicit, so it keeps working if the defaults change.
 
-1. Open [dash.cloudflare.com → previously.fyi → Caching → Cache Rules](https://dash.cloudflare.com/?to=/:account/:zone/caching/cache-rules)
-   and select **Create rule**.
-2. **Rule name:** `media`. **If incoming requests match:** Custom filter
-   expression, **Hostname** **equals** `media.previously.fyi`.
-3. **Cache eligibility:** **Eligible for cache**. Leave the TTL settings on
-   respecting the origin (the images say `max-age=31536000, immutable`).
-4. **Deploy.** A repeated `curl -sI` of an image then shows
-   `cf-cache-status: HIT`.
+To check caching, use a GET request: `curl -s -o /dev/null -D - <image URL>`
+shows `cf-cache-status: HIT` and an `age` header. `curl -I` (a HEAD request)
+always shows `cf-cache-status: DYNAMIC`, even for cached files.
+
+The rule: [dash.cloudflare.com → previously.fyi → Caching → Cache Rules](https://dash.cloudflare.com/?to=/:account/:zone/caching/cache-rules)
+→ **Create rule**, name `media`, **Hostname** **equals**
+`media.previously.fyi`, **Eligible for cache**, TTLs left on their defaults
+(the images send `max-age=31536000, immutable`), **Deploy**.
 
 ## Deploying From Now On
 
