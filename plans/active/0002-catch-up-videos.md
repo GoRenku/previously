@@ -39,7 +39,7 @@ Date: 2026-11-21
   in our ElevenLabs account. Fal reaches ElevenLabs through Fal's own account,
   so it cannot use that voice. **The ElevenLabs MCP is not connected in this
   session.** Music, sound effects and alignment can go through Fal.
-- **Decision: official stills in public videos.** The site already uses
+- **Decided 2026-11-21: yes, treated official stills.** The site already uses
   Netflix promotional stills. A recap without faces loses people, so this plan
   uses them: treated, inside our own frames, with original narration and
   analysis. We use no trailer or episode footage, none of the show's audio or
@@ -484,9 +484,11 @@ This changes no production code.
 ## Risks And Open Questions
 
 1. **The ElevenLabs MCP connection** is a prerequisite for slice 2. Slices 0
-   and 1 can start without it.
+   and 1 can start without it. (Resolved: the claude.ai ElevenLabs connector
+   works in Code sessions.)
 2. **Stills, yes or no.** Without them the videos rely on type and graphics
    alone, and the face-before-name rule becomes the hardest one to keep.
+   (Decided 2026-11-21: yes, treated.)
 3. **The narrator's direction**, chosen after the auditions.
 4. **Pilot first**, or the long video first.
 5. **Platform policies.**
