@@ -1,6 +1,6 @@
 # 0002 Catch-Up Videos
 
-Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 casting is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator). The ident, end cards and caption style are still to do.
+Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator), and the channel kit (intro, end cards, shorts captions, sound) is in the content repo's `videos/_channel/landscape` and `portrait`, waiting on your review. Next: slice 3, the Black Doves kit.
 Date: 2026-11-21
 
 ## Review Attention
