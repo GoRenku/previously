@@ -1,0 +1,42 @@
+<!doctype html>
+<!--
+  The link-preview image for the home page (public/og.png, 1200×630). Render with:
+    pnpm og:image
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500&family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet" />
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background:
+      radial-gradient(900px 420px at 18% -10%, rgba(242, 180, 90, .16), transparent 70%),
+      radial-gradient(700px 500px at 100% 110%, rgba(242, 180, 90, .07), transparent 70%),
+      #0c0b0a;
+    color: #f3eee6;
+    font-family: Geist, sans-serif;
+    position: relative;
+  }
+  .card { position: absolute; inset: 64px 80px; display: flex; flex-direction: column; }
+  .brand { display: flex; align-items: center; gap: 14px; font-family: 'Instrument Serif', serif; font-size: 34px; }
+  .mark { width: 44px; height: 44px; border-radius: 11px; background: #f3eee6; display: grid; place-items: center; }
+  .kicker { margin-top: auto; font-family: 'Geist Mono', monospace; font-size: 19px; letter-spacing: .22em; text-transform: uppercase; color: #a39b8f; }
+  h1 { margin: 18px 0 0; font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 168px; line-height: .9; letter-spacing: -.02em; }
+  h1 em { color: #f2b45a; }
+  .foot { margin-top: 36px; display: flex; justify-content: space-between; font-size: 24px; color: #cfc7bb; }
+  .foot b { font-weight: 500; color: #f3eee6; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <div class="mark"><svg width="24" height="24" viewBox="0 0 32 32"><path d="M17 9 9 16l8 7zM25 9l-8 7 8 7z" fill="#0c0b0a"/></svg></div>
+      Previously…
+    </div>
+    <div class="kicker">Spoiler-safe recaps for returning shows</div>
+    <h1>Previously <em>on…</em></h1>
+    <div class="foot"><span>Everything up to your episode. Nothing after.</span><b>previously.fyi</b></div>
+  </div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 Date: 2026-11-20
 
 Status: current (live since 2026-11-20, built under
-[plan 0001](../../plans/active/0001-launch-on-cloudflare.md))
+[plan 0001](../../plans/archive/0001-launch-on-cloudflare.md))
 
 Role: topic overview
 
@@ -33,6 +33,7 @@ Worker:  content store ──► spoiler gate (shared/spoilers.ts): full show + 
 | `worker/content/` | `ContentStore`: `catalog()`, `manifest()`, `show(id)`. The only place the Worker reads content: R2 when deployed (`r2.ts`), the local content folder under `pnpm dev` (`dev.ts`). |
 | `worker/shows.ts` | Catalog availability (a show is available once the manifest lists it) and resolving a viewer's position. |
 | `worker/api.ts` | `/api/*`: the catalog, the gated show, search. Handlers are thin: parse, gate, serialize. |
+| `worker/site.ts` | `/robots.txt` (staging: keep out), `/sitemap.xml` (from the manifest), and the app page for `/show/<id>` with that show's link-preview tags (title, tagline, premise, backdrop: what the home page shows everyone). |
 | `worker/mcp/` | The MCP server (SDK v2): instructions and eight read-only tools. Each tool takes `up_next`, gates, then formats text. |
 | `shared/theme.ts` | The shape of a show's theme: palette and type tokens, lock motif, microcopy. |
 | `src/` | The React site. It only renders gated views and never filters content itself. `src/themes.ts` holds the app theme; each show's theme comes from the API. |
@@ -105,8 +106,8 @@ run the same code and differ only in `CONTENT_ENV`, which picks the manifest
 they read. Each is built by Vite with the Cloudflare Vite plugin. A third,
 tiny Worker, `previously-www` (`worker/www.ts`), redirects
 `www.previously.fyi` to the apex. Only
-`/api/*` and `/mcp` run Worker code; every other path is a static asset with
-single-page-app fallback.
+`/api/*`, `/mcp`, `/show/*`, `/robots.txt` and `/sitemap.xml` run Worker
+code; every other path is a static asset with single-page-app fallback.
 
 Code and content ship separately, and only from the maintainer's machine:
 

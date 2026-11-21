@@ -2,7 +2,7 @@
 
 Date: 2026-11-19
 
-Status: current (for [plan 0001](../../plans/active/0001-launch-on-cloudflare.md))
+Status: current (for [plan 0001](../../plans/archive/0001-launch-on-cloudflare.md))
 
 This is the one-time setup that puts Previously on `previously.fyi`. Most of it
 Claude does with Wrangler, which is already signed in to your Cloudflare
@@ -17,6 +17,7 @@ it.
 | 4 | Claude | – | Deploy staging, publish the shows, check them, go live |
 | 5 | You | 5 min | Add the MCP server to Claude.ai and ChatGPT |
 | 6 | You | 2 min | Submit the domain to the HSTS preload list |
+| 7 | You | 2 min | Optional: let Cloudflare cache the images |
 
 Everything is deployed from this Mac with `pnpm` commands. Nothing deploys
 from GitHub: there are no GitHub Actions and Cloudflare is not connected to
@@ -183,6 +184,21 @@ preload`).
 
 Preloading is hard to undo (removal also takes months) and covers every
 subdomain: never serve anything on a `*.previously.fyi` name over plain HTTP.
+
+## Step 7 – You (optional): cache the images at the edge
+
+`media.previously.fyi` answers `cf-cache-status: DYNAMIC`: every image request
+is read from R2. Browsers already keep each image for a year, so this only
+matters as traffic grows.
+
+1. Open [dash.cloudflare.com → previously.fyi → Caching → Cache Rules](https://dash.cloudflare.com/?to=/:account/:zone/caching/cache-rules)
+   and select **Create rule**.
+2. **Rule name:** `media`. **If incoming requests match:** Custom filter
+   expression, **Hostname** **equals** `media.previously.fyi`.
+3. **Cache eligibility:** **Eligible for cache**. Leave the TTL settings on
+   respecting the origin (the images say `max-age=31536000, immutable`).
+4. **Deploy.** A repeated `curl -sI` of an image then shows
+   `cf-cache-status: HIT`.
 
 ## Deploying From Now On
 

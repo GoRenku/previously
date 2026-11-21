@@ -4,7 +4,7 @@ A spoiler-safe "catch me up" site for returning TV shows that is also an MCP ser
 
 - Concept and design: [docs/concept.md](docs/concept.md)
 - Architecture: [docs/architecture/README.md](docs/architecture/README.md)
-- Plans: [plans/](plans/README.md) (launch on Cloudflare: [plan 0001](plans/active/0001-launch-on-cloudflare.md))
+- Plans: [plans/](plans/README.md) (launch on Cloudflare: [plan 0001](plans/archive/0001-launch-on-cloudflare.md))
 
 ## Two repositories
 
@@ -91,12 +91,13 @@ node scripts/build-catalog.mjs             # rebuild the home page list from cat
 | `shared/spoilers.ts` | The gate: full data + position → spoiler-safe view; search |
 | `shared/theme.ts` | The shape of a show's `theme.json` |
 | `shared/content.ts` | The content contracts: catalog entries, show bundles, manifests |
-| `worker/` | The Cloudflare Worker: `/api/*` (gated JSON), `/mcp` (MCP tools); everything else is static assets |
+| `worker/` | The Cloudflare Worker: `/api/*` (gated JSON), `/mcp` (MCP tools), link previews, robots and sitemap; everything else is static assets |
 | `wrangler.jsonc` | The two Workers: `previously` (production) and `previously-staging` |
 | `src/` | React site; it only renders gated views. `src/themes.ts` holds the app theme |
 | `scripts/content-root.mjs` | Finds the content repo |
 | `scripts/publish/` | Bundling (no reveal ledger, no research), image mirroring, manifests, the R2 client, the `content:*` commands |
-| `scripts/deploy.mjs` | `deploy:staging`, `deploy:production`, `rollback:production` |
+| `scripts/deploy.mjs` | `deploy:staging`, `deploy:production`, `rollback:production`, `deploy:www` |
+| `scripts/og-image.html`, `public/og.png` | The home page's link-preview image (`pnpm og:image` re-renders it with headless Chrome) |
 | `scripts/validate-data.mjs`, `validate-all.mjs` | Checks the dataset: codes, ordering, cross-references, ledger, theme |
 | `scripts/spoiler-scan.mjs` | Fetches the gated payload at every position and flags sensitive terms that appear before their reveal |
 | `scripts/mcp-smoke.mjs` | Calls the MCP server like a chat client and checks that the spoiler line holds |

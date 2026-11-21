@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './styles.css';
+import { ErrorBoundary } from './ErrorBoundary';
 import Home from './pages/Home';
 import { CatchUp, ShowLayout } from './pages/Show';
 import { Ask, Clips, EpisodeDetail, Episodes, World } from './pages/sections';
@@ -10,6 +11,7 @@ import { Storylines } from './pages/storylines';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ErrorBoundary>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,5 +29,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="*" element={<Home />} />
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 );

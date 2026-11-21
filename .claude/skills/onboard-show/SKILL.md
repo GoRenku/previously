@@ -45,6 +45,7 @@ Never write show content into this repo: it is public, and nothing here is gitig
    - the browser review at the six positions
 6. **Feed back.** Anything a writer, the audit or the browser review found that a check missed becomes either a ledger term or a rule in the relevant skill. Note it in "Lessons" below, using made-up examples (this repo is public).
 7. **Commit in the content repo** and merge the branch. Lessons and skill changes are committed here, in the code repo.
+8. **Ship it** (`spoiler-qa`, step 7): `pnpm content:publish <id>` puts the committed show on `https://staging.previously.fyi`. Review it there, then `pnpm content:promote <id>` re-runs the spoiler scan and MCP smoke test against staging and, if both pass, makes it live on `https://previously.fyi`. New and changed shows need no code deploy (a new lock motif is the one exception, see `show-theme`).
 
 ### Agent brief template (keep it this short)
 > Run phase <N> of adding **<Show>** to Previously. Project: <path>. Content folder: <path>/../previously-content/shows/<id>/. Follow `.claude/skills/<skill>/SKILL.md` exactly; read `.claude/skills/spoiler-model/SKILL.md` first. Show facts: TVmaze <id>; seasons/episodes <…>; seasons after your training cutoff: <…>. You own only: <files>. Report: <counts>, judgement calls with episode codes, and **anything in the skill that was unclear or wrong for this show**.
@@ -57,6 +58,7 @@ That last request is how the skills improve.
 - The browser review is done at the six positions, plus mobile.
 - Arc characters have a `now` for nearly every episode they appear in, and storylines have a beat for every episode that advances them.
 - The home page shows the show as Ready, and its theme reads well.
+- It is published, reviewed on staging and promoted: `pnpm content:promote <id>` passed and `https://previously.fyi` lists it as Ready.
 
 ## Lessons (keep this list current)
 

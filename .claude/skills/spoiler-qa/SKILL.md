@@ -1,6 +1,6 @@
 ---
 name: spoiler-qa
-description: Phase 3 of adding a show to Previously — verify a show's data before it ships. Runs the validator, the static ledger check, the live spoiler scan across every position (web + MCP), the MCP smoke test, an independent reveal audit, and a browser review at key positions. Use after content is written, and after any content change.
+description: Phase 3 of adding a show to Previously — verify a show's data and ship it. Runs the validator, the static ledger check, the live spoiler scan across every position (web + MCP), the MCP smoke test, an independent reveal audit and a browser review, then publishes to staging and promotes to production (which re-runs the live checks remotely). Use after content is written, and after any content change.
 ---
 
 # Spoiler QA
@@ -71,9 +71,24 @@ With `pnpm dev` running, set the position from the picker (or `localStorage['pre
 
 Also check at 375px: the arc lanes collapse to one, the map scrolls, and the hero and logo are legible.
 
+### 7. Ship: staging, then production
+Only after 1–6 pass and the content repo is committed (publishing refuses uncommitted content):
+```bash
+pnpm content:publish <id>                # bundle, mirror images, point staging at it
+```
+Review `https://staging.previously.fyi` at two or three of the positions above. Images now come from `media.previously.fyi`; a publish stops and names any image it cannot fetch. Then:
+```bash
+pnpm content:promote <id>                # spoiler-scan + mcp-smoke against staging, then live
+```
+Promote stops, and production stays as it was, if either check fails on staging, or if the content repo's `reveals.json` differs from the commit that was staged (the scan reads the local ledger). A site picks up the change within about a minute. If something bad reaches production anyway:
+```bash
+pnpm content:rollback production <id>    # back to what production served before
+```
+Details: `docs/operations/content-publishing.md`.
+
 ## Report
 Include:
-- the pass/fail of 1–4
+- the pass/fail of 1–4, and of the promote (7)
 - what the audit found and what you changed
 - residual risks, especially seasons with thin sources or calls made on a single source
 

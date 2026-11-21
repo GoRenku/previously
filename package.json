@@ -23,7 +23,8 @@
     "content:qa": "node scripts/publish/promote.mjs qa",
     "content:promote": "node scripts/publish/promote.mjs promote",
     "content:rollback": "node scripts/publish/promote.mjs rollback",
-    "deploy:www": "node scripts/deploy.mjs www"
+    "deploy:www": "node scripts/deploy.mjs www",
+    "og:image": "\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless=new --disable-gpu --hide-scrollbars --virtual-time-budget=5000 --window-size=1200,630 --screenshot=public/og.png scripts/og-image.html"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

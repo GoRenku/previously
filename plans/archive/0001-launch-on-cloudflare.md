@@ -1,6 +1,6 @@
 # 0001 Launch Previously On Cloudflare
 
-Status: accepted (choices settled 2026-11-19; slices 0–4 done 2026-11-20: live on previously.fyi; slice 5 and the chat-app connector tests remain)
+Status: done 2026-11-21 (choices settled 2026-11-19; live on previously.fyi since 2026-11-20). Follow-ups are listed at the end.
 Date: 2026-11-19
 Setup guide: [docs/operations/cloudflare-setup.md](../../docs/operations/cloudflare-setup.md)
 
@@ -437,8 +437,8 @@ Routes and MCP tools keep their current names, parameters and output.
    - `media.previously.fyi` now requires TLS 1.2 or later.
    - The home page showed a crash when the catalog request failed (for
      example on a 429); it now shows the error.
-4. **Cloudflare setup and first launch.** Done 2026-11-20 apart from the
-   chat-app tests (setup step 5, yours). Notes:
+4. **Cloudflare setup and first launch.** Done 2026-11-20; the MCP
+   connector was added in Claude.ai on 2026-11-21 and works. Notes:
    - Staging deployed; both shows published (469 images mirrored in 36 s);
      `content:qa staging` clean for both; staging output identical to the
      Express baseline once image URLs are normalized; browser review on
@@ -474,8 +474,23 @@ Routes and MCP tools keep their current names, parameters and output.
    runs the full QA, promotes both and runs `pnpm deploy:production`. Then the
    MCP is tested from Claude.ai and ChatGPT. Write `docs/operations/deploy.md`
    and `docs/operations/content-publishing.md`.
-5. **Polish.** Open Graph tags, `robots.txt`, a sitemap, a React error
-   boundary.
+5. **Polish.** Done 2026-11-21. Open Graph tags, `robots.txt`, a sitemap, a
+   React error boundary. Notes:
+   - `/robots.txt` and `/sitemap.xml` come from the Worker (`worker/site.ts`),
+     not static files: the sitemap lists the shows the site's manifest has
+     published, so it follows content without a code deploy, and staging's
+     robots file keeps crawlers out.
+   - Link previews: `index.html` has the site-wide tags and a share image
+     (`public/og.png`, rendered from `scripts/og-image.html` with headless
+     Chrome, `pnpm og:image`). `/show/*` now runs the Worker, which rewrites
+     the tags for that show with HTMLRewriter: title, tagline and premise,
+     and the backdrop as the image, which is only what the home page shows
+     everyone. The page keeps its CSP from `_headers` (checked).
+   - The error boundary (`src/ErrorBoundary.tsx`) shows "That didn't load…"
+     with Try again and All shows; checked with a forced crash.
+   - Also done after launch: `http://` redirects to `https://` on every host
+     (the zone's Always Use HTTPS, turned on by you), and HSTS now carries
+     `includeSubDomains; preload`.
 
 ## Tests And Guardrails
 
@@ -520,11 +535,21 @@ Routes and MCP tools keep their current names, parameters and output.
 
 ## Completion Checklist
 
-- [ ] Folder renamed; content repo created; content moved; no show content tracked here.
-- [ ] pnpm with the Renku Studio supply-chain settings; `package-lock.json` gone; no `minimumReleaseAgeExclude` entries without a reason.
-- [ ] Worker matches the Architecture Shape; Express removed.
-- [ ] Spoiler gate remains the only owner of visibility rules.
-- [ ] Publish, promote and rollback work, and promote enforces remote QA.
-- [ ] Both shows live on `previously.fyi`, with MCP working in Claude.ai and ChatGPT.
-- [ ] Code and content deploy only through the local `pnpm` commands.
-- [ ] Docs, ADRs, README and skills updated.
+- [x] Folder renamed; content repo created; content moved; no show content tracked here.
+- [x] pnpm with the Renku Studio supply-chain settings; `package-lock.json` gone; no `minimumReleaseAgeExclude` entries.
+- [x] Worker matches the Architecture Shape (plus `worker/shows.ts`, `worker/limits.ts`, `worker/site.ts`, `worker/www.ts`); Express removed.
+- [x] Spoiler gate remains the only owner of visibility rules.
+- [x] Publish, promote and rollback work, and promote enforces remote QA.
+- [x] Both shows live on `previously.fyi`, with MCP working in Claude.ai. ChatGPT not yet tried (follow-up).
+- [x] Code and content deploy only through the local `pnpm` commands.
+- [x] Docs, ADRs, README and skills updated.
+
+## Follow-ups
+
+- **You:** try the connector in ChatGPT (setup guide step 5).
+- **You:** submit `previously.fyi` to the HSTS preload list (setup guide
+  step 6).
+- **You, optional:** a Cache Rule so images on `media.previously.fyi` are
+  cached at the edge (setup guide step 7).
+- Move `docs/concept.md` into `docs/product/`, as `docs/README.md` already
+  says.
