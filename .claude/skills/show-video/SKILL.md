@@ -208,5 +208,41 @@ Shorts aren't made yet. When the first one is, write its steps here.
     | Delivery render | ~18 min | — |
     | Publish kit and YouTube Studio | ~15 min | — |
 
+**From the second film (a workplace thriller, 9 minutes):**
+
+13. **The proof can fail for new reasons.** It was rejected as a step down
+    from the first film: music that didn't fit, drawings that were
+    "low quality or meaningless", a grade nobody could see, a look taken
+    from the genre. Take 2 passed after five changes, the next five
+    lessons.
+14. **Research the look in the makers' own words** before any lookdev: an
+    agent reads interviews with the cinematographer, designer, colourists
+    and composer, and writes `RESEARCH.md`. For *Harbor Light* it might say
+    the blacks are true black, the lamp room is the warm world, and the
+    camera never hand-holds. It overturned three of our guesses.
+15. **Audition the music before the theme:** three 30-second takes in
+    genuinely different directions, sent to the user as files. A cue
+    conditioned on a reference (`audio_reference`) takes that reference's
+    key and tempo whatever the request says; check with `cue_sim.py`.
+16. **Bake the grade with ffmpeg,** once per still (`kit/grade.py`): exposure
+    normalised to the world's level, the look, a saturation cap after the
+    look, one finish. CSS filters on media are both invisible at the grade's
+    strength and forbidden by HyperFrames.
+17. **Three.js where the world itself is the subject** (*Harbor Light*'s
+    lighthouse as a white cutaway model: the stairs, the lamp, the keeper's
+    room), with name tags pinned to 3D points. One film-level scene file and
+    one renderer, its windows in film time: a renderer per chapter would put
+    a dozen WebGL contexts on one page.
+18. **Drawings at the quality of the screen grabs:** a precise object of the
+    show's world (a tide gauge, the lamp's clockwork as a technical drawing),
+    never a scene with people in it.
+19. **HyperFrames traps found:** a scripted edit moved a clock tween off 0
+    and the 3D went black for the whole film. Two zero-time `set`s on one
+    element fight, so a canvas's visibility is set per frame from `t`. Crop
+    portraits by face boxes, not by eye. A tag that reads leftward uses
+    `order`, not `row-reverse`, or it reads backwards. A white caption on a
+    white model needs the ink colour at higher specificity than the caption
+    rule.
+
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
