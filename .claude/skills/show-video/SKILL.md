@@ -85,7 +85,7 @@ this public repo carries no real spoilers.
    - **The music palette** (BIBLE, "Sound"): one cue per mood, each a
      genuinely different request (its own style line, key, tempo and seed,
      no shared reference). Run `_channel/tools/cue_sim.py` after each one;
-     above about 0.85 against another cue, change the request instead of
+     if it flags a pair as the same piece, change the request instead of
      re-rolling. Send the user the theme and the moods to listen to before
      laying them in. Stay within the cap (about 5 minutes, about $3).
    - Generate the effects library in one pass. Builders generate nothing:
@@ -192,8 +192,8 @@ Shorts aren't made yet. When the first one is, write its steps here.
     find (a line-draw tween that jumped) get fixed across every chapter.
 11. **A cue per chapter, all copying one, is one piece ten times.** Every
     chapter's cue reused the proof cue as a reference, with the same seed
-    and style line: ten cues, one key, one tempo, 0.93–1.00 similar, and the
-    user heard the same music over and over. Now: a palette of 4–5
+    and style line: nine of ten came out in its key and tempo, 0.95–0.99
+    alike, and the user heard the same music over and over. Now: a palette of 4–5
     genuinely different moods, checked with `cue_sim.py`, cut to fit each
     chapter. It costs half as much and has variety.
 12. **Rough cost of a 9-minute film** (Black Doves; the palette now halves
