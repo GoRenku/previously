@@ -175,8 +175,8 @@ Shorts aren't made yet. When the first one is, write its steps here.
     |---|---|---|
     | Storylines to approved script, with the audit | ~40 min | — |
     | Narration, 11 chapters | ~5 min | ~6,600 ElevenLabs credits |
-    | The finished first chapter (score, 21 effects, build) | ~25 min | ~1,050 credits, $0.61 |
-    | The rest (scores, 28 more effects, 25 stills, 7 builders) | ~70 min | ~1,400 credits, ~$4.75 |
+    | The finished first chapter (score, 21 effects, build) | ~25 min | ~1,050 credits, 0.61 USD |
+    | The rest (scores, 28 more effects, 25 stills, 7 builders) | ~70 min | ~1,400 credits, ~4.75 USD |
     | Delivery render | ~18 min | — |
     | Publish kit and YouTube Studio | ~15 min | — |
 
