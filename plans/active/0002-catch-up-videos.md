@@ -1,6 +1,6 @@
 # 0002 Catch-Up Videos
 
-Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator), and the channel's brand elements (mark, wordmark, sound, spoiler warning, end card) are in the content repo's `videos/_channel/`, with reference projects (a Black Doves opening over the Season 1 key art). Every video's opening is directed for its show, not reused. The YouTube channel exists (2026-11-21): **Previously**, handle `@previouslyfyi`, channel id `UChvZ4eWuOk01FOEUwKJyjlw`, a Brand Account under the owner's personal Google account; its picture and banner (content repo `videos/_channel/youtube/`) and its description and previously.fyi link (`about.md` there) were published the same day. Slice 4 is done: the Black Doves long video (9:02) was accepted and published on 2026-11-21. Its first animatic was rejected as static, and a one-minute proof at finished quality replaced the animatic and style-frame gates (see "Workflow And Review Gates"). On 2026-11-22 its lessons went into the content repo's `BIBLE.md` ("The Film") and `videos/README.md`, and the `show-video` skill was written early (part of slice 7) so the next film follows it. Next, by the owner's call on 2026-11-22: the Severance long video (`before-s2`), then the shorts (slices 5 and 6).
+Status: in progress. Slices 0 and 1 done 2026-11-21; the spike's numbers are in the content repo's `videos/_channel/BIBLE.md`. Slice 2 is done: we kept **two narrators**, A1 for Severance and B1 for Black Doves (see "Decision: two narrators" under The Narrator), and the channel's brand elements (mark, wordmark, sound, spoiler warning, end card) are in the content repo's `videos/_channel/`, with reference projects (a Black Doves opening over the Season 1 key art). Every video's opening is directed for its show, not reused. The YouTube channel exists (2026-11-21): **Previously**, handle `@previouslyfyi`, channel id `UChvZ4eWuOk01FOEUwKJyjlw`, a Brand Account under the owner's personal Google account; its picture and banner (content repo `videos/_channel/youtube/`) and its description and previously.fyi link (`about.md` there) were published the same day. Slice 4 is done: the Black Doves long video (9:02) was accepted and published on 2026-11-21. Its first version (every chapter, built before the owner saw any of it) was rejected as static; one finished chapter, approved in the preview before the rest was built, replaced the animatic and style-frame gates (see "Workflow And Review Gates"). On 2026-11-22 its lessons went into the content repo's `BIBLE.md` ("The Film") and `videos/README.md`, and the `show-video` skill was written early (part of slice 7) so the next film follows it. Next, by the owner's call on 2026-11-22: the Severance long video (`before-s2`), then the shorts (slices 5 and 6).
 Date: 2026-11-21 (updated 2026-11-22)
 
 ## Review Attention
@@ -362,16 +362,18 @@ show's look and sound, which then go into `KIT.md` for its later videos.
 | --- | --- | --- | --- |
 | G1 Story | The three storylines (each a device from the show's own world), `STORY.md`, the script; `video-check` passes; an independent fact and spoiler audit | text files | minutes |
 | G2 Voice | The narration, chapter by chapter | audio files | TTS credits for one chapter |
-| G3 Proof | One movement, about a minute, built to finished quality with its own score cue and effects. Its approval sets the film's grammar (`DIRECTION.md`) | HyperFrames Studio preview (no render) | edits, one cue |
-| G4 Film | Every chapter built to the proof's standard, the whole cut; `check`, `video-check` | Studio preview (no render) | edits |
+| G3 One chapter | One movement, about a minute, completely finished, with its own score cue and effects. Nothing else is built until it's approved; its design language goes into `DIRECTION.md` | HyperFrames Studio preview (no render) | edits, one cue |
+| G4 Film | Every other chapter built in that design language, the whole cut; `check`, `video-check` | Studio preview (no render) | edits |
 | G5 Delivery | The one render, ffprobe, loudness | `renders/` | one render |
 | G6 Publish | Title, description, chapters, tags, SRT, thumbnails, YouTube Studio settings | `publish/`, YouTube Studio | minutes |
 
-**Why the gates changed.** The first G3 was an animatic in rough form, and
-the owner rejected it outright: one background for the whole film, with
-portraits fading in and out. A rough version can't be judged, so the owner
-now sees finished craft first, on one minute, and nothing is rendered (not
-even a draft) until they accept the whole cut. The narration is still locked
+**Why the gates changed.** The first G3 was a full first version, every
+chapter built before the owner saw any of it, and the owner rejected it
+outright: the same split view for the whole film, mostly narration, cast
+photos popping up. All of that time and those tokens were wasted. Now one
+finished chapter comes first, in the preview, and the rest (about an hour of
+parallel agents) is built only once the owner approves it. Nothing is
+rendered, not even a draft, until they accept the whole cut. The narration is still locked
 at G2 because it is the clock: every later timing is cued to its words (text
 lands on the word that says it).
 

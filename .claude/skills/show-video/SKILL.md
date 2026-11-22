@@ -48,17 +48,25 @@ this public repo carries no real spoilers.
    narrator, keeping the TTS spellings in `long/assets/voice/tts-text.json`.
    Transcribe each chapter with `--model medium.en`, and check its last word
    ends before its audio does. The user listens.
-5. **G3 The proof.** Pick the movement with the most action, about a minute.
+5. **G3 One finished chapter (the proof).** Pick the movement with the most
+   action, about a minute. **Build nothing else until the user approves it:**
+   every chapter costs about an hour of parallel agents, all wasted if the
+   direction is wrong.
+   - Prep its screen grabs: cut-outs, blurred plates, the film's grade
+     (BIBLE, "The Treatment").
    - Price, then generate its score cue (Fal `elevenlabs/music/v2.5`, a
      composition plan following its beats) and its effects (ElevenLabs SFX
      v3, about 50 credits each).
-   - Build it to finished quality in the grammar: stills in 2.5D, a new
-     picture every 2–3 s, reconstruction graphics from the show's world,
-     kinetic type, an effect on every action, the global layers.
+   - Build it completely finished, in the grammar: treated screen grabs in
+     2.5D, a new picture every 2–3 s, drawn illustrations of the show's
+     symbols and setting, reconstruction graphics from its world, kinetic
+     type, an effect on every action, the film finish over everything.
    - Snapshot every shot and look at it; fix what you see. Hand the user the
-     Studio preview URL. **No render.** Ask: is this the direction?
+     HyperFrames preview URL in the browser. **No render.** Ask: is this the
+     direction?
 6. **Write `DIRECTION.md`** from the approved proof: the grammar in the
-   user's words, the palette, the global layers, the facts and pictures
+   user's words, the palette and grade recipes, the illustrations, the
+   global layers, the facts and pictures
    rules, the HyperFrames contract, the chapter table (start, length,
    narration), the asset list. It is the builders' whole brief.
 7. **G4 Film.**
@@ -118,11 +126,14 @@ Shorts aren't made yet. When the first one is, write its steps here.
 
 **From the first film (a spy thriller, 9 minutes):**
 
-1. **Show finished craft, never a rough version.** A generated animatic (one
-   background, portraits fading in) was rejected outright as "terrible and
-   boring". A side-by-side style test of two devices decided nothing. The
-   one-minute proof at finished quality was approved at first sight, and the
-   rest, built to its standard, was accepted unchanged.
+1. **One finished chapter first, then the rest.** The first version was the
+   whole film, built before the user saw any of it: the same split view
+   throughout, mostly narration, cast photos popping up. It was rejected as
+   "extremely boring and very static", and an hour of work went with it. The
+   second time, one finished chapter in the preview was approved at first
+   sight, and the rest, built in its design language, was accepted
+   unchanged. Never show a rough version instead: the user judges the
+   finished look.
 2. **The device is a frame, not a stage.** If *Harbor Light*'s film is "what
    the lamp reveals", the beam sweeps between scenes and returns at the end
    of each movement. It is not nine minutes of a beam on black.
@@ -130,25 +141,35 @@ Shorts aren't made yet. When the first one is, write its steps here.
    sea-fog greys against lamp amber; tide tables, logbook pages, radio dials
    and nautical charts as the reconstruction graphics; a folk-noir score with
    a foghorn drone; gulls, static, the lamp's clockwork as effects.
-4. **Busy picture, calm story.** The user wanted action on screen and an
+4. **Screen grabs carry the memory.** Scenes from the episodes remind a
+   viewer of the show; cast photos only name people. Find many, and vary
+   them: places, moments, not the same faces again.
+5. **One treatment makes it one film.** Every still gets the same prep, a
+   grade per side of the device, colour washes and one film finish (grain,
+   vignette, light leaks). The user called the result polished and
+   professional.
+6. **Draw the show's symbols.** Illustrations drawn in code (for *Harbor
+   Light*: gulls wheeling past the lens, the beam cutting through fog, the
+   island coast as a night map) were the moments the user singled out.
+7. **Busy picture, calm story.** The user wanted action on screen and an
    easy pace for viewers who remember nothing. Fast pictures, slow facts:
    the screen only restates the narrator.
-5. **Direct every shot.** Scenes generated from a cue sheet all look alike.
-6. **Pictures run out first.** The show data had 19 scene stills; the film
+8. **Direct every shot.** Scenes generated from a cue sheet all look alike.
+9. **Pictures run out first.** The show data had 19 scene stills; the film
    used about 45. Start the hunt at G1.
-7. **Parallel builders work** when each gets the proof, `DIRECTION.md` and
-   files of its own: seven built eight minutes in about an hour. Bugs they
-   find (a line-draw tween that jumped) get fixed across every chapter.
-8. **Rough cost of a 9-minute film:**
+10. **Parallel builders work** when each gets the proof, `DIRECTION.md` and
+    files of its own: seven built eight minutes in about an hour. Bugs they
+    find (a line-draw tween that jumped) get fixed across every chapter.
+11. **Rough cost of a 9-minute film:**
 
-   | Step | Wall time | Cost |
-   |---|---|---|
-   | Storylines to approved script, with the audit | ~40 min | — |
-   | Narration, 11 chapters | ~5 min | ~6,600 ElevenLabs credits |
-   | The proof minute (score, 21 effects, build) | ~25 min | ~1,050 credits, $0.61 |
-   | The rest (scores, 28 more effects, 25 stills, 7 builders) | ~70 min | ~1,400 credits, ~$4.75 |
-   | Delivery render | ~18 min | — |
-   | Publish kit and YouTube Studio | ~15 min | — |
+    | Step | Wall time | Cost |
+    |---|---|---|
+    | Storylines to approved script, with the audit | ~40 min | — |
+    | Narration, 11 chapters | ~5 min | ~6,600 ElevenLabs credits |
+    | The finished first chapter (score, 21 effects, build) | ~25 min | ~1,050 credits, $0.61 |
+    | The rest (scores, 28 more effects, 25 stills, 7 builders) | ~70 min | ~1,400 credits, ~$4.75 |
+    | Delivery render | ~18 min | — |
+    | Publish kit and YouTube Studio | ~15 min | — |
 
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
