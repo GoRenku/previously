@@ -19,6 +19,12 @@ this public repo carries no real spoilers.
 - Read `BIBLE.md` end to end, then the reference film's `DIRECTION.md` and
   `ch05.html`. Load the `hyperframes` skill. Run its CLI through the plugin's
   launcher (`videos/README.md`, "Running HyperFrames").
+- Three levels of instructions. `BIBLE.md` is general: the rules for every
+  show. A show's `videos/<show>/KIT.md` holds that one show's look and
+  sound, written after its first video. A film's `DIRECTION.md` holds that
+  one film's design language, written after its first chapter is approved.
+  If the show already has a `KIT.md`, start from it; if it doesn't, its
+  first film creates one (step 10).
 - The show's narrator is in `_channel/voices.json` (`shows`). If the show
   has none, pick one with the user first.
 - Check the tools: the ElevenLabs connector's `creative_*` tools (narration,
@@ -87,8 +93,11 @@ this public repo carries no real spoilers.
    settings), `publish/long.en.srt` (`_channel/tools/make_srt.py`), three
    thumbnail takes, `video-check`. Fill in YouTube Studio only when the user
    asks, in their own Chrome.
-10. **Feed back.** Lessons go into `BIBLE.md` (concrete, private) and below
-    (made-up examples). Commit and push the content repo as you go.
+10. **Feed back.** Write or update the show's `KIT.md` (voice, display
+    face, palette and grade, graphics and illustrations, the theme cue, the
+    effects), as Black Doves' does. Lessons for every show go into
+    `BIBLE.md` (concrete, private) and below (made-up examples). Commit and
+    push the content repo as you go.
 
 Shorts aren't made yet. When the first one is, write its steps here.
 
