@@ -46,7 +46,11 @@ this public repo carries no real spoilers.
      on the recall ladder, its look and its sound.
    - The user picks one. Write `STORY.md`: the film in one line, the device,
      the "Fit The Show" table (BIBLE) filled for this show, the names, the
-     chapters.
+     chapters, and **a cost table per gate** (ElevenLabs credits left and
+     their reset date from `account_get_usage`, Fal prices from
+     `get_pricing`, Claude tokens from the last film's actuals). The user
+     wants to see costs: say the price before each paid step, and write the
+     actual into the table after each gate.
    - Write `script.md`, citing sources per paragraph. Run an independent
      audit agent that gets only the gated view and the script, and fix every
      finding. Run `video-check`. The user approves the script.
