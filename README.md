@@ -70,6 +70,7 @@ The process lives in `.claude/skills/`. Ask Claude Code to "add <show> to Previo
 | `show-content` | Three parallel writers: episodes and clips / characters and arcs / storylines and world |
 | `show-theme` | The show's `theme.json`: tokens, display type matched to the wordmark, lock motif |
 | `spoiler-qa` | validate → ledger-check → spoiler-scan → mcp-smoke → independent audit → browser review |
+| `show-video` | After a show is live: its catch-up video (storylines → script → narration → a one-minute proof → parallel chapter builds → render → YouTube), written into `../previously-content/videos/<id>/` |
 
 The skills' examples use a made-up show, so this public repo carries no real spoilers.
 
