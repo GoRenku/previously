@@ -255,5 +255,16 @@ Shorts aren't made yet. When the first one is, write its steps here.
 21. **End on the card, briefly.** A 20 s end-card hold reads as dead air;
     6 s leaves room for a 5 s end screen.
 
+22. **Tell the season forward.** Movements that each restart the clock
+    ("meanwhile, back in episode 2…") lose a viewer who remembers nothing.
+    Run them in episode order, weave the two worlds inside each, cue any
+    flashback in words, and end each movement on its turn. Give every
+    villain and every risk-taker a motive on screen. *Harbor Light*'s
+    keeper hides the logbook. Why? Say it the moment it matters.
+23. **Say a mystery is a mystery.** A strange thing the season never
+    explains (a locked room, a recurring bird) gets the line "nobody knows
+    why", and comes back among the open questions at the end. Shown without
+    that, it reads as something the film forgot to explain.
+
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
