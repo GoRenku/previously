@@ -64,9 +64,10 @@ this public repo carries no real spoilers.
    direction is wrong.
    - Prep its screen grabs: cut-outs, blurred plates, the film's grade
      (BIBLE, "The Treatment").
-   - Price, then generate its score cue (Fal `elevenlabs/music/v2.5`, a
-     composition plan following its beats) and its effects (ElevenLabs SFX
-     v3, about 50 credits each).
+   - Price, then generate its score cue, which becomes the film's theme (Fal
+     `elevenlabs/music/v2.5`, a composition plan following its beats), and
+     its effects (ElevenLabs SFX v3 on Fal, about $0.004 each). Log both in
+     `STORY.md`.
    - Build it completely finished, in the grammar: treated screen grabs in
      2.5D, a new picture every 2–3 s, drawn illustrations of the show's
      symbols and setting, reconstruction graphics from its world, kinetic
@@ -75,18 +76,31 @@ this public repo carries no real spoilers.
      HyperFrames preview URL in the browser. **No render.** Ask: is this the
      direction?
 6. **Write `DIRECTION.md`** from the approved proof: the grammar in the
-   user's words, the palette and grade recipes, the illustrations, the
-   global layers, the facts and pictures
-   rules, the HyperFrames contract, the chapter table (start, length,
-   narration), the asset list. It is the builders' whole brief.
+   user's words, the colour palette and grade recipes, the illustrations,
+   the music plan (what each chapter needs, grouped into 4–5 moods), the
+   global layers, the facts and pictures rules, the HyperFrames contract,
+   the chapter table (start, length, narration), the asset list. It is the
+   builders' whole brief.
 7. **G4 Film.**
-   - Generate the effects library and every chapter's score (`audio_reference`
-     = the proof cue, same seed), and level them under the narration.
+   - **The music palette** (BIBLE, "Sound"): one cue per mood, each a
+     genuinely different request (its own style line, key, tempo and seed,
+     no shared reference). Run `_channel/tools/cue_sim.py` after each one;
+     above about 0.85 against another cue, change the request instead of
+     re-rolling. Send the user the theme and the moods to listen to before
+     laying them in. Stay within the cap (about 5 minutes, about $3).
+   - Generate the effects library in one pass. Builders generate nothing:
+     only this session makes paid media, and every generation goes in the
+     `STORY.md` log.
    - Write `long/index.html` with every chapter at its final start, so each
      builder can check theirs in place.
    - Fan out builders, one per chapter (pair the short ones), each owning
      only its files. Review each chapter's frames as it lands. Fix anything
      that crosses chapters yourself, once, everywhere.
+   - Cut each chapter's score from the palette on the root's tracks
+     (`data-media-start` into a cue, `data-duration`, crossfades at the
+     chapter's turns), levelled under the narration. A chapter gets its own
+     cue only when the palette can't serve it, with the reason and price
+     said first.
    - Run the whole film's `check --json` (in the background) and
      `video-check`, open the preview, confirm no console errors, and hand
      the user the URL.
@@ -121,9 +135,12 @@ Shorts aren't made yet. When the first one is, write its steps here.
 > Narration: `assets/voice/chNN.mp3`, words in `chNN.words.json` (scene
 > time = word start + 0.6). Length <L> s, root start <T>. Stills that fit:
 > <…>. You own only `compositions/chNN.html` and `assets/chNN/`. No
-> render, no commit. Check: lint 0 errors, `check --json --range <T>,<T+L>`
-> clean for your file, a snapshot of every shot. Report your shot list, the
-> checks, and anything in `DIRECTION.md` that was unclear or wrong.
+> render, no commit, and **no generation of any kind** (music, effects,
+> voice, images): use `assets/sound/` and the stills; no music in your file,
+> the score is laid in at assembly. Check: lint 0 errors,
+> `check --json --range <T>,<T+L>` clean for your file, a snapshot of every
+> shot. Report your shot list, the checks, any sound or picture you needed
+> and didn't have, and anything in `DIRECTION.md` that was unclear or wrong.
 
 ## Definition of done
 
@@ -173,7 +190,14 @@ Shorts aren't made yet. When the first one is, write its steps here.
 10. **Parallel builders work** when each gets the proof, `DIRECTION.md` and
     files of its own: seven built eight minutes in about an hour. Bugs they
     find (a line-draw tween that jumped) get fixed across every chapter.
-11. **Rough cost of a 9-minute film:**
+11. **A cue per chapter, all copying one, is one piece ten times.** Every
+    chapter's cue reused the proof cue as a reference, with the same seed
+    and style line: ten cues, one key, one tempo, 0.93–1.00 similar, and the
+    user heard the same music over and over. Now: a palette of 4–5
+    genuinely different moods, checked with `cue_sim.py`, cut to fit each
+    chapter. It costs half as much and has variety.
+12. **Rough cost of a 9-minute film** (Black Doves; the palette now halves
+    the music):
 
     | Step | Wall time | Cost |
     |---|---|---|
