@@ -244,5 +244,16 @@ Shorts aren't made yet. When the first one is, write its steps here.
     white model needs the ink colour at higher specificity than the caption
     rule.
 
+20. **Check the script against each storyline's beats,** not its summary.
+    *Harbor Light*'s keeper and the radio operator would be a five-episode
+    arc; one line ("the keeper falls for the operator") loses it, and the
+    user can't follow the ending that depends on it. A major arc gets its
+    turns on screen, each with its own picture (about 40 s). Re-voicing a
+    passage costs little: voice the new paragraphs alone and splice them
+    in at the paragraph pauses (`silencedetect`), then shift every later
+    time by the difference.
+21. **End on the card, briefly.** A 20 s end-card hold reads as dead air;
+    6 s leaves room for a 5 s end screen.
+
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
