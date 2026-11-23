@@ -33,5 +33,7 @@ content and private product notes live in the private content repository.
   code.
 - [operations/content-publishing.md](operations/content-publishing.md) –
   publishing, promoting and rolling back show content.
+- [operations/analytics.md](operations/analytics.md) – the analytics banner,
+  the PostHog events and the dashboard script.
 - [concept.md](concept.md) – product concept and design (to move into
   `product/`).

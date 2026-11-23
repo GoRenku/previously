@@ -156,6 +156,9 @@ The publish scripts use their own R2 token, kept in the git-ignored
   written by `vite.config.ts` for static assets). Staging is `noindex`.
 - **MCP from browsers:** CORS is open (`*`) and `Origin` is not checked: the
   server is public, read-only and holds no credentials.
+- **Analytics:** PostHog (EU), loaded only after the visitor answers the
+  banner; page views carry show and section. See
+  [operations/analytics.md](../operations/analytics.md) and ADR 0003.
 - **Logs and traces:** Workers Logs and traces, viewable on the Worker's
   page in the Cloudflare dashboard.
 

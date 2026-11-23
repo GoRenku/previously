@@ -10,6 +10,14 @@
       "port": 5180
     },
     {
+      "name": "previously-build",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "preview"
+      ],
+      "port": 5180
+    },
+    {
       "name": "severance-before-s2-long",
       "runtimeExecutable": "node",
       "runtimeArgs": [

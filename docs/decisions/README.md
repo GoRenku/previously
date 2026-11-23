@@ -35,3 +35,4 @@ mark the old one `superseded by NNNN`.
 
 - [0001](0001-serve-content-from-r2.md) Keep content in a private repo and serve it from R2.
 - [0002](0002-workers-with-stateless-mcp.md) Run on Cloudflare Workers with a stateless MCP server.
+- [0003](0003-measure-visits-with-posthog.md) Measure visits with PostHog after a banner answer.

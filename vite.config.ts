@@ -42,7 +42,7 @@ function devContent(): Plugin {
  * The static assets' `_headers` (Workers static assets apply it). Worker
  * responses get the same security headers in worker/http.ts. The CSP allows
  * scripts only from this site, styles and fonts from Google Fonts, YouTube
- * embeds, and https images (mirrored to media.previously.fyi once published;
+ * embeds, PostHog's EU endpoint (src/analytics.ts), and https images (mirrored to media.previously.fyi once published;
  * on their original hosts under `pnpm content:local`).
  */
 function staticHeaders(): Plugin {
@@ -54,7 +54,7 @@ function staticHeaders(): Plugin {
     'font-src https://fonts.gstatic.com',
     "img-src 'self' data: https:",
     'frame-src https://www.youtube-nocookie.com',
-    "connect-src 'self'",
+    "connect-src 'self' https://eu.i.posthog.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

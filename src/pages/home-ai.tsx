@@ -19,7 +19,7 @@ export function AskAI() {
       <ChatDemo name={AI_APPS.find((a) => a.id === app)!.chat} />
 
       <div className="home-ai-setup">
-        <AiSetup example="I’m about to start Severance season 2. Who is Petey again?" onApp={setApp} />
+        <AiSetup example="I’m about to start Severance season 2. Who is Petey again?" onApp={setApp} placement="home" />
       </div>
     </section>
   );

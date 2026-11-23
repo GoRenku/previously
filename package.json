@@ -29,6 +29,7 @@
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
     "agents": "0.33.0",
+    "posthog-js": "1.450.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.5",

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fmt, searchShow, type GCharacter, type GWorld, type SearchHit } from '../api';
 import { Ep, Icon, Locked, Portrait, YouTube } from '../components';
 import { AiSetup } from '../ai-setup';
+import { track } from '../analytics';
 import { FactList } from './characters';
 import { useShow } from './Show';
 import { Mentions, Paras } from '../mentions';
@@ -189,7 +190,7 @@ export function World() {
 /* ─────────────── Clips ─────────────── */
 
 export function Clips() {
-  const { view, theme } = useShow();
+  const { view, theme, showId } = useShow();
   return (
     <div className="page">
       <h2 className="display page-title">Clips & trailers</h2>
@@ -198,7 +199,7 @@ export function Clips() {
         <div className="clip-grid">
           {view.clips.map((c) => (
             <div key={c.id} className="clip">
-              <YouTube id={c.youtubeId} title={c.title} />
+              <YouTube id={c.youtubeId} title={c.title} onPlay={() => track('clip_played', { show_id: showId, clip_id: c.id, kind: c.kind })} />
               <div className="t">{c.title}</div>
               <div className="d"><Mentions text={c.description} /> <span className="kicker" style={{ fontSize: 10 }}>{c.channel} · {c.kind}</span></div>
             </div>
@@ -222,7 +223,11 @@ export function Ask() {
   const { view, showId, next } = useShow();
   const [q, setQ] = useState('');
   const [hits, setHits] = useState<SearchHit[] | null>(null);
-  const run = (text: string) => { setQ(text); if (text.trim()) searchShow(showId, next, text).then(setHits); };
+  const run = (text: string, suggested = false) => {
+    setQ(text);
+    if (!text.trim()) return;
+    searchShow(showId, next, text).then((h) => { setHits(h); track('ask_searched', { show_id: showId, results: h.length, suggested }); });
+  };
   const suggestions = useMemo(() => {
     const s: string[] = [];
     const top = view.characters.slice(0, 3).map((c) => `Who is ${c.name.split(/[ /]/)[0]}?`);
@@ -242,7 +247,7 @@ export function Ask() {
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. why does Mark work at Lumon?" aria-label="Ask a question" />
         <button className="btn btn-primary btn-sm" type="submit">Ask</button>
       </form>
-      <div className="suggest">{suggestions.map((s) => <button key={s} className="chip" onClick={() => run(s)}>{s}</button>)}</div>
+      <div className="suggest">{suggestions.map((s) => <button key={s} className="chip" onClick={() => run(s, true)}>{s}</button>)}</div>
       {hits && (hits.length ? (
         <div className="hits">
           {hits.map((h, i) => (
@@ -258,7 +263,7 @@ export function Ask() {
         <div className="side-card">
           <h3 className="display">Ask from Claude or ChatGPT</h3>
           <p className="muted" style={{ marginTop: 0 }}>Add Previously to the AI app you already use, then ask in your own words. Tell it where you are, and it only ever answers from before that point.</p>
-          <AiSetup example={`I’m about to ${startLine(view.position.nextUp)} of ${view.meta.title}. Catch me up.`} />
+          <AiSetup example={`I’m about to ${startLine(view.position.nextUp)} of ${view.meta.title}. Catch me up.`} placement="ask" />
         </div>
         <div className="side-card">
           <h3 className="display">What you can ask</h3>

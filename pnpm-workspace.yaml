@@ -8,7 +8,8 @@ minimumReleaseAgeIgnoreMissingTime: false
 trustLockfile: false
 verifyDepsBeforeRun: warn
 allowBuilds:
-  core-js-pure: false   # postinstall only prints a funding banner
+  core-js: false # postinstall only prints a funding banner (posthog-js dependency)
+  core-js-pure: false # postinstall only prints a funding banner
   esbuild: true
   workerd: false
 

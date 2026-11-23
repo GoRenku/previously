@@ -4,6 +4,8 @@ import { getShow, savedPosition, savePosition, fmt, type GatedShow, type ShowVie
 import { Brand, Ep, Icon, Locked, Portrait, PositionPicker } from '../components';
 import { themeOrApp, themeStyle, type ShowTheme } from '../themes';
 import { MentionProvider, Mentions, Paras } from '../mentions';
+import { track } from '../analytics';
+import { PrivacyLinks } from '../consent';
 
 interface Ctx { view: GatedShow; theme: ShowTheme; showId: string; next: string; openPicker: () => void }
 const ShowCtx = createContext<Ctx | null>(null);
@@ -25,7 +27,7 @@ export function ShowLayout() {
   useEffect(() => { window.scrollTo({ top: 0 }); }, [loc.pathname]);
   useEffect(() => { if (view) document.title = `${view.meta.title} — Previously`; }, [view]);
 
-  const pick = (code: string) => { savePosition(id, code); setNext(code); setPicker(false); };
+  const pick = (code: string) => { savePosition(id, code); setNext(code); setPicker(false); track('position_set', { show_id: id, up_next: code, placement: 'picker' }); };
   const ctx = useMemo(() => (view && next ? { view, theme, showId: id, next, openPicker: () => setPicker(true) } : null), [view, theme, id, next]);
   const isIndex = /^\/show\/[^/]+\/?$/.test(loc.pathname);
 
@@ -79,6 +81,7 @@ export function ShowLayout() {
         <div className="wrap footer-inner">
           <span>{theme.copy.footer ?? 'Previously — prototype.'} Spoiler-safe through {view?.position.through === 'S0E0' ? 'the premise' : fmt(view?.position.through ?? '')}.</span>
           <span>Data & images: <a href="https://www.tvmaze.com" target="_blank" rel="noreferrer">TVmaze</a> (CC BY-SA) and others · Images © their owners · Not affiliated with {view?.meta.network ?? 'the network'}.</span>
+          <PrivacyLinks />
         </div>
       </footer>
 

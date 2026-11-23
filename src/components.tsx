@@ -178,14 +178,14 @@ export function StatusBadge({ status }: { status?: string }) {
 }
 
 /* ── YouTube, loaded only on click (privacy-enhanced domain) ── */
-export function YouTube({ id, title }: { id: string; title: string }) {
+export function YouTube({ id, title, onPlay }: { id: string; title: string; onPlay?: () => void }) {
   const [on, setOn] = useState(false);
   return (
     <div className="frame">
       {on ? (
         <iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
       ) : (
-        <button onClick={() => setOn(true)} aria-label={`Play ${title}`}>
+        <button onClick={() => { setOn(true); onPlay?.(); }} aria-label={`Play ${title}`}>
           <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" style={{ position: 'absolute', inset: 0 }} />
           <span className="play" style={{ position: 'relative' }}><Icon.play /></span>
         </button>

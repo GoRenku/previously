@@ -4,11 +4,13 @@
  * service. The YouTube recaps are content here, not a link in the footer.
  * Videos come from each show's `videos.json` through `/api/catalog`.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCatalog, savePosition, savedPosition, fmt, ord, type CatalogShow, type CatalogVideo } from '../api';
 import { Brand, Icon } from '../components';
 import { AskAI, AskIcon } from './home-ai';
+import { track } from '../analytics';
+import { PrivacyLinks } from '../consent';
 import './home.css';
 
 const SLIDE_MS = 9000;
@@ -31,7 +33,10 @@ export default function Home() {
   const [solid, setSolid] = useState(false);
   const nav = useNavigate();
   /** Set the spoiler line (when given) and open the show, already caught up to it. */
-  const go = (id: string, code?: string) => { if (code) savePosition(id, code); nav(`/show/${id}`); };
+  const go = (id: string, code?: string) => {
+    if (code) { savePosition(id, code); track('position_set', { show_id: id, up_next: code, placement: 'home' }); }
+    nav(`/show/${id}`);
+  };
 
   useEffect(() => { document.title = 'Previously — catch up without spoilers'; }, []);
   useEffect(() => { getCatalog().then(setShows, (e: Error) => setError(e.message)); }, []);
@@ -56,9 +61,14 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [slide, paused, playing, ready.length]);
 
+  const play = (showId: string, placement: 'hero' | 'rail') => (v: Video) => {
+    track('recap_played', { show_id: showId, up_to: v.upTo, placement });
+    setPlaying(v);
+  };
+
   return (
-    <div className="home">
-      <header className={`home-head ${solid ? 'solid' : ''}`}>
+    <div className="home" onClickCapture={trackYouTube} onAuxClick={(e) => { if (e.button === 1) trackYouTube(e); }}>
+      <header className={`home-head ${solid ? 'solid' : ''}`} data-placement="header">
         <Brand />
         <nav className="home-nav">
           <a href="#recaps">Recaps</a>
@@ -70,9 +80,9 @@ export default function Home() {
         <a className="home-sub" href={CHANNEL.subscribe} target="_blank" rel="noreferrer"><YtIcon size={13} /><span>Subscribe</span></a>
       </header>
 
-      <section className="home-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} aria-roledescription="carousel" aria-label="Ready to catch up">
+      <section className="home-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} aria-roledescription="carousel" aria-label="Ready to catch up" data-placement="hero">
         {ready.map((s, i) => (
-          <HeroSlide key={s.id} show={s} active={i === slide} onPlay={setPlaying} onGo={() => go(s.id)} />
+          <HeroSlide key={s.id} show={s} active={i === slide} onPlay={play(s.id, 'hero')} onGo={() => go(s.id)} />
         ))}
         {ready.length > 1 && (
           <div className="home-hero-dots">
@@ -92,7 +102,7 @@ export default function Home() {
         {/* Wait for the catalog: with the subscribe card alone in the row, the row re-snaps to it when the videos arrive. */}
         {shows.length > 0 && (
           <Rail id="recaps" title="Recaps on YouTube" note={<a href={CHANNEL.url} target="_blank" rel="noreferrer">{CHANNEL.handle} <Icon.arrow /></a>}>
-            {videos.map(({ show, video }) => <VideoCard key={`${show.id}/${video.id}`} video={video} show={show} onPlay={setPlaying} />)}
+            {videos.map(({ show, video }) => <VideoCard key={`${show.id}/${video.id}`} video={video} show={show} onPlay={play(show.id, 'rail')} />)}
             <a className="home-video home-video-next" href={CHANNEL.subscribe} target="_blank" rel="noreferrer">
               <div className="frame"><span className="mark"><Icon.rewind size={30} /></span><span className="line">Every returning season gets one.</span></div>
               <div className="t">Your show next?</div>
@@ -126,7 +136,7 @@ export default function Home() {
           </Rail>
         )}
 
-        <section className="home-channel">
+        <section className="home-channel" data-placement="channel">
           <div className="home-channel-art" aria-hidden>
             <div className="avatar"><Icon.rewind size={44} /></div>
             <Timeline />
@@ -146,11 +156,21 @@ export default function Home() {
       <footer className="home-foot">
         <span>Previously. Not affiliated with any studio or streamer.</span>
         <span>Show data and images via <a href="https://www.tvmaze.com/api" target="_blank" rel="noreferrer">TVmaze</a> (CC BY-SA). Images © their owners.</span>
+        <PrivacyLinks />
       </footer>
 
       <Player video={playing} onClose={() => setPlaying(null)} />
     </div>
   );
+}
+
+/** Counts clicks on YouTube links (Yes visitors only): which link, and where on the page. */
+function trackYouTube(e: MouseEvent) {
+  const a = (e.target as Element).closest<HTMLAnchorElement>('a[href*="youtube.com"]');
+  if (!a) return;
+  const target = a.href.includes('sub_confirmation') ? 'subscribe' : a.href.includes('/watch') ? 'watch' : 'channel';
+  const placement = a.closest<HTMLElement>('[data-placement]')?.dataset.placement ?? (a.closest('#recaps') ? 'recaps' : 'page');
+  track('youtube_clicked', { target, placement });
 }
 
 /* ── the hero ── */
@@ -322,7 +342,7 @@ function Player({ video, onClose }: { video: Video | null; onClose: () => void }
   }, [video, onClose]);
   if (!video) return null;
   return (
-    <div className="home-player" role="dialog" aria-modal="true" aria-label="Recap video" onClick={onClose}>
+    <div className="home-player" data-placement="player" role="dialog" aria-modal="true" aria-label="Recap video" onClick={onClose}>
       <div className="home-player-frame" onClick={(e) => e.stopPropagation()}>
         <iframe src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&modestbranding=1`} title={video.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
       </div>
