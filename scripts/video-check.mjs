@@ -28,7 +28,7 @@ if (!ledger) { console.error(`no shows/${showId}/reveals.json in the content rep
 
 // Terms the viewer at `position` must not meet: revealed at or after it, or never.
 const checks = ledgerChecks(ledger).filter((c) => ord(c.at) >= ord(position));
-const SKIP_DIRS = new Set(['renders', 'takes', 'node_modules', '.hyperframes', '.git']);
+const SKIP_DIRS = new Set(['renders', 'takes', 'node_modules', '.hyperframes', '.waveform-cache', '.thumbnails', '.git']);
 const TEXT = new Set(['.md', '.html', '.htm', '.js', '.mjs', '.css', '.json', '.srt', '.vtt', '.txt', '.yaml', '.yml']);
 const EPISODE_PREFIX = /(^|[^a-z0-9])(s\d+e\d+)-[a-z0-9]/gi; // S1E3-two-shot.jpg, assets/stills/S2E1-...
 const KEBAB = /[a-z0-9]+(?:-[a-z0-9]+)+/g;

@@ -4,7 +4,9 @@
     {
       "name": "previously",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev"],
+      "runtimeArgs": [
+        "dev"
+      ],
       "port": 5180
     },
     {
@@ -20,6 +22,20 @@
         "--no-open"
       ],
       "port": 3031
+    },
+    {
+      "name": "3-body-problem-before-s2-long",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/keremk/.claude/plugins/cache/hyperframes/hyperframes/0.9.85/skills/hyperframes/scripts/plugin-cli.mjs",
+        "preview",
+        "/Users/keremk/Projects/aitinkerbox/previously-content/videos/3-body-problem/before-s2/long",
+        "--port",
+        "3032",
+        "--foreground",
+        "--no-open"
+      ],
+      "port": 3032
     }
   ]
 }
