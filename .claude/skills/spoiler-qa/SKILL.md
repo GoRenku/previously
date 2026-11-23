@@ -54,6 +54,8 @@ Give a new agent the spoiler-model skill, `reveals.json` and the data files, and
 - **Names:** every name must be confirmed **said on screen** by a recap, not just credited.
 - **Images:** look at each image tagged before a reveal involving that character. Use a contact sheet for speed, and check props and settings too (a rifle barrel or a siege setting in an "early" promo still).
 - **Official explainers:** the streamer often publishes ending explainers and features on release day. They settle "contested" items, so check the official hub and its related articles.
+- **Loglines against their own episode.** A logline shows as the teaser one episode early, so it must not paraphrase that episode's twists, and it must not answer an open question shown next to it.
+- **Adaptations: book framing, not just book names.** A term scan catches book names; it can't catch the book's *reading* of a scene the show leaves open, or a detail (a nationality, a motive) the show never gives. These arrive through Wikipedia and creator commentary. Ask the auditor to flag anything the per-episode recaps don't state.
 
 It should report each disagreement with episode codes and sources. Fix what it finds, then add any missing reveals to the ledger so the scans cover them from now on.
 

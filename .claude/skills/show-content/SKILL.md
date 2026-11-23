@@ -44,7 +44,7 @@ Depth beats breadth. Three or four characters with full arcs are worth more than
 
 ### episodes.json (writer A)
 - Use TVmaze for `title`, `airDate`, `runtimeMin` and `still`. The title is corrected only where the brief cites the on-screen card or the streamer's spelling. Credit stills as `source: "TVmaze"`, `license: "Promotional still (© <network>)"`.
-- `logline`: one spoiler-free sentence, shown as the teaser when the episode is up next.
+- `logline`: one spoiler-free sentence, shown as the teaser when the episode is up next, so **one episode before it airs for the reader**. It must not paraphrase its own episode's twists ("the keeper faces the hardest choice of his life" beside an open "who will go?" question answers it).
 - `summary`: 150–230 words in 1–3 paragraphs covering the main plot and every subplot thread, in present tense.
 - `keyMoments`: 4–7 bullets.
 - `leftOff`: 1–3 sentences on the situation as the episode ends. This powers "Where we left off". Make it specific.

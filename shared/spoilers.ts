@@ -269,7 +269,10 @@ export function gate(data: ShowData, position: Position): GatedShow {
       };
     });
 
-  const raised = data.questions.filter((q) => seen(q.raisedAt, through));
+  // a question links to its storyline only once that storyline is visible (the id alone can leak, e.g. a ship not yet seen)
+  const visibleStory = new Set(storylines.map((s) => s.id));
+  const raised = data.questions.filter((q) => seen(q.raisedAt, through))
+    .map((q) => (q.storyline && !visibleStory.has(q.storyline) ? { ...q, storyline: undefined } : q));
   const questions = {
     open: raised.filter((q) => !q.answeredAt || !seen(q.answeredAt, through)).map(({ answer, answeredAt, ...q }) => q),
     answered: raised.filter((q) => q.answeredAt && seen(q.answeredAt, through)),
