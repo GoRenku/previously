@@ -271,5 +271,22 @@ Shorts aren't made yet. When the first one is, write its steps here.
     why", and comes back among the open questions at the end. Shown without
     that, it reads as something the film forgot to explain.
 
+**From the third film (a science-fiction thriller, ~14 minutes):**
+
+24. **Re-read every earlier note before the proof.** Its first proof went
+    back on two notes the user had already given:
+    - flat line drawings in place of screen-grab-quality ones;
+    - names as lower thirds instead of beside the faces.
+
+    The user had to say both again. Before building, list the earlier
+    films' "The User's Words" and the bible's lessons, and how this proof
+    meets each. For *Harbor Light*, a wreck on the reef wants a Three.js
+    white model (contour board, a hull in slabs), not a hairline profile.
+25. **Check every term's first use at the script gate.** "The keeper's
+    lens" can't appear in the storm chapter if no earlier movement said
+    what the lens does.
+26. **A role-only tag still needs a face:** the person must be visible and
+    turned to camera.
+
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
