@@ -7,7 +7,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { fmt, savedPosition, ord, type CatalogShow } from '../../api';
 import { Icon } from '../../components';
-import { CHANNEL, LabSwitcher, Player, RECAPS, YtIcon, airLabel, recapFor, showFace, thumb, useGoTo, useLabData, type Recap, type ShowExtra } from './shared';
+import { CHANNEL, LabSwitcher, Player, RECAPS, YtIcon, airLabel, logoBlend, recapFor, showFace, thumb, useGoTo, useLabData, type Recap, type ShowExtra } from './shared';
 import './lab.css';
 import './b.css';
 
@@ -150,7 +150,7 @@ function Chapter({ n, show, extra, onPlay, onGo }: { n: number; show: CatalogSho
         <div className="hb-lower">
           <i className="rule" />
           {logo
-            ? <img className={`logo ${show.theme?.logo?.invert ? 'invert' : ''}`} src={extra!.logo} alt={show.title} />
+            ? <img className={`logo ${logoBlend(show)}`} src={extra!.logo} alt={show.title} />
             : <div className="t" style={showFace(show)}>{show.title}</div>}
           <div className="s">{show.network} · {show.seasons} seasons{episodes ? ` · ${episodes} episodes recapped` : ''}</div>
         </div>

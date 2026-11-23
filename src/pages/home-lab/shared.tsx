@@ -86,6 +86,12 @@ export const showFace = (show: CatalogShow) => {
   return v['--font-display'] ? { fontFamily: v['--font-display'], fontWeight: Number(v['--display-weight']) || undefined, letterSpacing: v['--display-tracking'], textTransform: v['--display-case'] as 'uppercase' | undefined } : undefined;
 };
 
+/**
+ * How a show's wordmark sits on a dark picture, from its theme: `invert` for a
+ * dark-on-white logo, `screen` for a light-on-black one (the black drops out).
+ */
+export const logoBlend = (show: CatalogShow) => (show.theme?.logo?.invert ? 'invert' : show.theme?.logo?.screen ? 'screen' : '');
+
 /* ── icons the prototypes add ── */
 export const YtIcon = ({ size = 18 }: { size?: number }) => (
   <svg viewBox="0 0 28 20" width={size * 1.4} height={size} aria-hidden><rect width="28" height="20" rx="5.5" fill="currentColor" /><path d="M11 5.8v8.4l7.2-4.2z" fill="var(--yt-hole, #0c0b0a)" /></svg>

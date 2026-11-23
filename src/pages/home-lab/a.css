@@ -64,6 +64,7 @@
 .ha-slide h1 { margin: 0; }
 .ha-logo { height: clamp(64px, 8vw, 104px); width: auto; max-width: 100%; display: block; }
 .ha-logo.invert { filter: invert(1); mix-blend-mode: screen; }
+.ha-logo.screen { mix-blend-mode: screen; }
 .ha-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: rgba(243, 238, 230, .72); }
 .ha-meta span + span::before { content: "·"; margin-right: 16px; color: rgba(243, 238, 230, .35); }
 .ha-meta .line { color: var(--ink); }

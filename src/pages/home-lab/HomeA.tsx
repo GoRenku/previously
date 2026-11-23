@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { savedPosition, fmt, ord, type CatalogShow } from '../../api';
 import { Brand, Icon } from '../../components';
-import { CHANNEL, LabSwitcher, MCP_URL, Player, RECAPS, YtIcon, airLabel, daysUntil, recapFor, showFace, thumb, useGoTo, useLabData, type Recap, type ShowExtra } from './shared';
+import { CHANNEL, LabSwitcher, MCP_URL, Player, RECAPS, YtIcon, airLabel, daysUntil, logoBlend, recapFor, showFace, thumb, useGoTo, useLabData, type Recap, type ShowExtra } from './shared';
 import './lab.css';
 import './a.css';
 
@@ -75,7 +75,8 @@ export default function HomeA() {
       <main className="ha-main">
         {error && <p className="ha-empty">{error}</p>}
 
-        <Rail id="recaps" title="Recaps on YouTube" note={<a href={CHANNEL.url} target="_blank" rel="noreferrer">{CHANNEL.handle} <Icon.arrow /></a>}>
+        {/* Wait for the catalog: with the subscribe card alone in the row, the row re-snaps to it when the videos arrive. */}
+        {shows.length > 0 && <Rail id="recaps" title="Recaps on YouTube" note={<a href={CHANNEL.url} target="_blank" rel="noreferrer">{CHANNEL.handle} <Icon.arrow /></a>}>
           {RECAPS.map((r) => {
             const s = shows.find((x) => x.id === r.showId);
             return s ? <VideoCard key={r.youtubeId} recap={r} show={s} onPlay={setPlaying} /> : null;
@@ -85,7 +86,7 @@ export default function HomeA() {
             <div className="t">Your show next?</div>
             <div className="s">Subscribe and the next recap finds you.</div>
           </a>
-        </Rail>
+        </Rail>}
 
         <Rail id="shows" title="Catch up to any episode" note={<span>Pick the episode you're about to watch. Nothing past it shows up.</span>}>
           {ready.map((s) => <ShowCard key={s.id} show={s} extra={extra[s.id]} onGo={(code) => go(s.id, code)} />)}
@@ -147,7 +148,7 @@ function HeroSlide({ show, extra, active, onPlay, onGo }: { show: CatalogShow; e
         <div className="ha-kicker">{recap?.live ? 'New recap · on YouTube' : recap ? 'Recap premieres soon' : 'Ready to catch up'}</div>
         <div className="ha-prev">Previously on</div>
         {logo
-          ? <h1><img className={`ha-logo ${show.theme?.logo?.invert ? 'invert' : ''}`} src={extra!.logo} alt={show.title} /></h1>
+          ? <h1><img className={`ha-logo ${logoBlend(show)}`} src={extra!.logo} alt={show.title} /></h1>
           : <h1 className="ha-title" style={showFace(show)}>{show.title}</h1>}
         <div className="ha-meta">
           <span>{show.network}</span>
