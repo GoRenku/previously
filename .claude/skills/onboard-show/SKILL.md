@@ -101,4 +101,23 @@ That last request is how the skills improve.
 24. **Every id list is a surface.** After the membership fix, the live scan still caught episode cast lists sending ids of on-screen-but-unnamed characters (at S1E1 and S2E1). The gate now filters every id list to visible entities.
 25. **Choose neutral ids on day one.** Renaming ids late touches every file. In this run an agent's bulk renames were blocked by the permission classifier and had to go back to the user. Use neutral descriptive ids (`second-assassin`, `the-nanny`) for anyone whose name might be credit-only or revealed later.
 
+**From 3 Body Problem (show 3).** An adaptation of a novel trilogy, eight episodes, written from fetched sources with a season 2 premiere seven weeks out.
+
+26. **Adaptations leak through framing, not names.** The novels' names and later concepts went into `never` and no writer used one. The audit still found two book leaks the scans can't see. One was the novels' reading of a scene the show leaves open: an unexplained riddle described as "a cipher the Guild can't read". The other was a nationality the show never gives. Both came in through Wikipedia, which mixes in book lore. The auditor now reads for book framing (`spoiler-qa`).
+27. **Loglines tease their own episode one episode early.** One logline paraphrased its episode's twist and, next to an open question, answered it. No term check sees that. `show-content` and the audit checklist now say so.
+28. **Every link is a surface, again.** A question linked to a storyline that appeared one episode later, and the storyline's id named a place not yet seen. **The gate now drops a question's storyline link until the storyline is visible**, the same structural fix as lessons 16 and 24.
+29. **A title can coin its own term.** The finale's title is the word the finale introduces. The ledger splits it into a guard on the bare word (at the teaser's position) and a reveal for its meaning (`spoiler-model`).
+30. **New ledger entries catch old text.** Adding the audit's reveals to the ledger flagged one more early mention in an episode summary the audit hadn't named. Add the audit's reveals before re-running the checks, not after.
+31. **Key art: TVmaze's main poster was the coming season's teaser**, and its image list held a book cover. The chosen backdrop had the title baked in; TMDB's `image_language=xx` listing had the same art textless (`show-theme`).
+32. **The streamer's recaps name people the way the credits do.** For when a name is first said, the recap that sticks to on-screen names is the better guide (`show-research`).
+33. **Rough cost for an 8-episode show:**
+
+    | Step | Wall time |
+    |---|---|
+    | Research | ~26 min |
+    | 3 writers in parallel | 15–23 min (first passes saved within ~10 min) |
+    | Theme, in parallel with the writers | ~25 min, including a new lock motif |
+    | Audit | ~15 min, then ~10 min of fixes |
+    | **Total, end to end** | **~1.5 h**, plus orchestration |
+
 **Next show:** append your lessons here. If a check missed something, change a check or the gate, not just the data.

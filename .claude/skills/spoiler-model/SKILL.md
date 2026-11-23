@@ -59,12 +59,14 @@ None of these are spoiler-safe. Use them for facts, never for structure or timin
 - **Fandom wikis** are written from the latest season's point of view.
 - **Later-season key art, episode stills and YouTube end screens** can show later events.
 - **Your own memory of the show** blurs episode boundaries. Verify the episode of every reveal against a per-episode source.
+- **Fetched summaries mislabel time strands.** A WebFetch summary of a recap can call a flashback "present day". Check strand and year against a second recap.
 - **Recap URLs** carry spoiler slugs ("who-is-mrs-lisle"). They belong in research notes and `reveals.json`, never in user-visible fields.
 
 ## Ledger terms that work
 - **Whole, distinctive strings.** Single first names collide with other characters and with actors: "Rose" matches the actor Emma *Rose* Hale. Use "Rose Kell". (The checks skip `actor` credits, but they can't skip prose.)
 - **Short terms ("Ada", "Tom", "Reyes") also hit ids** that contain them as a segment, so prefer full names.
 - **Episode titles count one episode early.** The next episode's title shows as a teaser. If a title contains a reveal term ("Ada's Lantern"), the reveal's `at` can be no later than the episode before it.
+- **A title can be the very word its episode coins.** Say S1E9 is called "Lamplighter" and only S1E9 explains what a lamplighter is. Split it: a guard reveal on the bare word at S1E8 (the teaser's position, so nothing earlier uses it) and a separate reveal at S1E9 for what it means, with the longer phrases as its terms. The S1E9 logline, visible at S1E8, must not explain the word.
 - **Terms catch names, not paraphrased twists.** "Ada is alive" can be written a hundred ways. The independent audit in `spoiler-qa` reads each position against the ledger's `what` for exactly this.
 
 ## Names and display

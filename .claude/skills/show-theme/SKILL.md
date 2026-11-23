@@ -17,13 +17,14 @@ Severance taught two lessons here:
 - **My first display font was a guess** (Archivo, wide). The real wordmark turned out to be a tight, heavy grotesque, so the theme switched to Inter Tight at 650 with −3.5% tracking. Match the wordmark's genre: serif or sans, condensed or wide, weight, tracking.
 
 Also check:
-- **Is it spoiler-safe?** Prefer earliest-season artwork. Later key art can reveal characters, costumes or settings.
+- **Is it spoiler-safe?** Prefer earliest-season artwork. Later key art can reveal characters, costumes or settings. **TVmaze's `main` poster is often the newest season's key art** (a teaser for the coming season), and its image list can include unrelated art such as a book cover.
+- **Need a textless version?** Backdrops with the title baked in clash with the hero's own title. TMDB's image page lists textless art: `https://www.themoviedb.org/tv/<tmdbId>/images/backdrops?image_language=xx`, served from `https://image.tmdb.org/t/p/original/<file>.jpg`. Publishing mirrors images from any host.
 - **Where's the focal point?** The hero darkens the bottom and the home card darkens the left, so a subject on the right or centre works best.
 
 ## 2. Hero logo
 Use only a real **typography** image as the logo: a horizontal wordmark. TVmaze sometimes files vertical title cards (1080×1920, white text on a dark vignette) under "poster"; Black Doves only had one of those. Without a usable wordmark, leave the theme's `logo` unset and the title renders in the display font. That's why the display font must match the wordmark.
 
-If TVmaze has a `typography` image, use it as `meta.images.logo` and set `logo: { invert, height }`. A black-on-white JPEG becomes white-on-transparent with `invert: true` (CSS `invert(1)` plus `mix-blend-mode: screen`). With no logo, the title renders in the display font.
+If TVmaze has a `typography` image, use it as `meta.images.logo` and set `logo: { invert, height }`. A black-on-white JPEG becomes white-on-transparent with `invert: true` (CSS `invert(1)` plus `mix-blend-mode: screen`). A light-on-black wordmark, especially one with a colour in it, takes `screen: true` instead: the black drops out and the colours stay. With no logo, the title renders in the display font.
 
 ## 3. Tokens (`theme.json` → `vars`)
 
@@ -51,7 +52,7 @@ Copy a finished show's `theme.json` as the starting point.
 | `--radius`, `--radius-lg` | Sharp for corporate or clinical shows, softer for warm ones. |
 
 ## 4. Lock motif (sealed content)
-This is the one place a theme may add code, and the only reason a new show needs a code deploy. A motif renders inside `<Locked>` in `src/components.tsx`, and it should be the show's own iconic image of hidden information. Severance uses `mdr`: drifting numbers, with the "scary numbers" pulsing. `redact` is the generic default. To add one:
+This is the one place a theme may add code, and the only reason a new show needs a code deploy. A motif renders inside `<Locked>` in `src/components.tsx`, and it should be the show's own iconic image of hidden information. Severance uses `mdr`: drifting numbers, with the "scary numbers" pulsing. Black Doves uses `classified`: a stamped file. 3 Body Problem uses `countdown`: a faint timer whose seconds tick down in CSS. `redact` is the generic default. To add one:
 1. Extend the `Motif` type in `shared/theme.ts` and the list in `scripts/validate-data.mjs`.
 2. Add a branch in `Locked`, with CSS in `src/styles.css`.
 3. Respect `prefers-reduced-motion`.

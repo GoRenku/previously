@@ -8,7 +8,8 @@ description: Phase 2 of adding a show to Previously. Writes the spoiler-gated co
 ## Before you start
 1. Read `.claude/skills/spoiler-model/SKILL.md`. It is not optional.
 2. Read `../previously-content/shows/<id>/_research/brief.md` and `../previously-content/shows/<id>/reveals.json`. All your files go in that folder (see the `onboard-show` skill).
-   - **The ledger decides *when* something is revealed. The brief's coverage tier decides *what* is solid enough to write.** A detail in a ledger `what` that has a single source does not license prose in a Core-tier season.
+   - **Words that are natural to use early can be later terms.** The brief's Traps list them (a world described as "three-mooned" before the episode that names its three moons); check yours against `reveals.json` before writing early episodes.
+  - **The ledger decides *when* something is revealed. The brief's coverage tier decides *what* is solid enough to write.** A detail in a ledger `what` that has a single source does not license prose in a Core-tier season.
    - **The brief overrides this skill's defaults**, such as lengths for thin seasons and title spellings it has sourced.
    - If a source convinces you the ledger is wrong, report it; don't quietly diverge.
    - **The source bar overrides the brief's `firstAppears` too.** If the evidence for something starts later than the brief says, tag it later and report the change (on Black Doves one world entry moved from S2E5 to S2E6). Moving something later is always safe; moving it earlier needs the orchestrator.
@@ -43,7 +44,7 @@ Depth beats breadth. Three or four characters with full arcs are worth more than
 
 ### episodes.json (writer A)
 - Use TVmaze for `title`, `airDate`, `runtimeMin` and `still`. The title is corrected only where the brief cites the on-screen card or the streamer's spelling. Credit stills as `source: "TVmaze"`, `license: "Promotional still (© <network>)"`.
-- `logline`: one spoiler-free sentence, shown as the teaser when the episode is up next.
+- `logline`: one spoiler-free sentence, shown as the teaser when the episode is up next, so **one episode before it airs for the reader**. It must not paraphrase its own episode's twists ("the keeper faces the hardest choice of his life" beside an open "who will go?" question answers it).
 - `summary`: 150–230 words in 1–3 paragraphs covering the main plot and every subplot thread, in present tense.
 - `keyMoments`: 4–7 bullets.
 - `leftOff`: 1–3 sentences on the situation as the episode ends. This powers "Where we left off". Make it specific.
@@ -55,13 +56,13 @@ Official channels only: the network's or streamer's own YouTube channels, includ
 ```bash
 curl -s "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=<ID>&format=json"
 ```
-Keep a clip only if this returns JSON whose title matches and whose author is the official channel. Set `at` to the first position where watching it spoils nothing: S0E0 for season 1 trailers, the previous season's finale for a new season's trailer, and the scene's episode or later for scene clips.
+Keep a clip only if this returns JSON whose title matches and whose author is the official channel. When checking many ids, use a small script that parses the JSON; a shell loop over curl output is easy to misread (on 3 Body Problem it reported every id invalid). Leave out clips whose scene you can't place, and featurettes that may use credit-only names. Set `at` to the first position where watching it spoils nothing: S0E0 for season 1 trailers, the previous season's finale for a new season's trailer, and the scene's episode or later for scene clips.
 
 ### characters.json (writer B)
 - `names`, `roles`, `group`, `status` and `images` are gated arrays, ascending. **`group` must be one of `show.json` → `groups`.** Names are short (≤3 words, no parentheses).
 - `facts`: 12–20 for the arc characters, 6–12 for other main cast, and 1–5 for minor characters. Each is atomic and present tense, with `importance` (3 = essential), a `facet` where the show has facets, and `kind`.
 - `relationships`: the label says **who the target is to this character** (Mark → Devon: "Sister"), and it must be spoiler-safe at its `at`. Use `supersededAt` when a relationship turns out to be something else.
-- Identity twists use `mergedInto`, and false beliefs use `supersededAt` + `supersededNote` (see spoiler-model).
+- Identity twists use `mergedInto`, and false beliefs use `supersededAt` + `supersededNote` (see spoiler-model). This applies to early **facts and beats** too, not just relationships: if S1E1 shows a lie as the viewer heard it ("the lantern was her mother's") and S1E6 exposes it, the S1E1 fact keeps its wording and gets `supersededAt: S1E6` and a short note.
 - **`actor` credits are spoilers too.** "Played by X" on a second identity gives the twist away. Set `actor.at` to the reveal episode, or leave the actor off the hidden identity. If a merge target has no safe photo before the merge, leave its `images` empty; after the merge it borrows the alias's photo.
 - **The brief's caps win over the fact targets here.** A Core-tier season's characters will have fewer facts.
 
@@ -76,12 +77,13 @@ This is the flagship content; Mark's arc in `../previously-content/shows/severan
 - 10–14 storylines: the main plot plus every subplot, on every side of the story. `kind` is main / subplot / mystery / relationship.
 - Multiple `summary` versions (2–4 sentences each), plus evolving `stakes`.
 - A beat for **every episode that advances the thread** (1–3 sentences), with `kind`, `importance` and `characters`.
-- Status moves open → resolved / dormant, with gated versions. A thread can go dormant and **reopen**: open → dormant → open is fine.
+- Status moves open → resolved / dormant, with gated versions. A thread can go dormant and **reopen**: open → dormant → open is fine. Don't mark a thread dormant or resolved at an episode that still has a beat for it; the brief's status hints are approximate.
+- **Static `characters` lists hold only people involved from the storyline's `firstAppears`.** Someone who joins later goes in the beat where they join. A later character in an early static list is a membership leak the ledger check can't see.
 - Write beats from the **viewer's** side: what we saw happen, not what a character found out. Sources often blur the two (e.g. "Nora discovers the voice isn't Tom's" vs. the scene showing it to us directly).
 - `questions`: 25–40 of them, phrased as viewers asked them at `raisedAt`, never presupposing the answer, each with `answeredAt` and `answer` if answered. Link each to a `storyline`. Questions still open after the latest episode are the "going into next season" list, and they matter.
 
 ### world.json (writer C)
-20–30 entries. Each has a gated `summary` (one line) and `explainer` (2–4 sentences), facts, and the related `characters` and `storylines`.
+20–30 entries. Each has a gated `summary` (one line) and `explainer` (2–4 sentences), facts, and the related `characters` and `storylines`. **A world entry links to a storyline only once that storyline's visible text contains the entry's exact name** (the gate derives the link). If a link matters, make sure the storyline's summary or a beat uses the name as written, without quote marks around it.
 
 ## Images
 - Order of preference:
@@ -93,7 +95,7 @@ This is the flagship content; Mark's arc in `../previously-content/shows/severan
 - Verify every URL: `curl -sIL --retry 2 <url>` must end in 200 with an image content-type. TVmaze sometimes answers the first request with a 302 to HTML while its cache warms, so retry before rejecting.
 - **Look at every image** before tagging it, because a photo can spoil (a costume, a location, a face that's a twist). If no safe image exists, leave `images` empty; the UI shows a typographic fallback.
 - **Portraits should be in-show, not actor headshots.** Readers recognise people by their look in the show. If TVmaze has only a person photo, use an in-show still instead: a solo still (or one where the person is unambiguous from the credit, e.g. the only woman in a two-shot), with `focus` set to the CSS `object-position` of the person so the 3:4 crop lands on them. Keep the headshot only for the episodes before any in-show image exists.
-- **`stills`: the gallery.** Per-episode IMDb galleries (`imdb.com/title/<episode tt>/mediaindex/`, read in the browser) caption each still with the credited actors, so stills are assigned by credit, never by matching faces. A still's `at` is its own episode (raised to `firstAppears`), so it only shows once that episode is watched. Series-level stills with no episode go at the end of the last aired season unless an official source dates them. `with` lists the other credited characters; the gate drops ones not yet visible. Leave out child actors, stills that are too dark to read, watermarked frames, key art with baked-in text, and identity-merge targets before the merge (the alias's stills join the target after it). Use the CDN's size suffixes (`._V1_QL80_UX1600_.jpg` large, `UX640` thumb, `UY900` portrait) and review every pick on a contact sheet.
+- **`stills`: the gallery.** Per-episode IMDb galleries (`imdb.com/title/<episode tt>/mediaindex/`, read in the browser) caption each still with the credited actors. The grid itself shows no captions (every alt text is "View Poster"): open one image's viewer page and read every image's caption from its embedded `__NEXT_DATA__` with the browser's JavaScript tool. Galleries also hold mis-filed images, so check each pick on the contact sheet rather than trusting the episode. Leave out group stills that include a child actor too. so stills are assigned by credit, never by matching faces. A still's `at` is its own episode (raised to `firstAppears`), so it only shows once that episode is watched. Series-level stills with no episode go at the end of the last aired season unless an official source dates them. `with` lists the other credited characters; the gate drops ones not yet visible. Leave out child actors, stills that are too dark to read, watermarked frames, key art with baked-in text, and identity-merge targets before the merge (the alias's stills join the target after it). Use the CDN's size suffixes (`._V1_QL80_UX1600_.jpg` large, `UX640` thumb, `UY900` portrait) and review every pick on a contact sheet.
 
 ## Style
 - Original prose only; see the copyright guardrails in spoiler-model.
