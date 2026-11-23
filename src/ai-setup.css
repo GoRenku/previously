@@ -1,0 +1,34 @@
+/* The AI app setup (src/ai-setup.tsx): theme tokens only, so it fits the home page and every show's theme, light or dark. */
+
+.ai-setup button { font: inherit; border: 0; cursor: pointer; }
+.ai-tabs { display: flex; gap: 4px; width: fit-content; max-width: 100%; margin: 0 0 22px; padding: 4px; border-radius: 999px; background: var(--surface-2); }
+.ai-tabs button { padding: 9px 16px; border-radius: 999px; background: none; font-size: 14px; font-weight: 550; color: var(--muted); white-space: nowrap; transition: background .2s, color .2s; }
+.ai-tabs button:hover { color: var(--ink); }
+.ai-tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+
+.ai-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; counter-reset: step; }
+.ai-steps li { position: relative; padding-left: 40px; font-size: 15px; line-height: 1.5; color: var(--ink-2); counter-increment: step; }
+.ai-steps li::before { content: counter(step); position: absolute; left: 0; top: -1px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font: 600 12.5px/1 var(--font-mono); }
+.ai-steps b { color: var(--ink); font-weight: 600; }
+.ai-steps q { color: var(--ink); font-weight: 500; quotes: "“" "”"; }
+
+.ai-open { display: flex; width: fit-content; align-items: center; gap: 8px; margin-top: 10px; height: 38px; padding: 0 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; font-weight: 600; text-decoration: none; transition: opacity .2s; }
+.ai-open:hover { opacity: .88; }
+.ai-open svg { width: 15px; height: 15px; }
+
+/* inline-size containment: a long command scrolls inside the field instead of widening the column around it */
+.ai-copy { contain: inline-size; display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 5px 5px 5px 13px; border-radius: 10px; background: var(--surface-2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+.ai-copy code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: 500 13.5px/1.4 var(--font-mono); color: var(--ink); scrollbar-width: none; }
+.ai-copy code::-webkit-scrollbar { display: none; }
+.ai-copy button { flex: none; height: 32px; padding: 0 13px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); font-size: 13px; font-weight: 600; transition: filter .2s; }
+.ai-copy button:hover { filter: brightness(1.08); }
+
+/* the MCP tool behind a capability, for the people who look (the show's Ask tab) */
+.ai-tool { margin-left: 4px; font: 500 11.5px/1 var(--font-mono); color: var(--muted); white-space: nowrap; }
+
+.ai-note { margin: 22px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+@media (max-width: 560px) {
+  .ai-tabs button { padding: 8px 12px; font-size: 13.5px; }
+  .ai-steps li { padding-left: 36px; }
+}

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fmt, searchShow, type GCharacter, type GWorld, type SearchHit } from '../api';
 import { Ep, Icon, Locked, Portrait, YouTube } from '../components';
+import { AiSetup } from '../ai-setup';
 import { FactList } from './characters';
 import { useShow } from './Show';
 import { Mentions, Paras } from '../mentions';
@@ -210,6 +211,13 @@ export function Clips() {
 
 /* ─────────────── Ask ─────────────── */
 
+/** The viewer's position, as they'd say it to their AI: "start season 2", "watch S2·E5", or "start the next season". */
+const startLine = (next?: string | null) => {
+  const m = next ? /^S(\d+)E(\d+)$/.exec(next) : null;
+  if (!next || !m) return 'start the next season';
+  return m[2] === '1' ? `start season ${m[1]}` : `watch ${fmt(next)}`;
+};
+
 export function Ask() {
   const { view, showId, next } = useShow();
   const [q, setQ] = useState('');
@@ -246,19 +254,19 @@ export function Ask() {
         </div>
       ) : <div className="empty">Nothing about that has come up before your episode.</div>)}
 
-      <div className="two-col" style={{ marginTop: 56 }}>
+      <div className="two-col ask-ai" style={{ marginTop: 56 }}>
         <div className="side-card">
           <h3 className="display">Ask from Claude or ChatGPT</h3>
-          <p className="muted" style={{ marginTop: 0 }}>Connect Previously as an MCP server, then tell your assistant where you are — e.g. “I'm about to start {view.position.nextUp ? fmt(view.position.nextUp) : 'the next season'} of {view.meta.title}”. The server only ever returns content from before that point.</p>
-          <div className="code">claude mcp add --transport http \{'\n'}  previously {location.origin}/mcp</div>
+          <p className="muted" style={{ marginTop: 0 }}>Add Previously to the AI app you already use, then ask in your own words. Tell it where you are, and it only ever answers from before that point.</p>
+          <AiSetup example={`I’m about to ${startLine(view.position.nextUp)} of ${view.meta.title}. Catch me up.`} />
         </div>
         <div className="side-card">
-          <h3 className="display">Tools it exposes</h3>
+          <h3 className="display">What you can ask</h3>
           <ul className="moments">
-            <li><b>catch_me_up</b> — where it left off, story so far, open questions</li>
-            <li><b>get_character</b> / <b>list_characters</b> — spoiler-safe dossiers</li>
-            <li><b>get_episode</b> — refuses anything past your episode</li>
-            <li><b>list_storylines</b>, <b>lookup</b>, <b>search</b></li>
+            <li><b>Catch me up.</b> Where it left off, the story so far, and the questions still open. <span className="ai-tool">catch_me_up</span></li>
+            <li><b>Who is this again?</b> Anyone you’ve met, as of your episode. <span className="ai-tool">get_character</span></li>
+            <li><b>What happened in that episode?</b> Any episode you’ve seen. Ones you haven’t, it won’t tell you. <span className="ai-tool">get_episode</span></li>
+            <li><b>Remind me about…</b> Storylines, places, and anything else that has come up. <span className="ai-tool">list_storylines · lookup · search</span></li>
           </ul>
         </div>
       </div>

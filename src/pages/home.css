@@ -220,24 +220,9 @@ button.home-return:hover { box-shadow: inset 0 0 0 1px var(--show); transform: t
 .home-chat.run .msg { animation: home-msg .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i) * .8s + .2s); }
 @keyframes home-msg { from { opacity: 0; transform: translateY(8px); } }
 
-.home-ai-setup { grid-area: setup; padding: 6px clamp(18px, 2.4vw, 28px) 22px; border-radius: 14px; background: #0c0b0a; box-shadow: 0 0 0 1px var(--line); }
-.home-ai-tabs { display: flex; gap: 4px; width: fit-content; max-width: 100%; margin: 16px 0 22px; padding: 4px; border-radius: 999px; background: rgba(243, 238, 230, .07); }
-.home-ai-tabs button { padding: 9px 16px; border-radius: 999px; font-size: 14px; font-weight: 550; color: rgba(243, 238, 230, .65); cursor: pointer; white-space: nowrap; transition: background .2s, color .2s; }
-.home-ai-tabs button:hover { color: var(--ink); }
-.home-ai-tabs button[aria-selected="true"] { background: var(--ink); color: #0c0b0a; }
-.home-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; counter-reset: step; }
-.home-steps li { position: relative; padding-left: 40px; font-size: 15px; line-height: 1.5; color: var(--ink-2); counter-increment: step; }
-.home-steps li::before { content: counter(step); position: absolute; left: 0; top: -1px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: rgba(242, 180, 90, .14); color: var(--accent); font: 600 12.5px/1 "Geist Mono", monospace; }
-.home-steps b { color: var(--ink); font-weight: 600; }
-.home-steps q { font: italic 400 18px/1.35 "Instrument Serif", serif; color: var(--ink); quotes: "“" "”"; }
-.home-open { display: flex; width: fit-content; align-items: center; gap: 8px; margin-top: 10px; height: 38px; padding: 0 14px; border-radius: 8px; background: var(--ink); color: #0c0b0a; font-size: 14px; font-weight: 600; transition: background .2s; }
-.home-open:hover { background: #fff; }
-.home-copy { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 5px 5px 5px 13px; border-radius: 10px; background: #15130f; box-shadow: inset 0 0 0 1px rgba(242, 180, 90, .3); }
-.home-copy code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: 500 13.5px/1.4 "Geist Mono", monospace; color: var(--ink); scrollbar-width: none; }
-.home-copy code::-webkit-scrollbar { display: none; }
-.home-copy button { flex: none; height: 32px; padding: 0 13px; border-radius: 7px; background: var(--accent); color: #1b1306; font-size: 13px; font-weight: 600; cursor: pointer; }
-.home-copy button:hover { background: #f7c77e; }
-.home-ai-note { margin: 22px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.5; color: var(--muted); }
+.home-ai-setup { grid-area: setup; padding: 20px clamp(18px, 2.4vw, 28px) 22px; border-radius: 14px; background: #0c0b0a; box-shadow: 0 0 0 1px var(--line); }
+.home-ai-setup { --surface-2: #15130f; }
+.home-ai-setup .ai-steps q { font: italic 400 18px/1.35 "Instrument Serif", serif; }
 .home-empty { padding: 0 var(--pad); color: var(--muted); }
 
 .home-foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 36px var(--pad) 90px; margin-top: 40px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
@@ -263,8 +248,6 @@ button.home-return:hover { box-shadow: inset 0 0 0 1px var(--show); transform: t
   .home-search:focus-within input { flex: 1; width: auto; }
   .home-results { width: 100%; }
   .home-askai { margin-left: 0; margin-right: 0; }
-  .home-ai-tabs button { padding: 8px 12px; font-size: 13.5px; }
-  .home-steps li { padding-left: 36px; }
   .home-slide p { font-size: 15.5px; }
   .home-meta .line { flex-basis: 100%; }
   .home-meta .line::before { display: none; }
