@@ -16,6 +16,9 @@ export const CHANNEL = {
   subscribe: 'https://www.youtube.com/@previouslyfyi?sub_confirmation=1',
 };
 
+/** The MCP server, as people paste it into Claude, ChatGPT or any MCP app. */
+export const MCP_URL = 'https://previously.fyi/mcp';
+
 /**
  * The long recaps. In the real build this belongs in content (a `videos`
  * entry per show, published with the catalog), not in code.
