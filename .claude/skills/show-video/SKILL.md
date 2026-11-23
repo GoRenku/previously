@@ -287,6 +287,11 @@ Shorts aren't made yet. When the first one is, write its steps here.
     what the lens does.
 26. **A role-only tag still needs a face:** the person must be visible and
     turned to camera.
+27. **Fill the 16:9 frame, even for a show shot wide.** *Harbor Light* is
+    shot 2.35:1; screen grabs in that band with black bars "look weird" on
+    YouTube. After re-cropping, re-place every tag on its face, and check
+    each camera move's corners against the frame: a push with its origin on
+    one side and a slide the other way opens an empty strip at the edge.
 
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
