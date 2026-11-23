@@ -105,6 +105,9 @@ export interface StorylineBeat {
   kind?: BeatKind;
   importance?: 1 | 2 | 3; // 3 = a beat everyone should remember
   characters?: string[]; // character ids
+  /** If a later episode reframes this beat, the note shown from then on (the gate already honours it). */
+  supersededAt?: EpCode;
+  supersededNote?: string;
 }
 
 export interface Storyline {

@@ -228,7 +228,7 @@ else {
 if (!existsSync(join(dir, 'theme.json'))) warn('no theme.json — the show uses the app theme (run the show-theme skill)');
 else {
   const t = load('theme.json');
-  const MOTIFS = ['redact', 'mdr', 'classified']; // drawn in src/components.tsx
+  const MOTIFS = ['redact', 'mdr', 'classified', 'countdown']; // drawn in src/components.tsx
   if (!['light', 'dark'].includes(t.scheme)) err(`theme.json: scheme must be "light" or "dark"`);
   if (!t.vars || typeof t.vars !== 'object') err('theme.json: needs a "vars" object of CSS custom properties');
   else Object.entries(t.vars).forEach(([k, v]) => {
@@ -239,6 +239,7 @@ else {
   if (!t.copy?.lock || !t.copy?.gateKicker) err('theme.json: copy.lock and copy.gateKicker are required');
   if (t.facetStyle !== undefined && t.facetStyle !== 'split') err('theme.json: facetStyle can only be "split"');
   if (t.logo && typeof t.logo.height !== 'string') err('theme.json: logo.height must be a CSS length');
+  if (t.logo?.invert && t.logo?.screen) err('theme.json: logo takes invert or screen, not both');
 }
 
 console.log(`${showId}: ${episodes.length} episodes, ${characters.length} characters, ${arcs.length} arcs, ${world.length} world entries, ${storylines.length} storylines, ${questions.length} questions, ${clips.length} clips`);

@@ -138,6 +138,8 @@ export function Locked({ motif, label, seed = 7, density = 180 }: { motif: Motif
             <i key={i} style={{ width: `${38 + ((c.n * 7 + i * 13) % 55)}%`, marginLeft: i % 4 === 0 ? 0 : `${(c.n % 3) * 6}%` }} />
           ))}
         </div>
+      ) : motif === 'countdown' ? (
+        <Countdown seed={seed} />
       ) : motif === 'mdr' ? (
         <div className="mdr" aria-hidden>
           {cells.map((c, i) => (
@@ -150,6 +152,23 @@ export function Locked({ motif, label, seed = 7, density = 180 }: { motif: Motif
       <span className="lock-label"><Icon.lock />{label}</span>
     </div>
   );
+}
+
+/** A countdown that only the viewer can see: fixed days, hours and minutes, with the seconds ticking down in CSS. */
+function Countdown({ seed }: { seed: number }) {
+  const { head, at } = useMemo(() => {
+    const rnd = seeded(seed * 31 + 11);
+    const pad = (n: number, w = 2) => String(n).padStart(w, '0');
+    const head = `${pad(Math.floor(rnd() * 1400), 4)}:${pad(Math.floor(rnd() * 24))}:${pad(Math.floor(rnd() * 60))}:`;
+    return { head, at: Math.floor(rnd() * 60) }; // seconds into the minute where this lock starts
+  }, [seed]);
+  // Both wheels share one clock: the tens wheel steps down when the units wheel wraps from 0 to 9.
+  const wheel = (digits: string, period: number) => (
+    <span className="cd-wheel"><span style={{ ['--p' as string]: `${period}s`, ['--n' as string]: digits.length, ['--delay' as string]: `-${at}s` }}>
+      {[...digits].map((d, i) => <span key={i}>{d}</span>)}
+    </span></span>
+  );
+  return <div className="countdown" aria-hidden><span>{head}{wheel('543210', 60)}{wheel('9876543210', 10)}</span></div>;
 }
 
 export function StatusBadge({ status }: { status?: string }) {

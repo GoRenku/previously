@@ -102,12 +102,12 @@ function Hero({ view, compact, theme }: { view: GatedShow; compact: boolean; the
             <div className="kicker" style={{ color: 'inherit', opacity: .75 }}>{view.meta.network} · {view.meta.years} · {view.meta.genres.slice(0, 2).join(' · ')}</div>
             {theme.logo && view.meta.images.logo ? (
               <h1 style={{ margin: compact ? '12px 0 0' : '16px 0 0' }}>
-                <img className={`hero-logo ${theme.logo.invert ? 'invert' : ''}`} src={view.meta.images.logo.url} alt={view.meta.title} style={{ height: compact ? `calc(${theme.logo.height} * .6)` : theme.logo.height }} />
+                <img className={`hero-logo ${theme.logo.invert ? 'invert' : theme.logo.screen ? 'screen' : ''}`} src={view.meta.images.logo.url} alt={view.meta.title} style={{ height: compact ? `calc(${theme.logo.height} * .6)` : theme.logo.height }} />
               </h1>
             ) : (
               <h1 className="display" style={compact ? { fontSize: 'clamp(40px, 6vw, 64px)', marginTop: 8 } : { marginTop: 10 }}>{view.meta.title}</h1>
             )}
-            {!compact && <div className="meta"><span>Created by {view.meta.creators.join(', ')}</span><span className="sep">/</span><span>{view.meta.seasons.filter((s) => s.status !== 'upcoming').length} seasons</span>{view.meta.tagline && <><span className="sep">/</span><span className="serif-i" style={{ fontSize: 17 }}>“{view.meta.tagline}”</span></>}</div>}
+            {!compact && <div className="meta"><span>Created by {view.meta.creators.join(', ')}</span><span className="sep">/</span><span>{((n) => `${n} season${n === 1 ? '' : 's'}`)(view.meta.seasons.filter((s) => s.status !== 'upcoming').length)}</span>{view.meta.tagline && <><span className="sep">/</span><span className="serif-i" style={{ fontSize: 17 }}>“{view.meta.tagline}”</span></>}</div>}
           </div>
           {!compact && (
             <div className="upnext-card">

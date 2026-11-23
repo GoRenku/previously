@@ -7,7 +7,7 @@
  */
 
 /** Lock motifs are drawn in code (src/components.tsx), so a new one needs a code change. */
-export type Motif = 'redact' | 'mdr' | 'classified';
+export type Motif = 'redact' | 'mdr' | 'classified' | 'countdown';
 
 export interface ShowTheme {
   scheme: 'light' | 'dark';
@@ -20,6 +20,9 @@ export interface ShowTheme {
     empty?: string;
   };
   facetStyle?: 'split'; // render character facets side-by-side (e.g. two identities of one person)
-  /** Use the show's wordmark in the hero. `invert` turns black-on-white artwork into white-on-transparent. */
-  logo?: { invert?: boolean; height: string };
+  /**
+   * Use the show's wordmark in the hero. `invert` turns black-on-white artwork into white-on-transparent;
+   * `screen` drops the black field of light-on-black artwork (keeping its colours).
+   */
+  logo?: { invert?: boolean; screen?: boolean; height: string };
 }

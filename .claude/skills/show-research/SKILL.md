@@ -25,7 +25,7 @@ curl -s "https://api.tvmaze.com/singlesearch/shows?q=<title>&embed[]=episodes&em
 curl -s "https://api.tvmaze.com/shows/<tvmazeId>/images"        # posters, backgrounds, banners, typography (logos)
 curl -s "https://api.tvmaze.com/episodes/<episodeId>/guestcast" # recurring and guest characters, per episode
 ```
-Record the seasons, episode titles, air dates, runtimes and still availability. A season that has an announced premiere but no episodes yet is `status: "upcoming"`.
+Record the seasons, episode titles, air dates, runtimes and still availability. A season that has an announced premiere but no episodes yet is `status: "upcoming"`. Give it no episode entries (TVmaze's "TBA" placeholder included): the app already offers "Waiting for Season N" as the caught-up position. Leave `episodeCount` out until an official source confirms it.
 
 ### 2. Sources, and a coverage plan
 For each episode, list the best sources for **what happens and in which episode**:
@@ -48,6 +48,7 @@ For each episode, list the best sources for **what happens and in which episode*
 
 **Fetching tips:**
 - WebFetch truncates long recap pages, so use `curl` and extract the text.
+- Netflix Tudum answers `curl` with 403; WebFetch works there.
 - Some TVmaze image URLs redirect, so use `curl -L`.
 - For a season that is still being edited on Wikipedia, cite the revision id (`?oldid=`).
 
@@ -67,7 +68,9 @@ List every identity, real name, death, allegiance, betrayal, major twist and hid
 - **`what` holds only the fact that clears the source bar.** Writers read it as licence to write prose. Put single-source details in `note`, prefixed `single-source:`. In Black Doves, single-source clauses mixed into `what` had to be stripped out by the writers one at a time.
 - A reveal with several parts that land in different episodes is several reveals, e.g. `r-lisle-is-ada` (S1E7, the viewer sees it) and `r-ferryman-reyes` (S2E3).
 
-**Unverified names**, such as those that appear only in credits or cast lists, go in `never` until someone confirms them on screen.
+**Unverified names**, such as those that appear only in credits or cast lists, go in `never` until someone confirms them on screen. **For when a name is first said, the streamer's own recaps are no better than the credits**: they name people from the start. The recap that sticks to on-screen names ("the mysterious woman" until she is named) is the guide.
+
+**Adaptations.** When the show adapts books (or remakes another series), the source work is not a source: it renames, merges and reorders, and it contains every later season. Put its names and later concepts that the show hasn't put on screen into `never`, so the scans catch a writer who knows the books. Vet each term for false positives first: drop ones that occur in ordinary prose, and when a real place name contains a term, tell writers which short form to use. Call out in Traps where the show departs from the books, because writers who know them fill gaps from memory.
 
 Include the "small" reveals too: surnames, first names of people known by title, when a character is first named, and when a place or organisation is first named. Those are what leak in practice. Put names that never appear on screen (press-only names) in `never`.
 
@@ -78,7 +81,9 @@ Include the "small" reveals too: surnames, first names of people known by title,
 4. **Storyline list**: neutral ids and early titles (10–14), each with its kind and the characters involved.
 5. **World list**: ids and kinds (20–30 places, organisations, concepts, objects, events).
 6. **Source map**: episode → best sources.
-7. **Traps**: the show's specific spoiler traps (cast lists, key art, titles, and what your sources get wrong).
+7. **Traps**: the show's specific spoiler traps (cast lists, key art, titles, and what your sources get wrong). Include the **natural-but-early words**: descriptions a writer will reach for in episode 1 that are ledger terms for a later episode. Writers trip on these more than on names.
+
+**Check every id against the ledger's terms.** The checks match ids by slug, so a world id built from a later name (`the-guild` before the Guild is named) is flagged at every position before that reveal. Use a neutral id (`the-smugglers`).
 
 IDs in this brief are binding, and **unique across characters, world, storylines and questions**. The validator enforces it. Parallel writers use them, and a new id needs the orchestrator's approval.
 
