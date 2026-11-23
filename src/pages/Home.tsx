@@ -76,7 +76,7 @@ export default function Home() {
           <a href="#returning">Returning</a>
         </nav>
         <Search shows={shows} onGo={go} />
-        <a className="home-askai" href="#ai"><AskIcon /><span>Ask your AI</span></a>
+        <a className="home-askai" href="#ai" aria-label="Ask your AI about a show"><AskIcon /><span>Ask AI</span></a>
         <a className="home-sub" href={CHANNEL.subscribe} target="_blank" rel="noreferrer"><YtIcon size={13} /><span>Subscribe</span></a>
       </header>
 
