@@ -110,7 +110,11 @@ this public repo carries no real spoilers.
 9. **G6 Publish.** `publish/long.md` (title, description, chapters, tags,
    settings), `publish/long.en.srt` (`_channel/tools/make_srt.py`), three
    thumbnail takes, `video-check`. Fill in YouTube Studio only when the user
-   asks, in their own Chrome.
+   asks, in their own Chrome. Once it is uploaded, add it to the show's
+   `shows/<id>/videos.json` (`id` like `before-s2-long`, `upTo`, the site
+   title, `youtubeId`, `seconds` as YouTube shows it), and add `published`
+   (YYYY-MM-DD) the day it goes public: the home page lists it as coming
+   until then, without its id. Then `validate-data`, and publish the show.
 10. **Feed back.** Write or update the show's `KIT.md` (voice, display
     face, palette and grade, graphics and illustrations, the theme cue, the
     effects), as Black Doves' does. Lessons for every show go into
@@ -151,6 +155,7 @@ Shorts aren't made yet. When the first one is, write its steps here.
   peak at −1 dBTP or lower.
 - `publish/` is complete, the content repo is pushed, and no committed file
   is over 20 MB.
+- The video is in the show's `videos.json`, with `published` once it is public.
 
 ## Lessons (keep this list current)
 

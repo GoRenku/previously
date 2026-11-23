@@ -61,7 +61,7 @@ function walk(node, at, path, file) {
   }
 }
 
-const files = ['show.json', 'episodes.json', 'clips.json', 'characters.json', 'arcs.json', 'world.json', 'storylines.json'];
+const files = ['show.json', 'episodes.json', 'clips.json', 'characters.json', 'arcs.json', 'world.json', 'storylines.json', 'videos.json'];
 for (const f of files) { const j = read(f); if (j) walk(j, 'S0E0', '', f); }
 
 for (const h of hits) {

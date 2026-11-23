@@ -1,11 +1,11 @@
 import type { GatedShow, SearchHit } from '../shared/spoilers.ts';
-import type { CatalogShow } from '../shared/content.ts';
+import type { CatalogShow, CatalogVideo } from '../shared/content.ts';
 import type { ShowTheme } from '../shared/theme.ts';
 
 /** The gated show plus its theme (null: use the app theme). */
 export type ShowView = GatedShow & { theme: ShowTheme | null };
 
-export type { GatedShow, SearchHit, CatalogShow };
+export type { GatedShow, SearchHit, CatalogShow, CatalogVideo };
 export type { GCharacter, GWorld, GStoryline, GEpisode, GFact } from '../shared/spoilers.ts';
 
 export async function getCatalog(): Promise<CatalogShow[]> {

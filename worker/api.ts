@@ -7,7 +7,7 @@
  * Gated responses depend only on the show's bundle and the request's
  * parameters, so they are cached at the edge under the bundle key.
  */
-import type { CatalogShow } from '../shared/content.ts';
+import type { CatalogShow, CatalogVideo, ShowVideo } from '../shared/content.ts';
 import { search } from '../shared/spoilers.ts';
 import type { ContentStore } from './content/store.ts';
 import { badRequest, digest, edgeCached, json, methodNotAllowed, notFound } from './http.ts';
@@ -60,7 +60,20 @@ async function catalog(store: ContentStore): Promise<CatalogShow[]> {
     return {
       ...s, poster: d.meta.images.poster.url, latestPremiere: latest?.premiered, hook, premise: d.meta.premise, backdrop: d.meta.images.backdrop.url, tagline: d.meta.tagline,
       stats: { episodes: d.episodes.length, characters: d.characters.length, storylines: d.storylines.length, world: d.world.length },
-      theme: d.theme,
+      theme: d.theme, logo: d.meta.images.logo?.url, videos: catalogVideos(d.videos),
+      seasonList: d.meta.seasons.map((x) => ({ number: x.number, status: x.status, episodeCount: x.episodeCount ?? 0 })),
     };
   }));
+}
+
+/**
+ * A show's catch-up videos for the home page. A draft or scheduled video is
+ * listed as coming, without its YouTube id: an unlisted link must not leak
+ * before it premieres. Public ones come first, newest first.
+ */
+function catalogVideos(videos: ShowVideo[] = []): CatalogVideo[] {
+  const today = new Date().toISOString().slice(0, 10);
+  return videos
+    .map(({ youtubeId, published, ...v }): CatalogVideo => (published && published <= today ? { ...v, published, youtubeId } : v))
+    .sort((a, b) => Number(!a.published) - Number(!b.published) || (b.published ?? '').localeCompare(a.published ?? ''));
 }

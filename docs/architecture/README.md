@@ -82,7 +82,9 @@ overrides). It holds `catalog-shows.json` (which shows to list),
 `catalog.json` (built from it and TVmaze) and `shows/<id>/`. Each show is a
 set of JSON files: `show.json`, `episodes.json`, `clips.json`,
 `characters.json`, `arcs.json`, `storylines.json`, `world.json`,
-`theme.json` (its visual tokens; the API sends it with the show), plus
+`theme.json` (its visual tokens; the API sends it with the show),
+`videos.json` (its catch-up videos on YouTube; only the home page's catalog
+reads it, and a video's YouTube id goes out only once it is public), plus
 `reveals.json` (the reveal ledger: when the viewer learns each sensitive
 thing) and a research brief. The ledger is not served; it drives QA.
 

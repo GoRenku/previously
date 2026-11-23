@@ -212,6 +212,24 @@ clips.forEach((c) => {
   checkCode(c.at, `${w}.at`);
 });
 
+// catch-up videos (ShowVideo in shared/content.ts); optional, listed on the home page
+if (existsSync(join(dir, 'videos.json'))) {
+  const videos = load('videos.json', 'videos');
+  unique(videos, 'videos');
+  // A video's line is an episode, or the first episode of a season this site doesn't hold yet.
+  const seasonStarts = new Set((meta.seasons ?? []).map((s) => `S${s.number}E1`));
+  videos.forEach((v) => {
+    const w = `video ${v.id}`;
+    if (!/^[a-z0-9-]+$/.test(v.id || '')) err(`${w}: id must be a slug like before-s2-long`);
+    if (typeof v.upTo !== 'string' || !CODE.test(v.upTo)) err(`${w}: bad upTo ${JSON.stringify(v.upTo)}`);
+    else if (!validCodes.has(v.upTo) && !seasonStarts.has(v.upTo)) err(`${w}: upTo ${v.upTo} is neither a known episode nor a season's first episode`);
+    if (!v.title || typeof v.title !== 'string') err(`${w}: needs a title`);
+    if (!/^[A-Za-z0-9_-]{11}$/.test(v.youtubeId || '')) err(`${w}: bad youtubeId`);
+    if (!Number.isInteger(v.seconds) || v.seconds <= 0) err(`${w}: seconds must be a whole number of seconds`);
+    if (v.published !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(v.published)) err(`${w}: published must be YYYY-MM-DD`);
+  });
+}
+
 // reveal ledger
 const ledger = load('reveals.json');
 if (Array.isArray(ledger)) warn('missing reveals.json — run the show-research skill');

@@ -43,5 +43,6 @@ export function bundleShow(id) {
     world: r('world.json').world ?? [],
     storylines: sl.storylines ?? [],
     questions: sl.questions ?? [],
+    videos: r('videos.json').videos ?? [],
   };
 }
