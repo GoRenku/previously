@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './styles.css';
 import { ErrorBoundary } from './ErrorBoundary';
 import Home from './pages/Home';
+import HomeA from './pages/home-lab/HomeA';
+import HomeB from './pages/home-lab/HomeB';
+import HomeC from './pages/home-lab/HomeC';
 import { CatchUp, ShowLayout } from './pages/Show';
 import { Ask, Clips, EpisodeDetail, Episodes, World } from './pages/sections';
 import { CharacterDetail, Characters } from './pages/characters';
@@ -15,6 +18,9 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/home-a" element={<HomeA />} />
+        <Route path="/home-b" element={<HomeB />} />
+        <Route path="/home-c" element={<HomeC />} />
         <Route path="/show/:id" element={<ShowLayout />}>
           <Route index element={<CatchUp />} />
           <Route path="characters" element={<Characters />} />

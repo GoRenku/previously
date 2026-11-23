@@ -1,0 +1,150 @@
+/* Option C — "The Listings": a weekly TV guide in print. Paper, ink, one spot red, a pen for ticking episodes. */
+
+.hc {
+  --paper: #efe8d9; --paper-2: #e6dcc8; --ink: #191512; --ink-2: #3b342c; --muted: #6f6556; --rule: #191512; --hair: rgba(25, 21, 18, .22);
+  --red: #c4381d; --hi: #f2b45a; --pad: clamp(16px, 3.6vw, 48px);
+  background: var(--paper); color: var(--ink); min-height: 100vh; font: 400 17px/1.5 "Newsreader", Georgia, serif; color-scheme: light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .08 0 0 0 0 .06 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  padding: 0 max(var(--pad), (100% - 1320px) / 2) 80px; overflow-x: clip;
+}
+:where(.hc) button { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; text-align: left; }
+.hc ::selection { background: var(--hi); color: var(--ink); }
+.hc-kick { font: 600 11.5px/1 "Geist Mono", monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+
+/* top line */
+.hc-top { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0 10px; border-bottom: 1px solid var(--rule); font: 500 11.5px/1 "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.hc-top a { display: inline-flex; gap: 7px; align-items: center; color: var(--ink); --yt-hole: var(--paper); }
+.hc-top a svg rect { fill: var(--red); }
+.hc-top a svg path { fill: var(--paper); }
+
+/* masthead */
+.hc-mast { padding: 18px 0 0; }
+.hc-mast h1 { position: relative; margin: 0; display: flex; align-items: flex-end; line-height: .8; }
+.hc-mast .name { font: 400 clamp(84px, 17.4vw, 236px)/.8 "Anton", Impact, sans-serif; letter-spacing: -.012em; text-transform: uppercase; }
+.hc-mast .on { position: absolute; right: .5%; bottom: -.16em; font: italic 400 clamp(46px, 8.5vw, 116px)/1 "Instrument Serif", serif; color: var(--red); transform: rotate(-6deg); }
+.hc-strap { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-top: 22px; padding-top: 12px; border-top: 4px solid var(--rule); }
+.hc-strap p { margin: 0; font: italic 400 clamp(20px, 2.2vw, 27px)/1.25 "Newsreader", serif; max-width: 34ch; }
+.hc-strap form { display: flex; align-items: baseline; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 4px; }
+.hc-strap label { font: 600 11px/1 "Geist Mono", monospace; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.hc-strap input { width: 200px; background: none; border: 0; outline: 0; color: var(--ink); font: italic 400 21px/1.2 "Newsreader", serif; }
+.hc-strap input::placeholder { color: rgba(25, 21, 18, .35); }
+.hc-nav { display: flex; gap: 0; margin-top: 16px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); overflow-x: auto; }
+.hc-nav a { padding: 10px 16px; font: 600 12px/1 "Geist Mono", monospace; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; border-right: 1px solid var(--hair); }
+.hc-nav a:first-child { padding-left: 0; }
+.hc-nav a:hover { color: var(--red); }
+
+/* cover */
+.hc-cover { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(24px, 3.6vw, 52px); padding: 34px 0 40px; border-bottom: 4px double var(--rule); }
+.hc-cover figure { margin: 0; }
+.hc-cover figure button { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--ink); }
+.hc-cover figure img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.08) saturate(.9) sepia(.12); transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.hc-cover figure button:hover img { transform: scale(1.03); }
+.hc-cover .flash { position: absolute; left: -2px; top: 18px; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px 9px 12px; background: var(--red); color: #fff; font: 600 12px/1 "Geist Mono", monospace; letter-spacing: .12em; text-transform: uppercase; box-shadow: 3px 3px 0 var(--ink); }
+.hc-cover .flash svg { width: 14px; height: 14px; }
+.hc-cover figcaption { margin-top: 8px; font: italic 400 14px/1.4 "Newsreader", serif; color: var(--muted); }
+.hc-cover figcaption a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.hc-cover-copy { display: flex; flex-direction: column; gap: 14px; }
+.hc-cover h2 { margin: 0; font: 400 clamp(40px, 4.8vw, 68px)/.98 "Instrument Serif", serif; letter-spacing: -.01em; }
+.hc-cover h2 span { font-size: .86em; display: inline-block; line-height: 1; }
+.hc-cover h2 em { color: var(--red); }
+.hc-cover .dek { margin: 0; font-size: 19px; line-height: 1.45; color: var(--ink-2); }
+.hc-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 4px; }
+.hc-btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 20px; background: var(--ink); color: var(--paper); font: 600 13px/1 "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; box-shadow: 4px 4px 0 var(--hi); transition: transform .15s, box-shadow .15s; }
+.hc-btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--hi); }
+.hc-btn svg { width: 16px; height: 16px; }
+.hc-btn.red { background: var(--red); color: #fff; box-shadow: 4px 4px 0 var(--ink); --yt-hole: var(--red); width: 100%; justify-content: center; }
+.hc-btn.red svg rect { fill: #fff; }
+.hc-btn.red svg path { fill: var(--red); }
+.hc-link { display: inline-flex; align-items: center; gap: 8px; font-style: italic; font-size: 17px; text-decoration: underline; text-decoration-color: var(--red); text-underline-offset: 4px; }
+.hc-also { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 8px; }
+.hc-also a { font-size: 15.5px; line-height: 1.35; }
+.hc-also a:hover { color: var(--red); }
+
+/* section heads */
+.hc-h { display: flex; align-items: center; gap: 16px; margin: 0 0 16px; font: 400 clamp(30px, 3.4vw, 44px)/1 "Anton", Impact, sans-serif; text-transform: uppercase; letter-spacing: .005em; }
+.hc-h::after { content: ""; flex: 1; height: 6px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+
+/* this week */
+.hc-week { padding: 34px 0 28px; border-bottom: 4px double var(--rule); }
+.hc-table { display: flex; flex-direction: column; }
+.hc-tr { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 12px 0; border-top: 1px solid var(--hair); }
+.hc-tr:first-child { border-top: 1px solid var(--rule); }
+.hc-tr .day { display: flex; flex-direction: column; gap: 3px; font: 500 11.5px/1 "Geist Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.hc-tr .day b { font: 400 26px/1 "Anton", sans-serif; color: var(--ink); letter-spacing: .02em; }
+.hc-tr.now .day b { color: var(--red); }
+.hc-tr .t { font-weight: 650; font-size: 20px; line-height: 1.15; }
+.hc-tr .s { font-size: 15px; color: var(--muted); font-style: italic; }
+.hc-pill { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1.5px solid var(--ink); font: 600 11.5px/1 "Geist Mono", monospace; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; background: var(--paper); }
+.hc-pill svg { width: 13px; height: 13px; }
+button.hc-pill:hover, a.hc-pill:hover { background: var(--ink); color: var(--paper); }
+.hc-pill.off { border-style: dashed; border-color: var(--hair); color: var(--muted); }
+
+/* the guide + sidebar */
+.hc-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: clamp(24px, 4vw, 56px); padding-top: 34px; }
+.hc-how { margin: -6px 0 10px; font-style: italic; color: var(--muted); }
+.hc-entry { display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 22px; padding: 22px 0 24px; border-top: 1px solid var(--rule); }
+.hc-entry .poster { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; filter: contrast(1.05) saturate(.85) sepia(.08); box-shadow: 4px 4px 0 var(--ink); }
+.hc-entry .hd { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.hc-entry h4 { margin: 0; font-size: 36px; line-height: 1; }
+.hc-entry .meta { font: 500 12px/1 "Geist Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.hc-entry p { margin: 10px 0 14px; font-size: 16.5px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.hc-entry .eps { display: flex; flex-direction: column; gap: 7px; }
+.hc-entry .season { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.hc-entry .season .lbl { width: 30px; font: 600 12px/1 "Geist Mono", monospace; }
+.hc-entry .season button { position: relative; min-width: 34px; height: 34px; padding: 0 6px; display: grid; place-items: center; border: 1.5px solid var(--ink); font: 500 13px/1 "Geist Mono", monospace; background: var(--paper); transition: background .1s; }
+.hc-entry .season button:hover { background: var(--paper-2); }
+/* seen: crossed through in red pen */
+.hc-entry .season button.seen { color: var(--muted); border-color: var(--muted); }
+.hc-entry .season button.seen::after { content: ""; position: absolute; inset: 3px; background: linear-gradient(to top right, transparent calc(50% - 1.2px), var(--red) calc(50% - 1.2px), var(--red) calc(50% + 1.2px), transparent calc(50% + 1.2px)); }
+/* next: circled */
+.hc-entry .season button.next { background: var(--hi); border-color: var(--ink); font-weight: 700; }
+.hc-entry .season button.next::before { content: ""; position: absolute; inset: -6px; border: 2px solid var(--red); border-radius: 50%; transform: rotate(-8deg); }
+.hc-entry .foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+.hc-entry .hint { font-style: italic; font-size: 15px; color: var(--muted); }
+.hc-entry .hint b { font-style: normal; font-family: "Geist Mono", monospace; font-weight: 600; color: var(--ink); }
+.hc-sub { margin: 26px 0 8px; font: 600 12px/1 "Geist Mono", monospace; letter-spacing: .16em; text-transform: uppercase; padding-top: 14px; border-top: 1px solid var(--rule); }
+.hc-az { list-style: none; margin: 0; padding: 0; columns: 3 200px; column-gap: 28px; column-rule: 1px solid var(--hair); }
+.hc-az li { break-inside: avoid; display: flex; flex-direction: column; padding: 7px 0; border-bottom: 1px dotted var(--hair); }
+.hc-az b { font-weight: 650; font-size: 16px; }
+.hc-az span { font-size: 13.5px; color: var(--muted); font-style: italic; }
+
+.hc-side { display: flex; flex-direction: column; gap: 22px; }
+.hc-box { border: 2px solid var(--ink); padding: 16px 16px 18px; background: rgba(255, 255, 255, .22); display: flex; flex-direction: column; gap: 12px; }
+.hc-box-h { display: flex; align-items: center; gap: 8px; margin: -16px -16px 2px; padding: 9px 14px; background: var(--ink); color: var(--paper); font: 600 12px/1 "Geist Mono", monospace; letter-spacing: .16em; text-transform: uppercase; --yt-hole: var(--ink); }
+.hc-box-h svg rect { fill: var(--red); }
+.hc-box-h svg path { fill: #fff; }
+.hc-box p { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.hc-vid { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 12px; align-items: start; padding-bottom: 12px; border-bottom: 1px dotted var(--hair); }
+.hc-vid .th { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--ink); }
+.hc-vid .th img { width: 100%; height: 100%; object-fit: cover; }
+.hc-vid.soon .th img { filter: grayscale(1) contrast(1.1); opacity: .7; }
+.hc-vid .d { position: absolute; right: 4px; bottom: 4px; padding: 3px 5px; background: var(--ink); color: var(--paper); font: 500 10.5px/1 "Geist Mono", monospace; }
+.hc-vid.soon .d { background: var(--hi); color: var(--ink); }
+.hc-vid .tx { display: flex; flex-direction: column; gap: 2px; font-size: 14.5px; line-height: 1.3; }
+.hc-vid .tx b { font-weight: 700; font-size: 15.5px; }
+.hc-vid .tx em { font-size: 12.5px; color: var(--muted); }
+.hc-vid:hover .tx b { color: var(--red); }
+.hc-box.ad { border-style: dashed; background: none; }
+.hc-box.ad .hc-box-h { background: none; color: var(--ink); border-bottom: 1px dashed var(--ink); }
+.hc-box .ad-h { font: 400 26px/1 "Anton", sans-serif; text-transform: uppercase; color: var(--ink); }
+.hc-box code { font: 600 14px/1 "Geist Mono", monospace; background: var(--hi); padding: 6px 8px; align-self: flex-start; }
+
+.hc-foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 50px; padding-top: 14px; border-top: 4px solid var(--rule); font-size: 14px; font-style: italic; color: var(--muted); }
+.hc-foot a { text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 960px) {
+  .hc-cover, .hc-body { grid-template-columns: 1fr; }
+  .hc-top .opt { display: none; }
+}
+@media (max-width: 600px) {
+  .hc-mast h1 { flex-direction: column; align-items: flex-start; }
+  .hc-mast .name { font-size: 20.5vw; }
+  .hc-mast .on { position: static; align-self: flex-end; margin: -.05em .1em 0 0; font-size: 52px; }
+  .hc-strap { flex-direction: column; align-items: stretch; }
+  .hc-strap input { width: 100%; }
+  .hc-entry { grid-template-columns: 1fr; }
+  .hc-entry .poster { display: none; }
+  .hc-tr { grid-template-columns: 70px minmax(0, 1fr); }
+  .hc-tr .act { grid-column: 2; }
+  .hc-pill.off { white-space: normal; line-height: 1.3; }
+}
