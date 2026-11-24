@@ -131,9 +131,12 @@ Shorts aren't made yet. When the first one is, write its steps here.
 > **Still hunt.** Find in-character stills of <Show> Season <N> from before
 > S<N+1>E1 on official and press pages (the network's site, recaps crediting
 > it, IMDb). Prove each one's episode with a caption, embedded metadata or
-> continuity, and check which actor plays whom. Save to
+> continuity, and check which actor plays whom. **Save each at the largest
+> size the source has, never resized or re-compressed** (IMDb: the URL
+> ending `._V1_.jpg`, no size suffix; TVmaze: `original_untouched`). Save to
 > `<long>/assets/incoming/` with a `manifest.json` (file, episode, evidence,
-> who, what, source page). Look at every image. Skip what's already in
+> who, what, source page, width × height). Look at every image at 100%, and
+> skip any that is blurry or blocky. Skip what's already in
 > `assets/stills/`. Report the count per person and who has none.
 
 > **Chapter builder.** Build `chNN` ("<title>") of <Show> before-s<N>.
@@ -319,6 +322,13 @@ Shorts aren't made yet. When the first one is, write its steps here.
     | Ten builders | ~4.8 M tokens, against an estimate of 2.8 M |
 
     Estimate about 0.4 M builder tokens per minute of film they build.
+
+33. **Never download a small picture or stretch one.** The hunt took
+    IMDb's 1600 px page copy, and the pipeline enlarged it to 1920. The 16:9
+    fill and the face crops enlarged it again. The film was 1080p, and the
+    user saw it as low-res. Take each source's original. Record its pixel
+    size. Frame every shot within the real pixels: cover scale times push,
+    at most 1.2×. Use an upscaler only after the user has seen a test.
 
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
