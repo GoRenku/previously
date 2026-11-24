@@ -312,7 +312,7 @@ Shorts aren't made yet. When the first one is, write its steps here.
     | Step | Cost |
     |---|---|
     | The proof (three auditions, the theme, 23 effects) | $2.14 on Fal |
-    | The rest (the palette, 48 effects) | $3.05 on Fal |
+    | The rest (the palette, 45 effects) | $3.05 on Fal |
     | Ten builders | ~4.8 M tokens, against an estimate of 2.8 M |
 
     Estimate about 0.4 M builder tokens per minute of film they build.
