@@ -246,7 +246,7 @@ else {
 if (!existsSync(join(dir, 'theme.json'))) warn('no theme.json — the show uses the app theme (run the show-theme skill)');
 else {
   const t = load('theme.json');
-  const MOTIFS = ['redact', 'mdr', 'classified', 'countdown']; // drawn in src/components.tsx
+  const MOTIFS = ['redact', 'mdr', 'classified', 'countdown', 'inscription']; // drawn in src/components.tsx
   if (!['light', 'dark'].includes(t.scheme)) err(`theme.json: scheme must be "light" or "dark"`);
   if (!t.vars || typeof t.vars !== 'object') err('theme.json: needs a "vars" object of CSS custom properties');
   else Object.entries(t.vars).forEach(([k, v]) => {

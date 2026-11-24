@@ -7,7 +7,7 @@
  */
 
 /** Lock motifs are drawn in code (src/components.tsx), so a new one needs a code change. */
-export type Motif = 'redact' | 'mdr' | 'classified' | 'countdown';
+export type Motif = 'redact' | 'mdr' | 'classified' | 'countdown' | 'inscription';
 
 export interface ShowTheme {
   scheme: 'light' | 'dark';

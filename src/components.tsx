@@ -140,6 +140,8 @@ export function Locked({ motif, label, seed = 7, density = 180 }: { motif: Motif
         </div>
       ) : motif === 'countdown' ? (
         <Countdown seed={seed} />
+      ) : motif === 'inscription' ? (
+        <Inscription seed={seed} />
       ) : motif === 'mdr' ? (
         <div className="mdr" aria-hidden>
           {cells.map((c, i) => (
@@ -169,6 +171,43 @@ function Countdown({ seed }: { seed: number }) {
     </span></span>
   );
   return <div className="countdown" aria-hidden><span>{head}{wheel('543210', 60)}{wheel('9876543210', 10)}</span></div>;
+}
+
+/**
+ * A line of script that shows only in fire: faint made-up glyphs (a stem, one or two bows, a mark above),
+ * with an ember glow passing slowly along them. One path, drawn twice: once faint, once lit under a moving mask.
+ */
+function Inscription({ seed }: { seed: number }) {
+  const { d, w } = useMemo(() => {
+    const rnd = seeded(seed * 17 + 5);
+    const p: string[] = [];
+    let x = 0;
+    for (let i = 0; i < 22; i++) {
+      if (i > 0 && rnd() < 0.2) x += 7; // a gap between words
+      const r = rnd();
+      const [top, bot] = r < 0.25 ? [-15, 6] : r < 0.45 ? [-6, 15] : [-6, 6]; // a raised, lowered or short stem
+      p.push(`M${x} ${top}V${bot}`);
+      const bows = rnd() < 0.35 ? 2 : 1;
+      const open = rnd() < 0.3; // a hook rather than a closed bow
+      for (let b = 0; b < bows; b++) {
+        const bx = x + b * 5.5;
+        p.push(open ? `M${bx} -6C${bx + 8} -6 ${bx + 8} 6 ${bx + 2} 6` : `M${bx} -6C${bx + 8} -7 ${bx + 8} 7 ${bx} 6`);
+      }
+      const gw = 7 + (bows - 1) * 5.5;
+      const t = rnd();
+      if (t < 0.35) p.push(`M${x + gw / 2 - 1} -11h.01`); // a dot (the round cap draws it)
+      else if (t < 0.55) p.push(`M${x + 1} -10q${gw / 2} -4 ${gw} 0`); // a curl
+      x += gw + 4;
+    }
+    return { d: p.join(''), w: x - 4 };
+  }, [seed]);
+  const box = `-3 -19 ${w + 6} 38`;
+  return (
+    <div className="inscription" aria-hidden style={{ ['--delay' as string]: `-${(seed * 1.7) % 9}s` }}>
+      <svg className="base" viewBox={box}><path d={d} /></svg>
+      <svg className="fire" viewBox={box}><path d={d} /></svg>
+    </div>
+  );
 }
 
 export function StatusBadge({ status }: { status?: string }) {
