@@ -57,6 +57,11 @@ Give a new agent the spoiler-model skill, `reveals.json` and the data files, and
 - **Loglines against their own episode.** A logline shows as the teaser one episode early, so it must not paraphrase that episode's twists, and it must not answer an open question shown next to it.
 - **Adaptations: book framing, not just book names.** A term scan catches book names; it can't catch the book's *reading* of a scene the show leaves open, or a detail (a nationality, a motive) the show never gives. These arrive through Wikipedia and creator commentary. Ask the auditor to flag anything the per-episode recaps don't state.
 
+- **Groups and statuses at their own episode.** A group change one episode before the reveal (the islanders moved into "The Guild" at S1E5 when S1E6 reveals it) shows on every card, and no term check sees it.
+- **Season posters** (`show.json` → `seasons[].poster`) at their season's first position: a character poster can show a guise revealed later that season.
+
+**For a long show, split the audit by season range** and run the auditors in parallel (Rings of Power: one for S1–S2 positions, one for the just-aired season plus anything that leaks it into earlier positions). Each wrote its report to `_research/audit-<range>.md` and edited nothing; the orchestrator updated the ledger and sent each writer the findings for its own files.
+
 It should report each disagreement with episode codes and sources. Fix what it finds, then add any missing reveals to the ledger so the scans cover them from now on.
 
 ### 6. Browser review

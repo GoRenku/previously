@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import type { GatedShow, GCharacter } from './api';
 import { fmt } from './api';
-import { Icon, Portrait } from './components';
+import { Icon, Portrait, shortName } from './components';
 
 /* ── matching ── */
 
@@ -125,7 +125,7 @@ function HoverCard({ c, rect, view, showId, onEnter, onLeave }: { c: GCharacter;
           {strip.map((s) => <img key={s.url} src={s.thumb ?? s.url} alt="" loading="lazy" referrerPolicy="no-referrer" />)}
         </div>
       )}
-      <Link to={`/show/${showId}/characters/${c.id}`} className="hc-foot">Open {c.name.split(/[ /]/)[0]}'s page <Icon.arrow /></Link>
+      <Link to={`/show/${showId}/characters/${c.id}`} className="hc-foot">Open {shortName(c.name)}'s page <Icon.arrow /></Link>
     </div>
   );
 }

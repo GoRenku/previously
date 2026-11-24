@@ -112,6 +112,11 @@ function Lightbox({ items, index, onIndex, onClose }: { items: StillItem[]; inde
   );
 }
 
+/** The short form of a character's name for running text: "Mark" from "Mark Scout", but a title name ("The Stranger") stays whole. */
+export function shortName(name: string) {
+  return /^the\s/i.test(name) ? name : name.split(/[ /]/)[0];
+}
+
 /* ── lock motifs ── */
 function seeded(seed: number) {
   let s = seed;

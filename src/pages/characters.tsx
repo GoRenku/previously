@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { fmt, type GCharacter, type GFact } from '../api';
 import type { GArc, GBeat } from '../../shared/spoilers.ts';
-import { Ep, Icon, Portrait, StatusBadge, StillsGrid } from '../components';
+import { Ep, Icon, Portrait, StatusBadge, StillsGrid, shortName } from '../components';
 import { Mentions } from '../mentions';
 import { useShow } from './Show';
 
@@ -31,7 +31,7 @@ export function Characters() {
                   <div className="kicker">Right now · end of {fmt(arc.nowAt!)}</div>
                   <div className="n display">{c.name}</div>
                   <p className="now"><Mentions text={arc.now} self={c.id} nested /></p>
-                  <span className="linkbtn" style={{ marginTop: 'auto' }}>Follow {c.name.split(/[ /]/)[0]}'s arc · {arc.chapters.length} chapter{arc.chapters.length === 1 ? '' : 's'} <Icon.arrow /></span>
+                  <span className="linkbtn" style={{ marginTop: 'auto' }}>Follow {shortName(c.name)}'s arc · {arc.chapters.length} chapter{arc.chapters.length === 1 ? '' : 's'} <Icon.arrow /></span>
                 </div>
               </Link>
             );
@@ -185,7 +185,7 @@ export function CharacterDetail() {
           </div>
           {arc?.now && (
             <div className="now-card">
-              <div className="kicker">Where {c.name.split(/[ /]/)[0]} stands right now · end of {fmt(arc.nowAt!)}</div>
+              <div className="kicker">Where {shortName(c.name)} stands right now · end of {fmt(arc.nowAt!)}</div>
               <p><Mentions text={arc.now} self={c.id} /></p>
             </div>
           )}

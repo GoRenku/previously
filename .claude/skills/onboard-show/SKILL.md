@@ -120,4 +120,30 @@ That last request is how the skills improve.
     | Audit | ~15 min, then ~10 min of fixes |
     | **Total, end to end** | **~1.5 h**, plus orchestration |
 
+**From The Rings of Power (show 4).** Three seasons and 22 episodes, a big ensemble, a book adaptation, and a third season whose finale dropped the night of onboarding (after the model's training data).
+
+34. **Split research by era, then merge.** Two agents ran in parallel: one for the seasons in the model's training data (every reveal still placed from fetched per-episode sources) and one for the season after the cutoff (fetched sources only, its own `s3-research.md` and draft ledger). The first agent, resumed with `SendMessage` because it already held the ledger, merged the second's output. Leave a placeholder reveal with a dummy term while waiting; the validator requires a term.
+35. **Four writers for 20+ episodes:** characters and arcs are separate writers (B1, B2). Each finished in 28–34 minutes.
+36. **Two auditors, split by season range,** in parallel. Between them they found what all four automated checks passed:
+    - a group change one episode early (*Harbor Light*: the islanders moved to "The Guild" at S1E5 when the show reveals it at S1E6);
+    - membership through a world entry's static list plus a fact that named him;
+    - a season poster showing a guise revealed in that season's second episode;
+    - a question that presumed a hidden master ("whom do they *really* serve?");
+    - a question raised before the show raises it;
+    - a character card that appeared before his first time on screen;
+    - single-source facts in a Core-tier season.
+37. **A later season's draft reveal can be an earlier season's on-screen fact.** The season 3 pass made a detail a season 3 term (in *Harbor Light* terms, "the lens was cut from the wreck's glass") though season 1's finale shows it; what season 3 reveals is that the villain *learns* it. The arcs writer caught it. When merging a later pass, check each term against the earlier seasons' text.
+38. **Structural fixes from this show** (`scripts/ledger.mjs`): slugs now drop accents. Before, a term like "Gull Rôck" slugged to `gull-ro-ck` and never matched the id `gull-rock`, so ids built from accented names were never checked. Terms match straight and curly apostrophes alike, so writers no longer add curly copies by hand. `spoiler-scan` uses the same matcher.
+39. **The permission check may refuse `pnpm deploy:production` and `pnpm content:promote`.** Then the user runs them. Have staging fully reviewed first, and say exactly what to run.
+40. **A branch switch in the code repo while `pnpm dev` runs can leave Vite's dependency cache stale:** a blank page whose React bundles never load. Restart the dev server; don't debug the content.
+41. **Rough cost for 22 episodes over three seasons:**
+
+    | Step | Wall time |
+    |---|---|
+    | Research, two eras in parallel | ~31 min, plus ~10 min to merge |
+    | Theme and a new lock motif, in parallel | ~30 min |
+    | 4 writers in parallel | 28–34 min |
+    | 2 auditors in parallel | ~22 min, then fixes |
+    | **Total, end to end** | **~2.5 h**, plus orchestration |
+
 **Next show:** append your lessons here. If a check missed something, change a check or the gate, not just the data.

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fmt, searchShow, type GCharacter, type GWorld, type SearchHit } from '../api';
-import { Ep, Icon, Locked, Portrait, YouTube } from '../components';
+import { Ep, Icon, Locked, Portrait, YouTube, shortName } from '../components';
 import { AiSetup } from '../ai-setup';
 import { track } from '../analytics';
 import { FactList } from './characters';
@@ -230,7 +230,7 @@ export function Ask() {
   };
   const suggestions = useMemo(() => {
     const s: string[] = [];
-    const top = view.characters.slice(0, 3).map((c) => `Who is ${c.name.split(/[ /]/)[0]}?`);
+    const top = view.characters.slice(0, 3).map((c) => `Who is ${shortName(c.name)}?`);
     s.push(...top);
     if (view.world[0]) s.push(`What is ${view.world[0].name}?`);
     if (view.questions.open[0]) s.push(view.questions.open[0].text);

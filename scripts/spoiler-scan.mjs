@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { showDir } from './content-root.mjs';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { qaFetch } from './qa-fetch.mjs';
+import { ledgerChecks } from './ledger.mjs';
 
 const showId = process.argv[2];
 const BASE = process.argv[3] ?? 'http://localhost:5180';
@@ -15,12 +16,7 @@ if (!showId) { console.error('usage: node scripts/spoiler-scan.mjs <show> [baseU
 const ledger = JSON.parse(readFileSync(join(showDir(showId), 'reveals.json'), 'utf8'));
 
 const ord = (c) => { const m = /^S(\d+)E(\d+)$/.exec(c ?? ''); return m ? +m[1] * 1000 + +m[2] : Infinity; };
-const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const checks = [
-  ...ledger.reveals.flatMap((r) => r.terms.map((t) => ({ id: r.id, at: r.at, term: t }))),
-  ...(ledger.never ?? []).map((t) => ({ id: 'never', at: 'S999E999', term: t })),
-].map((c) => ({ ...c, re: new RegExp(`(^|[^\\p{L}\\p{N}])${esc(c.term)}($|[^\\p{L}\\p{N}])`, 'iu'), slug: slug(c.term) }));
+const checks = ledgerChecks(ledger);
 
 const client = new Client({ name: 'spoiler-scan', version: '0.0.1' });
 await client.connect(new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`), { fetch: qaFetch }));
