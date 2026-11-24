@@ -292,6 +292,30 @@ Shorts aren't made yet. When the first one is, write its steps here.
     YouTube. After re-cropping, re-place every tag on its face, and check
     each camera move's corners against the frame: a push with its origin on
     one side and a slide the other way opens an empty strip at the edge.
+28. **Give each builder its own scratch folder** (`scratch/chNN/`) in its
+    brief, so ten builders' snapshots and test files can't collide.
+29. **A usage limit stops every builder at once; resume them, don't
+    restart.** `SendMessage` to each builder brings it back with its context
+    intact. Brief them to save their file after every shot, so a stop loses
+    at most one shot.
+30. **Word timings run early after a pause.** The transcriber put words
+    that follow a pause 0.2–0.5 s early (up to 0.84 s). The error doesn't add
+    up, so a whole chapter's cuts are only slightly early. Where a cut or a
+    3D window must land on a word (*Harbor Light*'s lamp lighting on
+    "now"), measure the word in the audio (`silencedetect`) instead.
+31. **Design the device for its longest line.** The log was drawn for short
+    entries, and two late rows didn't fit: the log was widened by 60 px
+    mid-build and long rows were allowed two lines. Lay out a recurring
+    graphic for the longest text it will ever carry.
+32. **Rough cost of a 14-minute film** (3 Body Problem, ten builders):
+
+    | Step | Cost |
+    |---|---|
+    | The proof (three auditions, the theme, 23 effects) | $2.14 on Fal |
+    | The rest (the palette, 48 effects) | $3.05 on Fal |
+    | Ten builders | ~4.8 M tokens, against an estimate of 2.8 M |
+
+    Estimate about 0.4 M builder tokens per minute of film they build.
 
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
