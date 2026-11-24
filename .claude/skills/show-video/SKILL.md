@@ -109,8 +109,11 @@ this public repo carries no real spoilers.
    `STORY.md`.
 9. **G6 Publish.** `publish/long.md` (title, description, chapters, tags,
    settings), `publish/long.en.srt` (`_channel/tools/make_srt.py`), three
-   thumbnail takes, `video-check`. Fill in YouTube Studio only when the user
-   asks, in their own Chrome. Once it is uploaded, add it to the show's
+   thumbnail takes, `video-check`. When the user says to upload, run
+   `_channel/tools/youtube_upload.mjs <folder> --dry-run`, then without
+   `--dry-run` (`--thumbnail` the take they picked). It uploads as private
+   and never publishes; the user reviews, adds the end screen and publishes
+   in Studio. Once it is uploaded, add it to the show's
    `shows/<id>/videos.json` (`id` like `before-s2-long`, `upTo`, the site
    title, `youtubeId`, `seconds` as YouTube shows it), and add `published`
    (YYYY-MM-DD) the day it goes public: the home page lists it as coming
