@@ -62,14 +62,16 @@ this public repo carries no real spoilers.
    action, about a minute. **Build nothing else until the user approves it:**
    every chapter costs about an hour of parallel agents, all wasted if the
    direction is wrong.
-   - Prep its screen grabs: cut-outs, blurred plates, the film's grade
+   - Prep its screen grabs: the film's grade on whole stills, never cut-outs
      (BIBLE, "The Treatment").
    - Price, then generate its score cue, which becomes the film's theme (Fal
      `elevenlabs/music/v2.5`, a composition plan following its beats), and
      its effects (ElevenLabs SFX v3 on Fal, about $0.004 each). Log both in
      `STORY.md`.
-   - Build it completely finished, in the grammar: treated screen grabs in
-     2.5D, a new picture every 2–3 s, drawn illustrations of the show's
+   - Build it completely finished, in the grammar (BIBLE, "The Grammar"):
+     treated whole screen grabs, every line its own picture idea, slow pushes
+     at most a third of the shots and never two in a row (count them), a new
+     picture every 2–3 s, drawn illustrations of the show's
      symbols and setting, reconstruction graphics from its world, kinetic
      type, an effect on every action, the film finish over everything.
    - Snapshot every shot and look at it; fix what you see. Hand the user the
@@ -329,6 +331,46 @@ Shorts aren't made yet. When the first one is, write its steps here.
     user saw it as low-res. Take each source's original. Record its pixel
     size. Frame every shot within the real pixels: cover scale times push,
     at most 1.2×. Use an upscaler only after the user has seen a test.
+
+
+**From the fourth film (an epic fantasy, about 13 minutes):**
+
+34. **A slow push on every still is a slideshow,** however fast the cuts.
+    The full cut had 286 pushes in 251 shots, and the user found it "boring
+    with the same slide-showy Ken Burns effects". Black Doves had pushed in
+    only about half its shots. Rebuilt with a picture idea per line (ink on
+    the stills, split panels, whips, punch-ins, holds, bursts, drawn charts)
+    and 11 slow moves in 62 shots, the chapter was "much much better". The
+    rule is now in BIBLE, "The Grammar": count the pushes before the user
+    sees anything. The proof chapter passed because it was mostly the device
+    (the map); the chapters of stills behind it were never checked against
+    that bar.
+35. **No cut-out parallax.** An automatic matte over its own picture, zoomed
+    faster, showed white halos and slid off its double in transitions:
+    "amateurish". Whole stills only.
+36. **Sound and picture together where the story has its own beat.** The
+    user's favourite moment was the rock-breaking contest: each hammer
+    strike's sound, a kick and a flash landing together. They were explicit
+    that it isn't a device to repeat: it fit that scene. Don't hesitate where
+    the narrative gives an event; never add it where nothing happens.
+37. **A whip runs out of a move.** A 0.2 s slide straight after a pan that
+    had come to a stop was "abrupt and awkward". Let the move accelerate into
+    a 0.3–0.35 s whip, the pictures edge to edge.
+38. **A map device must be full and coloured.** The engraved world map read
+    as "a blank beige thing" with "a line crossing over it". The user wanted
+    the opening on the map, so the map changed: hand-tinted washes, the story
+    drawn on it, every name whole and in frame when said.
+39. **A heavy film can't be reviewed in the preview.** A 3D plate across the
+    film and full-size stills made the preview freeze. A light live mode (the
+    render flag), preview proxies, and a draft review render sent as an MP4
+    are in BIBLE, "Production Notes". Proof chapters go out as a 720p cut
+    under 30 MB so they reach the user's phone.
+40. **Measure the music for drones.** A bed that was 94% one low note (83 Hz)
+    sounded like "a weird radiator" on laptop speakers. Check each take's
+    low-band share before it goes under the narration (BIBLE, "Sound").
+41. **A builder's wait loop must not match itself.** `until ! pgrep -f
+    "snapshot --at 107.95"` found its own command line and ran for three
+    hours. Wait on a file, or use `pgrep -x` on a process name.
 
 **Next film:** append your lessons here. If a rule turned out wrong, change
 the rule in `BIBLE.md`, not just the film.
