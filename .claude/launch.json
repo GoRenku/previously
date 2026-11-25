@@ -44,6 +44,20 @@
         "--no-open"
       ],
       "port": 3032
+    },
+    {
+      "name": "rings-of-power-before-s2-long",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/keremk/.claude/plugins/cache/hyperframes/hyperframes/0.9.91/skills/hyperframes/scripts/plugin-cli.mjs",
+        "preview",
+        "/Users/keremk/Projects/aitinkerbox/previously-content/videos/rings-of-power/before-s2/long",
+        "--port",
+        "3033",
+        "--foreground",
+        "--no-open"
+      ],
+      "port": 3033
     }
   ]
 }
