@@ -1,6 +1,6 @@
 /**
  * The few page-level things that depend on published content or the site:
- *   /robots.txt     staging asks crawlers to stay out; production points at the sitemap
+ *   /robots.txt     keeps crawlers off the API and MCP, and points at the sitemap
  *   /sitemap.xml    the home page and every show this site has published
  *   /show/<id>...   the app's page, with link-preview tags for that show
  * Preview tags use only what the home page already shows everyone (title,
@@ -12,11 +12,8 @@ import { catalogWithAvailability } from './shows.ts';
 const text = (body: string, type: string) =>
   new Response(body, { headers: { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'public, max-age=3600' } });
 
-export function robots(origin: string, staging: boolean): Response {
-  const body = staging
-    ? 'User-agent: *\nDisallow: /\n'
-    : `User-agent: *\nDisallow: /api/\nDisallow: /mcp\n\nSitemap: ${origin}/sitemap.xml\n`;
-  return text(body, 'text/plain');
+export function robots(origin: string): Response {
+  return text(`User-agent: *\nDisallow: /api/\nDisallow: /mcp\n\nSitemap: ${origin}/sitemap.xml\n`, 'text/plain');
 }
 
 const xml = (s: string) => s.replace(/[<>&'"]/g, (c) => `&#${c.charCodeAt(0)};`);

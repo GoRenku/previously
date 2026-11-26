@@ -33,7 +33,7 @@ Worker:  content store ──► spoiler gate (shared/spoilers.ts): full show + 
 | `worker/content/` | `ContentStore`: `catalog()`, `manifest()`, `show(id)`. The only place the Worker reads content: R2 when deployed (`r2.ts`), the local content folder under `pnpm dev` (`dev.ts`). |
 | `worker/shows.ts` | Catalog availability (a show is available once the manifest lists it) and resolving a viewer's position. |
 | `worker/api.ts` | `/api/*`: the catalog, the gated show, search. Handlers are thin: parse, gate, serialize. |
-| `worker/site.ts` | `/robots.txt` (staging: keep out), `/sitemap.xml` (from the manifest), and the app page for `/show/<id>` with that show's link-preview tags (title, tagline, premise, backdrop: what the home page shows everyone). |
+| `worker/site.ts` | `/robots.txt`, `/sitemap.xml` (from the manifest), and the app page for `/show/<id>` with that show's link-preview tags (title, tagline, premise, backdrop: what the home page shows everyone). |
 | `worker/mcp/` | The MCP server (SDK v2): instructions and eight read-only tools. Each tool takes `up_next`, gates, then formats text. |
 | `shared/theme.ts` | The shape of a show's theme: palette and type tokens, lock motif, microcopy. |
 | `src/` | The React site. It only renders gated views and never filters content itself. `src/themes.ts` holds the app theme; each show's theme comes from the API. |
@@ -104,25 +104,23 @@ Shows are added with the Claude Code skills in `.claude/skills/`
 
 ## Hosting
 
-Two Cloudflare Workers from one `wrangler.jsonc`: `previously`
-(`previously.fyi`) and `previously-staging` (`staging.previously.fyi`). They
-run the same code and differ only in `CONTENT_ENV`, which picks the manifest
-they read. Each is built by Vite with the Cloudflare Vite plugin. A third,
-tiny Worker, `previously-www` (`worker/www.ts`), redirects
+One Cloudflare Worker, `previously` (`previously.fyi`, `wrangler.jsonc`),
+built by Vite with the Cloudflare Vite plugin. `CONTENT_ENV` picks the
+manifest it reads. There is no staging site (dropped 2026-11-26): changes are
+reviewed on the maintainer's laptop with `pnpm dev`. A second, tiny Worker, `previously-www` (`worker/www.ts`), redirects
 `www.previously.fyi` to the apex. Only
 `/api/*`, `/mcp`, `/show/*`, `/robots.txt` and `/sitemap.xml` run Worker
 code; every other path is a static asset with single-page-app fallback.
 
 Code and content ship separately, and only from the maintainer's machine:
 
-- **Code:** `pnpm deploy:staging` / `pnpm deploy:production` (`check`, a
-  clean tree, then `wrangler deploy` tagged with the commit);
-  `pnpm rollback:production`.
-- **Content:** `pnpm content:publish <id>` bundles the committed content,
-  mirrors its images and points the staging manifest at it.
-  `pnpm content:promote <id>` runs `spoiler-scan` and `mcp-smoke` against
-  staging, then copies those exact entries to production.
-  `pnpm content:rollback <env> <id>` returns a site to the show's previous
+- **Code:** `pnpm deploy:production` (`check`, a clean tree, then
+  `wrangler deploy` tagged with the commit); `pnpm rollback:production`.
+- **Content:** `pnpm content:publish <id>` runs `spoiler-scan` and
+  `mcp-smoke` on a throwaway local server over the committed content, then
+  bundles it, mirrors its images, points the live manifest at it, runs the
+  same checks against `previously.fyi`, and rolls back on its own if they
+  fail. `pnpm content:rollback <id>` returns the site to the show's previous
   bundle.
 
 ### R2
@@ -155,7 +153,7 @@ The publish scripts use their own R2 token, kept in the git-ignored
   600 and `/mcp` 1200 requests a minute; `wrangler.jsonc`).
 - **Headers:** a Content-Security-Policy and the usual security headers on
   every response (`worker/http.ts` for Worker responses, a `_headers` file
-  written by `vite.config.ts` for static assets). Staging is `noindex`.
+  written by `vite.config.ts` for static assets).
 - **MCP from browsers:** CORS is open (`*`) and `Origin` is not checked: the
   server is public, read-only and holds no credentials.
 - **Analytics:** PostHog (EU), loaded only after the visitor answers the
@@ -175,5 +173,5 @@ The publish scripts use their own R2 token, kept in the git-ignored
 - `pnpm content:local`, then `pnpm build && pnpm preview`, runs the built
   Worker against a local R2 (`.wrangler/state`) holding the local content,
   which exercises exactly the deployed code path. Images stay on their
-  original hosts locally. `content:qa`, `content:promote` and
-  `content:rollback` take `--local` to work against it.
+  original hosts locally. `content:qa` and `content:rollback` take
+  `--local` to work against it.

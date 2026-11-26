@@ -45,7 +45,7 @@ Never write show content into this repo: it is public, and nothing here is gitig
    - the browser review at the six positions
 6. **Feed back.** Anything a writer, the audit or the browser review found that a check missed becomes either a ledger term or a rule in the relevant skill. Note it in "Lessons" below, using made-up examples (this repo is public).
 7. **Commit in the content repo** and merge the branch. Lessons and skill changes are committed here, in the code repo.
-8. **Ship it** (`spoiler-qa`, step 7): `pnpm content:publish <id>` puts the committed show on `https://staging.previously.fyi`. Review it there, then `pnpm content:promote <id>` re-runs the spoiler scan and MCP smoke test against staging and, if both pass, makes it live on `https://previously.fyi`. New and changed shows need no code deploy (a new lock motif is the one exception, see `show-theme`).
+8. **Ship it** (`spoiler-qa`, step 7): once the user has reviewed the show in the local preview (`pnpm dev`), `pnpm content:publish <id>` re-runs the spoiler scan and MCP smoke test locally, makes it live on `https://previously.fyi`, checks it there, and rolls back if a check fails. There is no staging site. New and changed shows need no code deploy (a new lock motif is the one exception, see `show-theme`).
 9. **Videos come after.** Once the show is live, its catch-up videos follow `show-video`; they read the same gated view.
 
 ### Agent brief template (keep it this short)
@@ -59,7 +59,7 @@ That last request is how the skills improve.
 - The browser review is done at the six positions, plus mobile.
 - Arc characters have a `now` for nearly every episode they appear in, and storylines have a beat for every episode that advances them.
 - The home page shows the show as Ready, and its theme reads well.
-- It is published, reviewed on staging and promoted: `pnpm content:promote <id>` passed and `https://previously.fyi` lists it as Ready.
+- It was reviewed in the local preview and published: `pnpm content:publish <id>` passed its local and live checks, and `https://previously.fyi` lists it as Ready.
 
 ## Lessons (keep this list current)
 
@@ -134,7 +134,7 @@ That last request is how the skills improve.
     - single-source facts in a Core-tier season.
 37. **A later season's draft reveal can be an earlier season's on-screen fact.** The season 3 pass made a detail a season 3 term (in *Harbor Light* terms, "the lens was cut from the wreck's glass") though season 1's finale shows it; what season 3 reveals is that the villain *learns* it. The arcs writer caught it. When merging a later pass, check each term against the earlier seasons' text.
 38. **Structural fixes from this show** (`scripts/ledger.mjs`): slugs now drop accents. Before, a term like "Gull Rôck" slugged to `gull-ro-ck` and never matched the id `gull-rock`, so ids built from accented names were never checked. Terms match straight and curly apostrophes alike, so writers no longer add curly copies by hand. `spoiler-scan` uses the same matcher.
-39. **The permission check may refuse `pnpm deploy:production` and `pnpm content:promote`.** Then the user runs them. Have staging fully reviewed first, and say exactly what to run.
+39. **The permission check may refuse `pnpm deploy:production` and `pnpm content:publish`.** Then the user runs them. Have the local preview fully reviewed first, and say exactly what to run.
 40. **A branch switch in the code repo while `pnpm dev` runs can leave Vite's dependency cache stale:** a blank page whose React bundles never load. Restart the dev server; don't debug the content.
 41. **Rough cost for 22 episodes over three seasons:**
 

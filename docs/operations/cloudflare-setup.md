@@ -120,18 +120,19 @@ is ever removed from the account.
 Done 2026-11-20 (and `www.previously.fyi` redirects to the apex through the
 small `previously-www` Worker, `pnpm deploy:www`).
 
-Claude runs, from this Mac: `pnpm deploy:staging`, then
+At the time, Claude ran, from this Mac: `pnpm deploy:staging`, then
 `pnpm content:publish severance black-doves`, the full spoiler QA against
 `https://staging.previously.fyi`, `pnpm content:promote severance black-doves`
 and `pnpm deploy:production`. The deploys attach
 `previously.fyi`, `staging.previously.fyi` and `www.previously.fyi` to their
 Workers automatically, including HTTPS certificates.
 
-When this is done:
+The staging site was dropped on 2026-11-26; see "Deploying From Now On"
+below. When this is done:
 
 - `https://previously.fyi` shows the site;
 - `https://previously.fyi/mcp` is the MCP server;
-- both Workers, `previously` and `previously-staging`, appear on
+- the `previously` Worker appears on
   [dash.cloudflare.com → Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages).
 
 Certificates for new names can take a few minutes. A browser warning in the
@@ -206,19 +207,16 @@ After the first launch, everything goes out from this Mac, in the
 `previously` folder. Wrangler uses your existing sign-in; publishing content
 uses `.publish.vars` from step 3.
 
-**Code** (after merging to `main` and pushing to GitHub):
+There is no staging site: review every change on this laptop with `pnpm dev`
+first (in the Claude app it opens in the browser pane).
 
-```bash
-pnpm deploy:staging
-```
-
-Check `https://staging.previously.fyi`, then:
+**Code** (after reviewing locally, merging to `main` and pushing to GitHub):
 
 ```bash
 pnpm deploy:production
 ```
 
-Both run the typecheck, data validation and build first, and refuse to run
+It runs the typecheck, data validation and build first, and refuse to run
 with uncommitted changes. Each deployment is labeled with its git commit on
 [dash.cloudflare.com → Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages)
 → the Worker → **Deployments**. To undo a bad code deploy:
@@ -227,23 +225,18 @@ with uncommitted changes. Each deployment is labeled with its git commit on
 pnpm rollback:production
 ```
 
-**Content** (after committing in `previously-content`):
+**Content** (after reviewing locally and committing in `previously-content`):
 
 ```bash
 pnpm content:publish <show>
 ```
 
-Check the show on staging, then:
+It runs the spoiler scan and MCP smoke test on a throwaway local server
+first and stops if either fails, then goes live, checks the live site and
+rolls back on its own if that check fails. To undo a release by hand:
 
 ```bash
-pnpm content:promote <show>
-```
-
-`content:promote` re-runs the spoiler scan and MCP smoke test against
-staging and stops if either fails. To undo a bad content release:
-
-```bash
-pnpm content:rollback production <show>
+pnpm content:rollback <show>
 ```
 
 Code and content are independent: deploying code never changes which content
@@ -257,5 +250,5 @@ is live, and publishing content never needs a code deploy.
 | Deploy says the domain or hostname is already in use | A leftover DNS record | Step 1.3: delete the A/AAAA/CNAME record for that name, then ask Claude to deploy again. |
 | `media.previously.fyi` does not load | The bucket domain is still being set up | Wait a few minutes; check R2 → `previously-media` → **Settings** → **Custom Domains** shows **Active**. |
 | Publishing fails with "access denied" | The token is missing a bucket, or `.publish.vars` has a typo | Recreate the token with both buckets (step 3); check the file has no spaces or quotes. |
-| Site loads but shows no shows | Nothing promoted to production yet | Run `pnpm content:promote <show>`. |
+| Site loads but shows no shows | Nothing published yet | Run `pnpm content:publish <show>`. |
 | `pnpm deploy:*` stops before deploying | The typecheck, validation or build failed, or there are uncommitted changes | Read the error it prints; commit or fix, then run it again. |

@@ -1,6 +1,6 @@
 # Publishing Content
 
-Date: 2026-11-20
+Date: 2026-11-26 (staging dropped)
 
 Status: current
 
@@ -13,42 +13,41 @@ Publishing uses the R2 token in `.publish.vars`
 ## The Path
 
 ```text
-edit in ../previously-content ──► local QA (pnpm dev) ──► commit
-   ──► pnpm content:publish <show>   (staging)
-   ──► review staging.previously.fyi
-   ──► pnpm content:promote <show>   (production)
+edit in ../previously-content ──► local QA and review (pnpm dev) ──► commit
+   ──► pnpm content:publish <show>   (checked locally, live, checked live)
 ```
+
+There is no staging site. The review is on this laptop: `pnpm dev` serves the
+content folder as it is on disk, and in the Claude app it opens in the
+browser pane.
 
 1. **Write.** Add or fix the show with the skills (`onboard-show`), on a
    branch in the content repo if you want a diff to review.
-2. **Check locally.** `pnpm dev` serves the content folder as it is on disk.
-   Run the local QA (`spoiler-qa` skill: `validate-data`, `ledger-check`,
-   `spoiler-scan`, `mcp-smoke`, the browser review).
+2. **Check and review locally.** Run the local QA (`spoiler-qa` skill:
+   `validate-data`, `ledger-check`, `spoiler-scan`, `mcp-smoke`) and look at
+   the show in `pnpm dev` at a few positions.
 3. **Commit** in the content repo. Publishing refuses uncommitted content and
    records the commit, so every live version maps to a commit.
-4. **Publish to staging:** `pnpm content:publish <show...>`. It runs
-   `validate-data` and `ledger-check`, bundles each show, mirrors its images,
-   uploads, and points the staging manifest at the new bundle.
-5. **Review** `https://staging.previously.fyi` (and `/mcp`). Staging is public
-   but marked `noindex`.
-6. **Promote:** `pnpm content:promote <show...>`. It re-runs `spoiler-scan`
-   and `mcp-smoke` against staging and stops if either fails. Then it makes
-   exactly the staged versions live on production, along with the staging
-   catalog.
-
-A site picks up a new manifest within about a minute (the Worker caches it for
-60 seconds).
+4. **Publish:** `pnpm content:publish <show...>`. In order, it:
+   1. runs `validate-data` and `ledger-check`;
+   2. starts a throwaway dev server on port 5199 over the committed content
+      and runs `spoiler-scan` and `mcp-smoke` against it, stopping with the
+      site unchanged if either fails;
+   3. bundles each show, mirrors its images and uploads;
+   4. points the live manifest at the new bundles (live within about a
+      minute: the Worker caches the manifest for 60 seconds);
+   5. waits that minute, runs both checks against `https://previously.fyi`,
+      and rolls back on its own if either fails.
 
 ## Undo
 
 ```bash
-pnpm content:rollback production <show>
+pnpm content:rollback <show>
 ```
 
-points production back at what it served for that show before its last
+points the site back at what it served for that show before its last
 change. If that was nothing (the show's first release), the show goes back to
-"coming soon". Rolling back twice undoes the first rollback. The same works
-for `staging`.
+"coming soon". Rolling back twice undoes the first rollback.
 
 ## What Publishing Does
 
@@ -64,7 +63,7 @@ for `staging`.
 - **Upload.** Bundles and the catalog are stored under the hash of their
   contents and never overwritten, so publishing never changes what another
   site serves.
-- **Manifest.** `manifests/staging.json` gets the new entries. The replaced
+- **Manifest.** `manifests/production.json` gets the new entries. The replaced
   manifest is kept under `manifests/history/`, and each manifest points at the
   one it replaced, which is what rollback walks.
 
@@ -72,9 +71,10 @@ for `staging`.
 
 | Command | Does |
 |---|---|
-| `pnpm content:qa <staging\|production> <show...>` | `spoiler-scan` and `mcp-smoke` against that site. |
-| `pnpm content:local [show...]` | Loads the local content into the local R2 (all shows, both manifests, images left on their original hosts). Then `pnpm build && pnpm preview` runs the deployed code path on port 5180. |
-| `--local` on `content:qa`, `content:promote`, `content:rollback` | Works against the local R2 and `http://localhost:5180` instead of the real sites. |
+| `pnpm content:publish <show...> --dry-run` | Only the checks (steps 1–2), before deciding to publish. Nothing is uploaded. |
+| `pnpm content:qa <show...>` | `spoiler-scan` and `mcp-smoke` against `https://previously.fyi`. |
+| `pnpm content:local [show...]` | Loads the local content into the local R2 (all shows, images left on their original hosts). Then `pnpm build && pnpm preview` runs the deployed code path on port 5180. |
+| `--local` on `content:qa`, `content:rollback` | Works against the local R2 and `http://localhost:5180` instead of the live site. |
 
 ## If Something Goes Wrong
 
@@ -82,7 +82,8 @@ for `staging`.
 |---|---|---|
 | "The content repo has uncommitted changes" | Publishing needs a commit | Commit in `../previously-content`. |
 | "N image(s) could not be mirrored" | An image URL is broken or not an image | Fix or replace those URLs in the content, commit, publish again. Already mirrored images are kept. |
-| Promote says the reveal ledger differs from the staged commit | `spoiler-scan` reads the local ledger, which has changed since publishing | Publish again from the current commit, or check out the staged one. |
-| Promote fails a check | A spoiler leak or an MCP regression on staging | Production is unchanged. Fix, commit, publish, promote again. |
+| Publish fails a check before going live | A spoiler leak or an MCP regression in the committed content | The site is unchanged. Fix, commit, publish again. |
+| Publish fails the live check and rolls back | Something differs on the live site (often the deployed code is older than this checkout) | The site is back as it was. Deploy the code first if it's behind, then publish again. |
+| "The local server on port 5199 didn't start" | The port is busy, or the dev server can't start | Free the port, or run `pnpm exec vite --port 5199` to see the error. |
 | "(rate limited; waiting …)" during QA | The site's per-IP limit | Nothing; the scripts wait and continue. |
 | Publishing fails with "access denied" | The token lacks a bucket, or `.publish.vars` has a typo | Recreate the token with both buckets; check the file. |

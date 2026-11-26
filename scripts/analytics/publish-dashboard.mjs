@@ -19,7 +19,7 @@ const APP = 'https://eu.posthog.com';
 const PROJECT_NAME = 'Renku Website';
 const DASHBOARD_NAME = 'Previously';
 const DASHBOARD_DESCRIPTION = 'previously.fyi: visits, shows, sections and what people do there. Managed by scripts/analytics/publish-dashboard.mjs in the previously repository; edits made here are overwritten.';
-const NOTE = '## previously.fyi\n\nVisits count everyone who answered the analytics banner (Yes and No) and are counted as sessions, because No visitors are new each day. Actions count only visitors who chose Yes. Staging and local traffic are left out.';
+const NOTE = '## previously.fyi\n\nVisits count everyone who answered the analytics banner (Yes and No) and are counted as sessions, because No visitors are new each day. Actions count only visitors who chose Yes. Local traffic is left out.';
 
 /* ── chart builders ── */
 

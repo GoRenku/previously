@@ -1,6 +1,6 @@
 ---
 name: spoiler-qa
-description: Phase 3 of adding a show to Previously — verify a show's data and ship it. Runs the validator, the static ledger check, the live spoiler scan across every position (web + MCP), the MCP smoke test, an independent reveal audit and a browser review, then publishes to staging and promotes to production (which re-runs the live checks remotely). Use after content is written, and after any content change.
+description: Phase 3 of adding a show to Previously — verify a show's data and ship it. Runs the validator, the static ledger check, the live spoiler scan across every position (web + MCP), the MCP smoke test, an independent reveal audit and a browser review, then publishes to production (publish re-runs the live checks locally first and on the live site after, rolling back if they fail). Use after content is written, and after any content change.
 ---
 
 # Spoiler QA
@@ -78,18 +78,14 @@ With `pnpm dev` running, set the position from the picker (or `localStorage['pre
 
 Also check at 375px: the arc lanes collapse to one, the map scrolls, and the hero and logo are legible.
 
-### 7. Ship: staging, then production
-Only after 1–6 pass and the content repo is committed (publishing refuses uncommitted content):
+### 7. Ship: straight to production
+There is no staging site. The review is the browser review in step 6, on this laptop (`pnpm dev`, in the app's browser pane). Only after 1–6 pass, the user has looked at the local preview, and the content repo is committed (publishing refuses uncommitted content):
 ```bash
-pnpm content:publish <id>                # bundle, mirror images, point staging at it
+pnpm content:publish <id>                # local checks, then live, then live checks
 ```
-Review `https://staging.previously.fyi` at two or three of the positions above. Images now come from `media.previously.fyi`; a publish stops and names any image it cannot fetch. Then:
+Publish first runs `spoiler-scan` and `mcp-smoke` on a throwaway local server (port 5199) over the committed content, and stops with the site unchanged if either fails. Then it mirrors the images (it stops and names any it cannot fetch; live images come from `media.previously.fyi`), makes the show live, waits a minute for the site to pick it up, runs both checks against `https://previously.fyi`, and rolls back on its own if they fail. To undo by hand:
 ```bash
-pnpm content:promote <id>                # spoiler-scan + mcp-smoke against staging, then live
-```
-Promote stops, and production stays as it was, if either check fails on staging, or if the content repo's `reveals.json` differs from the commit that was staged (the scan reads the local ledger). A site picks up the change within about a minute. If something bad reaches production anyway:
-```bash
-pnpm content:rollback production <id>    # back to what production served before
+pnpm content:rollback <id>               # back to what the site served before
 ```
 Details: `docs/operations/content-publishing.md`.
 

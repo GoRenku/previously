@@ -18,7 +18,9 @@ content lived in `data/` in the code repo, and a show went live as soon as its
   beside the code repo.
 - The sites read content from the R2 bucket `previously-content`: one
   hash-named bundle per show, a hash-named catalog, and a manifest per site
-  (`staging`, `production`) saying which bundles it serves.
+  (`staging`, `production`) saying which bundles it serves. *(2026-11-26: the
+  staging site is gone; only `production` is read. See
+  [content-publishing.md](../operations/content-publishing.md).)*
 - `pnpm content:publish` bundles committed content into staging (never the
   reveal ledger or research), mirroring images into the public bucket
   `previously-media` (`media.previously.fyi`). `pnpm content:promote` runs

@@ -13,7 +13,7 @@ custom connector.
 
 ## Decision
 
-- One Worker per site (`previously`, `previously-staging`) from one
+- *(2026-11-26: staging was dropped; only `previously` remains.)* One Worker per site (`previously`, `previously-staging`) from one
   `wrangler.jsonc`, built with the Cloudflare Vite plugin. Static assets serve
   the React app; only `/api/*` and `/mcp` run Worker code.
 - The MCP server uses SDK v2 (`@modelcontextprotocol/server`) through

@@ -1,8 +1,9 @@
-// Site manifests (see Manifest in shared/content.ts). Each site reads
-// manifests/<env>.json. Every write first saves the manifest it replaces to
+// Site manifests (see Manifest in shared/content.ts). The site reads
+// manifests/<env>.json; `production` is previously.fyi (and the local R2 under
+// `pnpm preview`). Every write first saves the manifest it replaces to
 // manifests/history/<env>/<timestamp>.json and links it as `previous`, so
-// rollback can walk back without listing the bucket.
-export const ENVS = ['staging', 'production'];
+// rollback can walk back without listing the bucket. (A staging manifest from
+// before 2026-11-26 may still be in the bucket; nothing reads it.)
 export const manifestKey = (env) => `manifests/${env}.json`;
 const EMPTY = () => ({ catalog: '', shows: {} });
 

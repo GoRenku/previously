@@ -17,16 +17,15 @@ import { robots, showPage, sitemap } from './site.ts';
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    const staging = env.CONTENT_ENV === 'staging';
     if (url.pathname.startsWith('/show/') || url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') {
       const store = contentStore(env, url);
-      const page = url.pathname === '/robots.txt' ? robots(url.origin, staging)
+      const page = url.pathname === '/robots.txt' ? robots(url.origin)
         : url.pathname === '/sitemap.xml' ? await sitemap(url.origin, store)
         : await showPage(request, url, env.ASSETS, store).catch((e) => { console.error(e); return env.ASSETS.fetch(request); });
-      return withSecurityHeaders(page, { noindex: staging, page: true });
+      return withSecurityHeaders(page, { page: true });
     }
     const response = await handle(request, env, ctx, url);
-    return withSecurityHeaders(response, { noindex: staging, page: false });
+    return withSecurityHeaders(response, { page: false });
   },
 } satisfies ExportedHandler<Env>;
 

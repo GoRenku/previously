@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Code deploys, run only from this machine (plan 0001: nothing deploys from GitHub).
-//   pnpm deploy:staging      check, build for staging, deploy previously-staging
-//   pnpm deploy:production   check, build for production, deploy previously
+// There is no staging site: review on this laptop (`pnpm dev`), then deploy.
+//   pnpm deploy:production   check, build, deploy previously (previously.fyi)
 //   pnpm rollback:production return the production Worker to its previous version
 //   pnpm deploy:www          the www.previously.fyi -> previously.fyi redirect Worker
 // Add --dry-run to a deploy to build and let Wrangler check the upload without
@@ -12,7 +12,7 @@ import { repoRoot } from './content-root.mjs';
 
 const [target, ...rest] = process.argv.slice(2);
 const dryRun = rest.includes('--dry-run');
-const WORKERS = { staging: 'previously-staging', production: 'previously' };
+const WORKERS = { production: 'previously' };
 
 const git = (...args) => execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' }).trim();
 function run(cmd, args, env = {}) {
@@ -28,7 +28,7 @@ if (target === 'rollback') {
 }
 
 if (!(target in WORKERS) && target !== 'www') {
-  console.error('usage: node scripts/deploy.mjs staging|production|www [--dry-run] | rollback');
+  console.error('usage: node scripts/deploy.mjs production|www [--dry-run] | rollback');
   process.exit(2);
 }
 
@@ -45,10 +45,6 @@ if (target === 'www') {
   process.exit(0);
 }
 
-// The Cloudflare Vite plugin picks the Wrangler environment at build time, so
-// the whole check (typecheck, validate, build) runs with it set. Production is
-// the top-level config.
-const env = target === 'staging' ? { CLOUDFLARE_ENV: 'staging' } : {};
-run('pnpm', ['check'], env);
-run('pnpm', ['exec', 'wrangler', 'deploy', '--tag', commit, '--message', `${commit}${dirty ? '-dirty' : ''} ${subject}`.slice(0, 100), ...(dryRun ? ['--dry-run'] : [])], env);
-console.log(`\n${dryRun ? 'Dry run of' : 'Deployed'} ${WORKERS[target]} at ${commit}.`);
+run('pnpm', ['check']);
+run('pnpm', ['exec', 'wrangler', 'deploy', '--tag', commit, '--message', `${commit}${dirty ? '-dirty' : ''} ${subject}`.slice(0, 100), ...(dryRun ? ['--dry-run'] : [])]);
+console.log(dryRun ? `\nDry run of ${WORKERS[target]} at ${commit}.` : `\nDeployed ${WORKERS[target]} at ${commit}: https://previously.fyi. To undo: pnpm rollback:production`);

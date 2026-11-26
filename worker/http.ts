@@ -24,18 +24,16 @@ export function serverError(e: unknown) {
 }
 
 /**
- * Headers every Worker response carries. Staging also asks search engines not
- * to index it. `page` marks the app's own HTML (and robots/sitemap), which keep
+ * Headers every Worker response carries. `page` marks the app's own HTML (and robots/sitemap), which keep
  * the page CSP from the static assets' `_headers`; everything else is JSON or
  * MCP, which is never rendered, so it gets a deny-all CSP.
  */
-export function withSecurityHeaders(response: Response, opts: { noindex: boolean; page: boolean }): Response {
+export function withSecurityHeaders(response: Response, opts: { page: boolean }): Response {
   const r = new Response(response.body, response);
   r.headers.set('X-Content-Type-Options', 'nosniff');
   r.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   r.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   if (!opts.page) r.headers.set('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
-  if (opts.noindex) r.headers.set('X-Robots-Tag', 'noindex');
   return r;
 }
 

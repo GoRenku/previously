@@ -31,14 +31,12 @@ pnpm check           # typecheck, validate every show, build
 
 ## Publish and deploy
 
-Everything goes out from this machine; nothing deploys from GitHub. Guides: [deploying code](docs/operations/deploy.md), [publishing content](docs/operations/content-publishing.md), [one-time setup](docs/operations/cloudflare-setup.md).
+Everything goes out from this machine; nothing deploys from GitHub. There is no staging site: review on this laptop with `pnpm dev`, then publish or deploy. Guides: [deploying code](docs/operations/deploy.md), [publishing content](docs/operations/content-publishing.md), [one-time setup](docs/operations/cloudflare-setup.md).
 
 ```bash
-pnpm content:publish <show>             # committed content -> staging (bundles, mirrored images, manifest)
-pnpm content:promote <show>             # spoiler-scan + mcp-smoke on staging, then make it live
-pnpm content:rollback production <show> # back to the show's previous version
-pnpm deploy:staging                     # code: check, then deploy (refuses uncommitted changes)
-pnpm deploy:production
+pnpm content:publish <show>             # committed content: checked locally, then live, then checked live
+pnpm content:rollback <show>            # back to the show's previous version
+pnpm deploy:production                  # code: check, then deploy (refuses uncommitted changes)
 pnpm rollback:production
 pnpm deploy:www                         # the www -> apex redirect Worker (rarely needed)
 pnpm content:local && pnpm build && pnpm preview   # the deployed code path, locally, on local R2
@@ -94,11 +92,11 @@ node scripts/build-catalog.mjs             # rebuild the home page list from cat
 | `shared/theme.ts` | The shape of a show's `theme.json` |
 | `shared/content.ts` | The content contracts: catalog entries, show bundles, manifests |
 | `worker/` | The Cloudflare Worker: `/api/*` (gated JSON), `/mcp` (MCP tools), link previews, robots and sitemap; everything else is static assets |
-| `wrangler.jsonc` | The two Workers: `previously` (production) and `previously-staging` |
+| `wrangler.jsonc` | The `previously` Worker (`previously.fyi`) |
 | `src/` | React site; it only renders gated views. `src/themes.ts` holds the app theme |
 | `scripts/content-root.mjs` | Finds the content repo |
 | `scripts/publish/` | Bundling (no reveal ledger, no research), image mirroring, manifests, the R2 client, the `content:*` commands |
-| `scripts/deploy.mjs` | `deploy:staging`, `deploy:production`, `rollback:production`, `deploy:www` |
+| `scripts/deploy.mjs` | `deploy:production`, `rollback:production`, `deploy:www` |
 | `scripts/og-image.html`, `public/og.png` | The home page's link-preview image (`pnpm og:image` re-renders it with headless Chrome) |
 | `scripts/validate-data.mjs`, `validate-all.mjs` | Checks the dataset: codes, ordering, cross-references, ledger, theme |
 | `scripts/spoiler-scan.mjs` | Fetches the gated payload at every position and flags sensitive terms that appear before their reveal |
