@@ -212,7 +212,9 @@ clips.forEach((c) => {
   checkCode(c.at, `${w}.at`);
 });
 
-// catch-up videos (ShowVideo in shared/content.ts); optional, listed on the home page
+// catch-up videos (ShowVideo in shared/content.ts); optional, listed on the home page and,
+// gated, on the show's Catch up and Videos pages. A locked video still shows its title.
+const epOrd = (c) => { const m = /^S(\d+)E(\d+)$/.exec(c); return m ? Number(m[1]) * 1000 + Number(m[2]) : NaN; };
 if (existsSync(join(dir, 'videos.json'))) {
   const videos = load('videos.json', 'videos');
   unique(videos, 'videos');
@@ -223,6 +225,10 @@ if (existsSync(join(dir, 'videos.json'))) {
     if (!/^[a-z0-9-]+$/.test(v.id || '')) err(`${w}: id must be a slug like before-s2-long`);
     if (typeof v.upTo !== 'string' || !CODE.test(v.upTo)) err(`${w}: bad upTo ${JSON.stringify(v.upTo)}`);
     else if (!validCodes.has(v.upTo) && !seasonStarts.has(v.upTo)) err(`${w}: upTo ${v.upTo} is neither a known episode nor a season's first episode`);
+    if (v.from !== undefined) {
+      if (typeof v.from !== 'string' || !CODE.test(v.from) || !validCodes.has(v.from)) err(`${w}: from ${JSON.stringify(v.from)} must be a known episode`);
+      else if (typeof v.upTo === 'string' && CODE.test(v.upTo) && epOrd(v.from) >= epOrd(v.upTo)) err(`${w}: from ${v.from} must come before upTo ${v.upTo}`);
+    }
     if (!v.title || typeof v.title !== 'string') err(`${w}: needs a title`);
     if (!/^[A-Za-z0-9_-]{11}$/.test(v.youtubeId || '')) err(`${w}: bad youtubeId`);
     if (!Number.isInteger(v.seconds) || v.seconds <= 0) err(`${w}: seconds must be a whole number of seconds`);

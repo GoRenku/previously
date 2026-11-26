@@ -47,7 +47,7 @@ Copy a finished show's `theme.json` as the starting point.
 | `--accent`, `--accent-2`, `--accent-soft`, `--accent-ink` | One signature colour and a lighter partner. |
 | `--terminal`, `--terminal-ink` | The show's "dark surface", used for *where we left off*, the "right now" card, the second facet lane and locks. It must work under light text. |
 | `--font-display`, `--display-weight`, `--display-tracking`, `--display-stretch` | Matched to the wordmark, from Google Fonts. Add the family to the `<link>` in `index.html` (a code change in this repo). |
-| `--font-quote`, `--quote-weight`, `--quote-case` | The face for **paragraph-length** display text: "Where we left off" and "Right now". It defaults to the display face, which suits Severance's grotesque. A condensed or all-caps display face (Black Doves' Anton) is unreadable at paragraph length, so point this at the UI face. |
+| `--font-quote`, `--quote-weight`, `--quote-case` | The face for **paragraph-length** display text: "Last time" on Catch up and "Right now". It defaults to the display face, which suits Severance's grotesque. A condensed or all-caps display face (Black Doves' Anton) is unreadable at paragraph length, so point this at the UI face. |
 | `--img-grade` | A gentle CSS filter that unifies stills: cool or warm, a little desaturated. |
 | `--radius`, `--radius-lg` | Sharp for corporate or clinical shows, softer for warm ones. |
 

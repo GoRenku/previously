@@ -3,7 +3,7 @@
 // gated web payload and the MCP tool outputs, and flags reveal-ledger terms that show up
 // before their reveal. Complements scripts/ledger-check.mjs (static) by also testing the gate.
 // Usage: node scripts/spoiler-scan.mjs <show> [baseUrl]   (server must be running)
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { showDir } from './content-root.mjs';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
@@ -17,6 +17,10 @@ const ledger = JSON.parse(readFileSync(join(showDir(showId), 'reveals.json'), 'u
 
 const ord = (c) => { const m = /^S(\d+)E(\d+)$/.exec(c ?? ''); return m ? +m[1] * 1000 + +m[2] : Infinity; };
 const checks = ledgerChecks(ledger);
+// Our recaps: a video's YouTube id is the spoiler until the viewer reaches its upTo.
+const videosFile = join(showDir(showId), 'videos.json');
+const videos = existsSync(videosFile) ? JSON.parse(readFileSync(videosFile, 'utf8')).videos ?? [] : [];
+const videoLeaks = [];
 
 const client = new Client({ name: 'spoiler-scan', version: '0.0.1' });
 await client.connect(new StreamableHTTPClientTransport(new URL(`${BASE}/mcp`), { fetch: qaFetch }));
@@ -42,6 +46,10 @@ for (const next of positions) {
   for (const c of view.characters.filter((x) => x.importance >= 2)) {
     sources[`mcp:get_character(${c.id})`] = await mcp('get_character', { show: showId, up_next: next, name: c.name });
   }
+  for (const v of videos) {
+    if (ord(next) >= ord(v.upTo)) continue;
+    for (const [where, text] of Object.entries(sources)) if (text.includes(v.youtubeId)) videoLeaks.push(`EARLY  recap ${v.id} (opens at ${v.upTo}): its YouTube id is in ${where} at next=${next}`);
+  }
   for (const c of checks) {
     if (ord(through) >= ord(c.at) || first.has(c)) continue;
     for (const [where, text] of Object.entries(sources)) {
@@ -59,6 +67,7 @@ for (const c of checks) {
   bad++;
   console.log(`EARLY  "${c.term}" (${c.id}, revealed ${c.at}) already visible after ${f.through} via ${f.where}\n       …${f.snippet}…`);
 }
-console.log(`${showId}: ${checks.length} terms × ${positions.length} positions (web + MCP) — ${bad ? `${bad} leak(s)` : 'clean'} (${qaFetch.calls} requests)`);
+for (const l of videoLeaks) { bad++; console.log(l); }
+console.log(`${showId}: ${checks.length} terms and ${videos.length} recap(s) × ${positions.length} positions (web + MCP) — ${bad ? `${bad} leak(s)` : 'clean'} (${qaFetch.calls} requests)`);
 await client.close();
 process.exit(bad ? 1 : 0);

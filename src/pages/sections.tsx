@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fmt, searchShow, type GCharacter, type GWorld, type SearchHit } from '../api';
 import { Ep, Icon, Locked, Portrait, YouTube, shortName } from '../components';
+import { clock, minutesToWatch, rangeLabel } from '../catchup-plan';
 import { AiSetup } from '../ai-setup';
 import { track } from '../analytics';
 import { FactList } from './characters';
@@ -187,25 +188,58 @@ export function World() {
   );
 }
 
-/* ─────────────── Clips ─────────────── */
+/* ─────────────── Videos: our recaps, then official clips ─────────────── */
 
-export function Clips() {
+const CHANNEL = { handle: '@previouslyfyi', url: 'https://www.youtube.com/@previouslyfyi' };
+
+export function Videos() {
   const { view, theme, showId } = useShow();
+  const recaps = view.recaps;
   return (
     <div className="page">
-      <h2 className="display page-title">Clips & trailers</h2>
-      <p className="page-sub">Official videos only, and only the ones that are safe for where you are. Trailers for the next season unlock once you've finished the last one.</p>
-      {view.clips.length ? (
-        <div className="clip-grid">
-          {view.clips.map((c) => (
-            <div key={c.id} className="clip">
-              <YouTube id={c.youtubeId} title={c.title} onPlay={() => track('clip_played', { show_id: showId, clip_id: c.id, kind: c.kind })} />
-              <div className="t">{c.title}</div>
-              <div className="d"><Mentions text={c.description} /> <span className="kicker" style={{ fontSize: 10 }}>{c.channel} · {c.kind}</span></div>
-            </div>
-          ))}
-        </div>
-      ) : <div className="empty">{theme.copy.empty ?? 'No clips yet.'}</div>}
+      <h2 className="display page-title">Videos</h2>
+      <p className="page-sub">Our recaps, and the official clips and trailers. Each one opens once it's safe for where you are.</p>
+      {recaps.length > 0 && (
+        <section className="vid-section">
+          <div className="vid-head">
+            <h3 className="display">Our recaps</h3>
+            <a href={CHANNEL.url} target="_blank" rel="noreferrer" className="vid-channel">{CHANNEL.handle} on YouTube <Icon.arrow /></a>
+          </div>
+          <div className="clip-grid">
+            {recaps.map((r) => (
+              <div key={r.id} className={`clip vid-recap ${r.status}`}>
+                {r.youtubeId ? (
+                  <YouTube id={r.youtubeId} title={r.title} onPlay={() => track('recap_played', { show_id: showId, up_to: r.upTo, placement: 'videos' })} />
+                ) : (
+                  <div className="frame vid-locked">
+                    <Locked motif={theme.motif} label={<>Opens at {fmt(r.upTo)}</>} density={120} seed={5} />
+                    <span className="vid-dur">{clock(r.seconds)}</span>
+                  </div>
+                )}
+                <div className="t">{r.title}</div>
+                <div className="d">{r.youtubeId
+                  ? <>{minutesToWatch(r.seconds)} min · covers {rangeLabel(view, r.from, r.upTo)}</>
+                  : <>Covers {rangeLabel(view, r.from, r.upTo)}. It opens once you reach {fmt(r.upTo)}.</>}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      <section className="vid-section">
+        {recaps.length > 0 && <div className="vid-head"><h3 className="display">Official clips and trailers</h3></div>}
+        {view.clips.length ? (
+          <div className="clip-grid">
+            {view.clips.map((c) => (
+              <div key={c.id} className="clip">
+                <YouTube id={c.youtubeId} title={c.title} onPlay={() => track('clip_played', { show_id: showId, clip_id: c.id, kind: c.kind })} />
+                <div className="t">{c.title}</div>
+                <div className="d"><Mentions text={c.description} /> <span className="kicker" style={{ fontSize: 10 }}>{c.channel} · {c.kind}</span></div>
+              </div>
+            ))}
+          </div>
+        ) : <div className="empty">{theme.copy.empty ?? 'No clips yet.'}</div>}
+        <p className="muted vid-note">Trailers for the next season unlock once you've finished the last one.</p>
+      </section>
     </div>
   );
 }

@@ -19,6 +19,8 @@ export interface ShowVideo {
   id: string;
   /** Its spoiler line: the episode its viewer is about to watch. It covers everything before, and nothing after. */
   upTo: string;
+  /** The first episode it covers (default S1E1). A mid-season film is S2E1 → S2E6; a two-season one S1E1 → S3E1. */
+  from?: string;
   /** The title on this site. The YouTube title carries search words; this one doesn't need to. */
   title: string;
   youtubeId: string;
@@ -49,7 +51,7 @@ export interface CatalogShow extends CatalogEntry {
 /** Everything published for one show: built from its content folder, without the reveal ledger or research. */
 export interface ShowBundle extends ShowData {
   theme: ShowTheme | null;
-  /** From `videos.json`. Only the catalog reads it; the gated show views never include it. */
+  /** From `videos.json`. The catalog lists them; the gated show view carries them gated (`GRecap`). */
   videos?: ShowVideo[];
 }
 

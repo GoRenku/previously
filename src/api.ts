@@ -6,7 +6,7 @@ import type { ShowTheme } from '../shared/theme.ts';
 export type ShowView = GatedShow & { theme: ShowTheme | null };
 
 export type { GatedShow, SearchHit, CatalogShow, CatalogVideo };
-export type { GCharacter, GWorld, GStoryline, GEpisode, GFact } from '../shared/spoilers.ts';
+export type { GCharacter, GWorld, GStoryline, GEpisode, GFact, GRecap } from '../shared/spoilers.ts';
 
 export async function getCatalog(): Promise<CatalogShow[]> {
   const r = await fetch('/api/catalog');

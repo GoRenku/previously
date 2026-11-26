@@ -27,7 +27,8 @@ export type Consent = 'yes' | 'no';
 export interface Events {
   position_set: { show_id: string; up_next: string; placement: 'picker' | 'home' };
   clip_played: { show_id: string; clip_id: string; kind: string };
-  recap_played: { show_id: string; up_to: string; placement: 'hero' | 'rail' };
+  recap_played: { show_id: string; up_to: string; placement: 'hero' | 'rail' | 'catchup' | 'videos' };
+  catchup_mode: { show_id: string; mode: 'watch' | 'read' };
   youtube_clicked: { target: 'watch' | 'subscribe' | 'channel'; placement: string };
   ai_app_chosen: { app: string; placement: 'home' | 'ask' };
   ai_link_copied: { app: string; what: 'link' | 'claude_code'; placement: 'home' | 'ask' };

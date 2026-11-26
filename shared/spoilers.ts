@@ -7,6 +7,7 @@ import type {
   ArcBeat, BeatKind, Character, CharacterArc, Clip, EpCode, Episode, Fact, Gated, ImageRef, Question, SeasonRecap,
   ShowData, ShowMeta, Storyline, WorldEntry,
 } from './schema.ts';
+import type { ShowVideo } from './content.ts';
 
 const CODE = /^S(\d+)E(\d+)$/i;
 
@@ -109,7 +110,39 @@ export interface GatedShow {
   storylines: GStoryline[];
   questions: { open: Question[]; answered: Question[] };
   clips: Clip[];
+  /** Our catch-up videos, published ones only: open when every episode they cover is seen, else locked (no YouTube id). */
+  recaps: GRecap[];
   redirects: Record<string, string>; // merged character ids → surviving id
+}
+
+/** A catch-up video as a viewer sees it. It covers the episodes from `from` up to, not including, `upTo`. */
+export interface GRecap {
+  id: string; title: string; from: EpCode; upTo: EpCode; seconds: number; published: string;
+  /** `open`: everything it covers is seen; `match`: open, and made for exactly this spot; `locked`: it covers an episode not seen yet. */
+  status: 'open' | 'match' | 'locked';
+  /** Only when it isn't locked: the link is the spoiler. */
+  youtubeId?: string;
+}
+
+/**
+ * Gate the catch-up videos. A video opens only when the viewer has seen every
+ * episode before its `upTo`; until then it is listed as locked, without its
+ * YouTube id. A video that isn't public yet (no `published`, or a date after
+ * `today`) is left out entirely.
+ */
+export function gateRecaps(videos: ShowVideo[] | undefined, episodes: Episode[], position: Position, today: string): GRecap[] {
+  const { through } = position;
+  const nextLine = position.nextUp ?? `S${(parseCode(through)?.season ?? 0) + 1}E1`;
+  return (videos ?? [])
+    .filter((v) => v.published && v.published <= today)
+    .map((v): GRecap => {
+      const from = v.from ?? 'S1E1';
+      const open = episodes.every((e) => ord(e.code) >= ord(v.upTo) || seen(e.code, through)) && ord(v.upTo) <= ord(nextLine);
+      const base = { id: v.id, title: v.title, from, upTo: v.upTo, seconds: v.seconds, published: v.published! };
+      if (!open) return { ...base, status: 'locked' };
+      return { ...base, status: ord(v.upTo) === ord(nextLine) ? 'match' : 'open', youtubeId: v.youtubeId };
+    })
+    .sort((a, b) => ord(a.from) - ord(b.from) || ord(a.upTo) - ord(b.upTo));
 }
 
 const gateFacts = (facts: Fact[] | undefined, through: EpCode, via?: string): GFact[] =>
@@ -121,7 +154,7 @@ const gateFacts = (facts: Fact[] | undefined, through: EpCode, via?: string): GF
     })
     .sort((a, b) => ord(a.at) - ord(b.at));
 
-export function gate(data: ShowData, position: Position): GatedShow {
+export function gate(data: ShowData & { videos?: ShowVideo[] }, position: Position, today = new Date().toISOString().slice(0, 10)): GatedShow {
   const { through } = position;
   const sortedEps = [...data.episodes].sort((a, b) => ord(a.code) - ord(b.code));
 
@@ -284,7 +317,8 @@ export function gate(data: ShowData, position: Position): GatedShow {
   // and posters of seasons the user hasn't started.
   const curSeason = Math.max(1, Math.floor(ord(position.nextUp ?? through) / 1000));
   const meta: ShowMeta = { ...data.meta, sources: [], seasons: data.meta.seasons.map((x) => (x.number > curSeason ? { ...x, poster: undefined } : x)) };
-  return { meta, position, episodes, seasonRecaps, leftOff, characters, arcs, world, storylines, questions, clips, redirects };
+  const recaps = gateRecaps(data.videos, data.episodes, position, today);
+  return { meta, position, episodes, seasonRecaps, leftOff, characters, arcs, world, storylines, questions, clips, recaps, redirects };
 }
 
 // ---------- search (used by the site's Ask box and the MCP `search` tool) ----------

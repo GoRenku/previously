@@ -42,22 +42,23 @@ Every piece of content carries `at`: the earliest episode after which a viewer k
 | Questions | `raisedAt` / `answeredAt`. The same question is "open" for one user and "answered" for another. |
 | Images | Each image has its own `at`, because a costume or location can spoil. |
 | Clips | Each clip has an `at`. The Season 2 trailer unlocks only after the Season 1 finale. |
+| Recaps | Each of our videos covers `from` (default S1·E1) up to, not including, `upTo`. It opens only once every episode it covers is seen; before that it shows as locked, with its title but no YouTube id. A recap is never trimmed to fit an earlier spot. |
 | Absence | "Not found" and "not yet" look identical. A URL like `/characters/<later-character>` shows the same message as a typo, because a different message would itself be a spoiler. IDs are spoiler-safe too (`helly`, not her later-revealed name). |
 
 ## 4. Information architecture
 
 **Home**: brand promise, show search (with the `/` shortcut), a featured show, a poster wall of popular shows ("Ready" / "Returns Jul 9" / "Coming soon"), how-it-works, and a block on connecting it to your AI.
 
-**Show** (themed), with seven tabs under a hero that shows the up-next card:
+**Show** (themed), with seven tabs under the show's hero:
 
 | Tab | Job |
 |---|---|
-| **Catch up** (default) | *Where we left off* card → *The story so far* (finished seasons in a breath, expandable to the full recap; the current season episode by episode) → **Where everyone stands**, a short "here's where X is right now" for each lead, correct for the viewer's exact episode → *Also in the story* → sidebar with **open questions** (answered ones folded away) and **storylines at a glance**. About a 4-minute read. |
+| **Catch up** (default) | *Everything before S2·E8*, in **Watch** or **Read** (the viewer picks once; Watch is the default when a recap is open). Watch is a playlist of our recaps in story order, then only the episodes no recap covers. Read is each finished season's full recap, then the current season episode by episode. Both end with *Last time* (the end of the last episode watched) and *Up next* → **Where everyone stands**, a short "here's where X is right now" for each lead, correct for the viewer's exact episode → *Also in the story* → sidebar with **open questions** (answered ones folded away) and **storylines at a glance**. About a 4-minute read. |
 | **Characters** | **Featured arcs** (leads, with their "right now" paragraph), then a grid filterable by *severed floor / Lumon leadership / outside Lumon*. A character page has five parts: **(1)** "Where they stand right now", plus *what drives them* and *the conflict inside them*. **(2)** **The arc**, told as chapters with an evolving summary and a beat timeline in **two lanes, Innie on the left and Outie on the right**. Shared or reintegrated beats sit in the middle, so for Severance the lanes visibly converge in Season 2. Each beat is tagged turn / reveal / choice / loss / win / cliffhanger, with a "key moments only" toggle. **(3)** **Dossier**: atomic facts split Innie | Outie, each with the episode it was learned. **(4)** Connections. **(5)** Storylines. |
 | **Storylines** | **The storyline map**: a grid of threads × episodes, with one dot wherever an episode moves a thread. Dot size is importance, colour is beat type, and a faint line shows how long the thread has been running. Hover shows the moment; click jumps to the thread. Below it, thread cards (main plot / subplot / mystery / relationship) carry an evolving summary, a **what's at stake** callout, beats grouped by season with who was involved, and the **questions in this thread** (open or answered). |
 | **Episodes** | Seasons → watched episodes (still and logline), the up-next teaser, and sealed later episodes. Each episode page has the recap, key moments, "where it left off" and who's in it. |
 | **World** | Places, organizations, ideas & rules, objects and events. Cards have an image, or a typographic cover when no image is safe. The drawer holds an evolving explainer, who's involved, related storylines, and facts with episode chips. This is the lore layer that complex shows need. |
-| **Clips** | Official trailers and clips, gated the same way as everything else, loaded click-to-play from youtube-nocookie. |
+| **Videos** | Our recaps (locked ones shown locked, with no link) above the official trailers and clips, all gated the same way as everything else and loaded click-to-play from youtube-nocookie. |
 | **Ask** | Question box over the gated knowledge (keyword search in the prototype; an LLM on the same gate in V1), plus MCP connection instructions. |
 
 ## 5. Design language

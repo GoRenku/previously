@@ -83,8 +83,10 @@ overrides). It holds `catalog-shows.json` (which shows to list),
 set of JSON files: `show.json`, `episodes.json`, `clips.json`,
 `characters.json`, `arcs.json`, `storylines.json`, `world.json`,
 `theme.json` (its visual tokens; the API sends it with the show),
-`videos.json` (its catch-up videos on YouTube; only the home page's catalog
-reads it, and a video's YouTube id goes out only once it is public), plus
+`videos.json` (its catch-up videos on YouTube; the home page's catalog lists
+them, and the gated show view carries them as `recaps`, each open only once
+the viewer has seen every episode it covers; a YouTube id goes out only for a
+public, open video), plus
 `reveals.json` (the reveal ledger: when the viewer learns each sensitive
 thing) and a research brief. The ledger is not served; it drives QA.
 

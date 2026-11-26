@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useParams } from 'react-router-dom';
 import { getShow, savedPosition, savePosition, fmt, type GatedShow, type ShowView } from '../api';
-import { Brand, Ep, Icon, Locked, Portrait, PositionPicker } from '../components';
+import { Brand, Ep, Icon, Portrait, PositionPicker } from '../components';
 import { themeOrApp, themeStyle, type ShowTheme } from '../themes';
-import { MentionProvider, Mentions, Paras } from '../mentions';
+import { MentionProvider, Mentions } from '../mentions';
 import { track } from '../analytics';
 import { PrivacyLinks } from '../consent';
+import { CatchUpHead, CatchUpReading } from './catchup';
 
 interface Ctx { view: GatedShow; theme: ShowTheme; showId: string; next: string; openPicker: () => void }
 const ShowCtx = createContext<Ctx | null>(null);
@@ -62,7 +63,7 @@ export function ShowLayout() {
               <NavLink to={`/show/${id}/storylines`} className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>Storylines<span className="count">{ctx.view.storylines.length}</span></NavLink>
               <NavLink to={`/show/${id}/episodes`} className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>Episodes</NavLink>
               <NavLink to={`/show/${id}/world`} className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>World<span className="count">{ctx.view.world.length}</span></NavLink>
-              <NavLink to={`/show/${id}/clips`} className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>Clips<span className="count">{ctx.view.clips.length}</span></NavLink>
+              <NavLink to={`/show/${id}/videos`} className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>Videos<span className="count">{ctx.view.clips.length + ctx.view.recaps.length}</span></NavLink>
               <NavLink to={`/show/${id}/ask`} className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>Ask</NavLink>
             </div>
           </nav>
@@ -95,7 +96,6 @@ export function ShowLayout() {
 }
 
 function Hero({ view, compact, theme }: { view: GatedShow; compact: boolean; theme: ShowTheme }) {
-  const nextEp = view.episodes.find((e) => e.locked && e.nextUp);
   return (
     <section className="show-hero" style={compact ? { minHeight: 280 } : undefined}>
       <div className="show-hero-img"><img src={view.meta.images.backdrop.url} alt="" /></div>
@@ -112,17 +112,6 @@ function Hero({ view, compact, theme }: { view: GatedShow; compact: boolean; the
             )}
             {!compact && <div className="meta"><span>Created by {view.meta.creators.join(', ')}</span><span className="sep">/</span><span>{((n) => `${n} season${n === 1 ? '' : 's'}`)(view.meta.seasons.filter((s) => s.status !== 'upcoming').length)}</span>{view.meta.tagline && <><span className="sep">/</span><span className="serif-i" style={{ fontSize: 17 }}>“{view.meta.tagline}”</span></>}</div>}
           </div>
-          {!compact && (
-            <div className="upnext-card">
-              <div style={{ width: 92, aspectRatio: '16/9', borderRadius: 8, overflow: 'hidden', flexShrink: 0 }}>
-                <Locked motif={theme.motif} label="" density={40} seed={11} />
-              </div>
-              <div>
-                <div className="kicker">{nextEp ? `Up next · ${fmt(nextEp.code)}` : 'All caught up'}</div>
-                <div className="t">{nextEp?.title ? `“${nextEp.title}”` : view.position.nextUpLabel}</div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>
@@ -132,11 +121,7 @@ function Hero({ view, compact, theme }: { view: GatedShow; compact: boolean; the
 /* ─────────────── Catch up (the main page) ─────────────── */
 
 export function CatchUp() {
-  const { view, showId, openPicker, theme } = useShow();
-  const [open, setOpen] = useState<Record<number, boolean>>({});
-  const completed = new Set(view.seasonRecaps.map((r) => r.season));
-  const current = view.episodes.filter((e) => !e.locked && !completed.has(e.season));
-  const words = [view.leftOff?.text, ...view.seasonRecaps.map((r) => r.short), ...current.flatMap((e) => (e.locked ? [] : e.keyMoments))].join(' ').split(/\s+/).length;
+  const { view, showId, openPicker, theme, next } = useShow();
 
   if (!view.leftOff) {
     return (
@@ -151,55 +136,18 @@ export function CatchUp() {
 
   const stands = view.characters.filter((c) => view.arcs[c.id]?.now);
   const leads = view.characters.filter((c) => c.importance >= 2 && !view.arcs[c.id]?.now).slice(0, 12);
-  const lastSeason = view.seasonRecaps[view.seasonRecaps.length - 1]?.season;
 
   return (
     <div className="page">
-      <section className="leftoff">
-        <div className="leftoff-img">{view.leftOff.still && <img src={view.leftOff.still.url} alt={`Still from ${view.leftOff.title}`} />}</div>
-        <div className="leftoff-body">
-          <div className="kicker">Where we left off · end of {fmt(view.leftOff.code)}</div>
-          <div className="quote"><Mentions text={view.leftOff.text} /></div>
-          <div className="ep-title">From “{view.leftOff.title}” · <Link to={`/show/${showId}/episodes/${view.leftOff.code}`} style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>full episode recap</Link></div>
-        </div>
-      </section>
+      <CatchUpHead view={view} showId={showId} next={next} />
 
-      <div className="cu-grid">
+      <div className="cu-grid" style={{ marginTop: 40 }}>
         <div>
-          <h2 className="display block-title">The story so far <span className="readtime"><Icon.clock /> {Math.max(2, Math.round(words / 230))} min read</span></h2>
-          {view.seasonRecaps.map((r) => (
-            <article key={r.season} className="season-recap">
-              <div className="kicker">Season {r.season}{r.season === lastSeason && !current.length ? ' · the most recent' : ''}</div>
-              <h3 className="display" style={{ marginTop: 6 }}>Season {r.season} in a breath</h3>
-              <p className="short" style={{ margin: 0 }}><Mentions text={r.short} /></p>
-              {open[r.season] && <div className="long prose"><Paras text={r.long} /></div>}
-              <button className="linkbtn" onClick={() => setOpen((o) => ({ ...o, [r.season]: !o[r.season] }))}>
-                {open[r.season] ? 'Show less' : `Read the full Season ${r.season} recap`} <Icon.chevron />
-              </button>
-            </article>
-          ))}
-          {current.length > 0 && (
-            <article className="season-recap">
-              <div className="kicker">Season {current[0].season} · so far</div>
-              <h3 className="display" style={{ margin: '6px 0 14px' }}>Episode by episode</h3>
-              <div className="ep-timeline">
-                {current.map((e) => !e.locked && (
-                  <Link to={`/show/${showId}/episodes/${e.code}`} key={e.code} className="ep-row">
-                    {e.still ? <img src={e.still.url} alt="" loading="lazy" /> : <div />}
-                    <div>
-                      <Ep code={e.code} />
-                      <h4>{e.title}</h4>
-                      <ul>{e.keyMoments.slice(0, 3).map((k, i) => <li key={i}><Mentions text={k} nested /></li>)}</ul>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </article>
-          )}
+          <CatchUpReading view={view} showId={showId} next={next} motif={theme.motif} />
 
           {stands.length > 0 && (
             <>
-              <h2 className="display block-title" style={{ marginTop: 56 }}>Where everyone stands</h2>
+              <h2 className="display block-title" style={{ marginTop: 64 }}>Where everyone stands</h2>
               <div className="stands">
                 {stands.map((c) => (
                   <Link key={c.id} to={`/show/${showId}/characters/${c.id}`} className="stand">

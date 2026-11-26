@@ -116,10 +116,15 @@ this public repo carries no real spoilers.
    `--dry-run` (`--thumbnail` the take they picked). It uploads as private
    and never publishes; the user reviews, adds the end screen and publishes
    in Studio. Once it is uploaded, add it to the show's
-   `shows/<id>/videos.json` (`id` like `before-s2-long`, `upTo`, the site
+   `shows/<id>/videos.json` (`id` like `before-s2-long`, `upTo`, `from` when
+   it doesn't start at S1E1 (a mid-season film is `from: S2E1`), the site
    title, `youtubeId`, `seconds` as YouTube shows it), and add `published`
    (YYYY-MM-DD) the day it goes public: the home page lists it as coming
-   until then, without its id. Then `validate-data`, and publish the show.
+   until then, without its id, and show pages leave it out. On a show page
+   it opens only once the viewer has seen every episode it covers; before
+   that its card shows locked with its title, so the site title must be
+   spoiler-free from S1E1 ("Everything before Season 2", "Season 2 so
+   far"). Then `validate-data`, and publish the show.
 10. **Feed back.** Write or update the show's `KIT.md` (voice, display
     face, palette and grade, graphics and illustrations, the theme cue, the
     effects), as Black Doves' does. Lessons for every show go into

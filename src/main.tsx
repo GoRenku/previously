@@ -1,11 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './styles.css';
 import { ErrorBoundary } from './ErrorBoundary';
 import Home from './pages/Home';
 import { CatchUp, ShowLayout } from './pages/Show';
-import { Ask, Clips, EpisodeDetail, Episodes, World } from './pages/sections';
+import { Ask, Videos, EpisodeDetail, Episodes, World } from './pages/sections';
 import { CharacterDetail, Characters } from './pages/characters';
 import { Storylines } from './pages/storylines';
 import Privacy from './pages/Privacy';
@@ -27,7 +27,8 @@ createRoot(document.getElementById('root')!).render(
           <Route path="episodes" element={<Episodes />} />
           <Route path="episodes/:code" element={<EpisodeDetail />} />
           <Route path="world" element={<World />} />
-          <Route path="clips" element={<Clips />} />
+          <Route path="videos" element={<Videos />} />
+          <Route path="clips" element={<Navigate to="../videos" replace />} />
           <Route path="ask" element={<Ask />} />
         </Route>
         <Route path="*" element={<Home />} />

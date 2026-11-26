@@ -51,8 +51,9 @@ Sent on every route change, for Yes and No visitors.
 | Event | When | Properties |
 | --- | --- | --- |
 | `position_set` | an episode is picked in the gate or on a home card | `show_id`, `up_next`, `placement` (`picker`, `home`) |
-| `recap_played` | a home-page recap is started | `show_id`, `up_to`, `placement` (`hero`, `rail`) |
-| `clip_played` | a clip is started on a show's Clips page | `show_id`, `clip_id`, `kind` |
+| `recap_played` | one of our recaps is started | `show_id`, `up_to`, `placement` (`hero`, `rail` on the home page; `catchup`, `videos` on a show) |
+| `catchup_mode` | Watch or Read is chosen on a show's Catch up page | `show_id`, `mode` (`watch`, `read`) |
+| `clip_played` | a clip is started on a show's Videos page | `show_id`, `clip_id`, `kind` |
 | `youtube_clicked` | a youtube.com link on the home page is followed | `target` (`watch`, `subscribe`, `channel`), `placement` |
 | `ai_app_chosen` | an app tab is chosen in the AI setup | `app`, `placement` (`home`, `ask`) |
 | `ai_link_copied` | the MCP link or Claude Code command is copied | `app`, `what` (`link`, `claude_code`), `placement` |

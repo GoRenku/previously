@@ -4,8 +4,9 @@
  *   GET /api/catalog                 every show; available ones get spoiler-free extras
  *   GET /api/shows/:id?next=|through=          the gated show plus its theme
  *   GET /api/shows/:id/search?next=|through=&q=  search over the gated show
- * Gated responses depend only on the show's bundle and the request's
- * parameters, so they are cached at the edge under the bundle key.
+ * Gated responses depend only on the show's bundle, the request's
+ * parameters and the day (recaps open on their publish date), so they are
+ * cached at the edge under the bundle key and the date.
  */
 import type { CatalogShow, CatalogVideo, ShowVideo } from '../shared/content.ts';
 import { search } from '../shared/spoilers.ts';
@@ -38,7 +39,9 @@ export async function api(request: Request, store: ContentStore, ctx: ExecutionC
   }
 
   const bundle = opts.cache ? (await store.manifest()).shows[id]?.bundle ?? null : null;
-  return edgeCached(ctx, url, bundle, async () => {
+  // A recap opens on its publish date, so the day is part of the version too.
+  const version = bundle ? await digest([bundle, new Date().toISOString().slice(0, 10)]) : null;
+  return edgeCached(ctx, url, version, async () => {
     const { data, view, error } = await gatedShow(store, id, pos);
     if (!data || !view) return notFound(error!);
     if (match[2]) return json({ hits: search(view, q, 12) });

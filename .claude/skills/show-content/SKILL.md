@@ -47,9 +47,9 @@ Depth beats breadth. Three or four characters with full arcs are worth more than
 - `logline`: one spoiler-free sentence, shown as the teaser when the episode is up next, so **one episode before it airs for the reader**. It must not paraphrase its own episode's twists ("the keeper faces the hardest choice of his life" beside an open "who will go?" question answers it).
 - `summary`: 150–230 words in 1–3 paragraphs covering the main plot and every subplot thread, in present tense. A Core-tier season's summaries can be shorter (about 150–180 words).
 - `keyMoments`: 4–7 bullets.
-- `leftOff`: 1–3 sentences on the situation as the episode ends. This powers "Where we left off". Make it specific.
+- `leftOff`: 1–3 sentences on the situation as the episode ends. This powers "Last time" at the end of Catch up. Make it specific.
 - `characters`: ids of characters **seen on screen** (including in flashbacks, photos or recordings), confirmed by a recap or the plot. Voice-only appearances and TVmaze credits alone don't count, because credits leak. In the episode where an identity merge happens, list the true identity (`ada`, not `mrs-lisle`).
-- `seasonRecaps`: for each completed season, `short` (60–90 words) and `long` (300–450 words, 3–5 paragraphs), using only what is known at that season's finale.
+- `seasonRecaps`: for each completed season, `short` (60–90 words; the MCP brief) and `long` (300–450 words, 3–5 paragraphs; the Read text on Catch up, so it must read well on its own), using only what is known at that season's finale.
 
 ### clips.json (writer A)
 Official channels only: the network's or streamer's own YouTube channels, including their regional and secondary channels (e.g. Netflix, Netflix Philippines, Still Watching Netflix, Apple TV). Fan, news and reaction channels don't qualify. Verify every id before using it; **never guess an id**:
